@@ -1,0 +1,15 @@
+{
+  "name": "nostalgist",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@happy-dom/global-registrator": "12.5.0",
+    "browserfs": "1.4.3",
+    "bun-types": "^1.0.3",
+    "delay": "6.0.0",
+    "ini": "4.1.1",
+    "ky": "1.0.1",
+    "ky-universal": "^0.12.0",
+    "typescript": "5.2.2"
+  }
+}
