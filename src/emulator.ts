@@ -1,4 +1,4 @@
-import { createEmscriptenFS, getEmscriptenModuleOverrides } from "./emscripten"
+import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 
 // Commands reference https://docs.libretro.com/development/retroarch/network-control-interface/
 type RetroArchCommand =
@@ -59,6 +59,20 @@ export class Emulator {
     this.options = options
   }
 
+  private get stateFileName() {
+    if (!this.rom) {
+      throw new Error('rom is not ready')
+    }
+    const { name } = this.rom.fileAccessor
+    const baseName = name.slice(0, name.lastIndexOf('.'))
+    const coreFullName = coreFullNameMap[this.core]
+    return `${raUserdataDir}states/${coreFullName}/${baseName}.state`
+  }
+
+  private get stateThumbnailFileName() {
+    return `${this.stateFileName}.png`
+  }
+
   getOptions() {
     return this.options
   }
@@ -78,6 +92,75 @@ export class Emulator {
     } else {
       launch()
     }
+  }
+  resume() {
+    if (this.gameStatus === 'paused') {
+      this.sendCommand('PAUSE_TOGGLE')
+    }
+    this.gameStatus = 'running'
+  }
+
+  restart() {
+    this.sendCommand('RESET')
+    this.resume()
+  }
+
+  pause() {
+    if (this.gameStatus === 'running') {
+      this.sendCommand('PAUSE_TOGGLE')
+    }
+    this.gameStatus = 'paused'
+  }
+
+  async saveState() {
+    this.clearStateFile()
+    if (!this.rom || !this.emscripten) {
+      return
+    }
+    this.sendCommand('SAVE_STATE')
+    const shouldSaveThumbnail = true
+    let stateBuffer: Buffer
+    let stateThumbnailBuffer: Buffer | undefined
+    if (shouldSaveThumbnail) {
+      ;[stateBuffer, stateThumbnailBuffer] = await Promise.all([
+        this.waitForEmscriptenFile(this.stateFileName),
+        this.waitForEmscriptenFile(this.stateThumbnailFileName),
+      ])
+    } else {
+      stateBuffer = await this.waitForEmscriptenFile(this.stateFileName)
+    }
+    this.clearStateFile()
+    return {
+      name: this.rom?.fileAccessor.name,
+      core: this.core,
+      createTime: Date.now(),
+      blob: new Blob([stateBuffer], { type: 'application/octet-stream' }),
+      thumbnailBlob: stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], { type: 'image/png' }) : undefined,
+    }
+  }
+
+  async loadState(blob: Blob) {
+    this.clearStateFile()
+    if (this.emscripten) {
+      const { FS } = this.emscripten
+      const buffer = await blobToBuffer(blob)
+      FS.writeFile(this.stateFileName, buffer)
+      await this.waitForEmscriptenFile(this.stateFileName)
+      this.sendCommand('LOAD_STATE')
+    }
+  }
+
+  exit(statusCode = 0) {
+    this.processStatus = 'terminated'
+    if (this.emscripten) {
+      const { FS, exit, JSEvents } = this.emscripten
+      exit(statusCode)
+      FS.unmount('/home')
+      JSEvents.removeAllEventListeners()
+    }
+    this.cleanupDOM()
+    // @ts-expect-error try to focus on previous active element
+    this.previousActiveElement?.focus?.()
   }
 
   private async setupFileSystem() {
@@ -167,8 +250,6 @@ export class Emulator {
     const { Module } = this.emscripten
     await Promise.all([await this.setupFileSystem(), await Module.monitorRunDependencies()])
   }
-
-
   private sendCommand(msg: RetroArchCommand) {
     const bytes = encoder.encode(`${msg}\n`)
     this.messageQueue.push([bytes, 0])
@@ -285,95 +366,11 @@ export class Emulator {
     return buffer
   }
 
-  resume() {
-    if (this.gameStatus === 'paused') {
-      this.sendCommand('PAUSE_TOGGLE')
-    }
-    this.gameStatus = 'running'
-  }
-
-  restart() {
-    this.sendCommand('RESET')
-    this.resume()
-  }
-
-  pause() {
-    if (this.gameStatus === 'running') {
-      this.sendCommand('PAUSE_TOGGLE')
-    }
-    this.gameStatus = 'paused'
-  }
-
-  private get stateFileName() {
-    if (!this.rom) {
-      throw new Error('rom is not ready')
-    }
-    const { name } = this.rom.fileAccessor
-    const baseName = name.slice(0, name.lastIndexOf('.'))
-    const coreFullName = coreFullNameMap[this.core]
-    return `${raUserdataDir}states/${coreFullName}/${baseName}.state`
-  }
-
-  private get stateThumbnailFileName() {
-    return `${this.stateFileName}.png`
-  }
-
   private clearStateFile() {
     const { FS } = this.emscripten
     try {
       FS.unlink(this.stateFileName)
       FS.unlink(this.stateThumbnailFileName)
     } catch {}
-  }
-
-  async saveState() {
-    this.clearStateFile()
-    if (!this.rom || !this.emscripten) {
-      return
-    }
-    this.sendCommand('SAVE_STATE')
-    const shouldSaveThumbnail = true
-    let stateBuffer: Buffer
-    let stateThumbnailBuffer: Buffer | undefined
-    if (shouldSaveThumbnail) {
-      ;[stateBuffer, stateThumbnailBuffer] = await Promise.all([
-        this.waitForEmscriptenFile(this.stateFileName),
-        this.waitForEmscriptenFile(this.stateThumbnailFileName),
-      ])
-    } else {
-      stateBuffer = await this.waitForEmscriptenFile(this.stateFileName)
-    }
-    this.clearStateFile()
-    return {
-      name: this.rom?.fileAccessor.name,
-      core: this.core,
-      createTime: Date.now(),
-      blob: new Blob([stateBuffer], { type: 'application/octet-stream' }),
-      thumbnailBlob: stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], { type: 'image/png' }) : undefined,
-    }
-  }
-
-  async loadState(blob: Blob) {
-    this.clearStateFile()
-    if (this.emscripten) {
-      const { FS } = this.emscripten
-      const buffer = await blobToBuffer(blob)
-      FS.writeFile(this.stateFileName, buffer)
-      await this.waitForEmscriptenFile(this.stateFileName)
-      this.sendCommand('LOAD_STATE')
-    }
-  }
-
-  exit(statusCode = 0) {
-    this.processStatus = 'terminated'
-    if (this.emscripten) {
-      const { FS, exit, JSEvents } = this.emscripten
-      exit(statusCode)
-      FS.unmount('/home')
-      JSEvents.removeAllEventListeners()
-    }
-    this.cleanupDOM()
-    // @ts-expect-error try to focus on previous active element
-    this.previousActiveElement?.focus?.()
   }
 }

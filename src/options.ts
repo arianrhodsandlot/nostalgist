@@ -39,7 +39,7 @@ const defaultRetroarchConfig = {
 }
 
 export function getDefaultOptions() {
-  const defaultOptions = {
+  return {
     runEmulatorManually: false,
     retroarchConfig: defaultRetroarchConfig,
     retroarchCoreConfig: {},
@@ -60,6 +60,4 @@ export function getDefaultOptions() {
       return bios
     },
   }
-
-  return defaultOptions
 }

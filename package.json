@@ -3,13 +3,15 @@
   "module": "src/index.ts",
   "type": "module",
   "devDependencies": {
+    "@arianrhodsandlot/eslint-config": "0.8.2",
     "@happy-dom/global-registrator": "12.5.0",
     "browserfs": "1.4.3",
-    "bun-types": "^1.0.3",
+    "bun-types": "1.0.3",
     "delay": "6.0.0",
+    "eslint": "8.50.0",
     "ini": "4.1.1",
     "ky": "1.0.1",
-    "ky-universal": "^0.12.0",
+    "ky-universal": "0.12.0",
     "typescript": "5.2.2"
   }
 }

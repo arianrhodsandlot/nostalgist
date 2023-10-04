@@ -1,7 +1,16 @@
-import { expect, test  } from "bun:test"
+import { expect, test } from 'bun:test'
 import { Nostalgist } from '../src'
 
-const testNesRomUrl = 'https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/Super%20Tilt%20Bro%20%28USA%29.nes'
+const testNesRomUrl =
+  'https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/Super%20Tilt%20Bro%20%28USA%29.nes'
+
+function resolveRom(rom: string) {
+  return `https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/${rom}`
+}
+
+function resolveBios(bios: string) {
+  return `https://buildbot.libretro.com/assets/system/${bios}`
+}
 
 test('Nostalgist.nes', async () => {
   Nostalgist.configure({ runEmulatorManually: true })
@@ -23,12 +32,7 @@ test('Nostalgist.nes', async () => {
 test('Nostalgist.nes with custom resolveRom', async () => {
   Nostalgist.configure({ runEmulatorManually: true })
 
-  const nostalgist = await Nostalgist.nes({
-    rom: 'Super Tilt Bro (USA).nes',
-    resolveRom(rom: string) {
-      return `https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/${rom}`
-    }
-  })
+  const nostalgist = await Nostalgist.nes({ rom: 'Super Tilt Bro (USA).nes', resolveRom })
   const emulatorOptions = nostalgist.getEmulatorOptions()
 
   expect(emulatorOptions.core.js).toBeString()
@@ -42,11 +46,7 @@ test('Nostalgist.nes with custom resolveRom', async () => {
 test('Nostalgist.configure with global custom resolveRom', async () => {
   Nostalgist.configure({ runEmulatorManually: true })
 
-  Nostalgist.configure({
-    resolveRom(rom: string) {
-      return `https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/${rom}`
-    }
-  })
+  Nostalgist.configure({ resolveRom })
 
   const nostalgist = await Nostalgist.nes('Super Tilt Bro (USA).nes')
 
@@ -96,8 +96,6 @@ test('Nostalgist.launch with custom emscripten core', async () => {
   expect(emulatorOptions.rom[0].fileContent).toBeInstanceOf(Blob)
   expect(emulatorOptions.bios).toEqual([])
 })
-
-
 test('Nostalgist.launch with custom rom and custom emscripten core', async () => {
   Nostalgist.configure({ runEmulatorManually: true })
 
@@ -106,10 +104,6 @@ test('Nostalgist.launch with custom rom and custom emscripten core', async () =>
     wasm: 'https://web.libretro.com/fceumm_libretro.wasm',
   }
   const rom = 'Super Tilt Bro (USA).nes'
-
-  function resolveRom(rom: string) {
-    return `https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/${rom}`
-  }
 
   const nostalgist = await Nostalgist.launch({ rom, core, resolveRom })
 
@@ -134,14 +128,6 @@ test('Nostalgist.launch with multiple files and bios', async () => {
   }
   const rom = ['Super Tilt Bro (USA).nes', '240p Test Suite.nes']
   const bios = ['PrBoom.zip', 'FinalBurn Neo (hiscore).zip']
-
-  function resolveRom(rom: string) {
-    return `https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/${rom}`
-  }
-
-  function resolveBios(bios: string) {
-    return `https://buildbot.libretro.com/assets/system/${bios}`
-  }
 
   const nostalgist = await Nostalgist.launch({ core, rom, bios, resolveRom, resolveBios })
 

@@ -1,6 +1,6 @@
-import { getDefaultOptions }  from './options'
 import { Emulator } from './emulator'
 import { http } from './http'
+import { getDefaultOptions } from './options'
 
 const systemCoreMap = {
   arcade: 'fbneo',
@@ -32,107 +32,6 @@ function baseName(url: string) {
 export class Nostalgist {
   private static globalOptions = getDefaultOptions()
 
-  static resetToDefaultOptions() {
-    Nostalgist.configure(getDefaultOptions())
-  }
-
-  static configure (options) {
-    Nostalgist.globalOptions = {
-      ...Nostalgist.globalOptions,
-      ...options,
-    }
-  }
-
-  private static getCoreForSystem(system) {
-    return systemCoreMap[system]
-  }
-
-  static async launch (options) {
-    const nostalgist = new Nostalgist(options)
-    await nostalgist.launch()
-    return nostalgist
-  }
-
-  private static async launchSystem(system, options) {
-    if (typeof options === 'string') {
-      options = { rom: options }
-    }
-    const core = await Nostalgist.getCoreForSystem(system)
-    return await Nostalgist.launch({ ...options, core, })
-  }
-
-  static async arcade (options) {
-    return await Nostalgist.launchSystem('arcade', options)
-  }
-
-  static async atari2600 (options) {
-    return await Nostalgist.launchSystem('atari2600', options)
-  }
-
-  static async atari5200 (options) {
-    return await Nostalgist.launchSystem('atari5200', options)
-  }
-
-  static async atari7800 (options) {
-    return await Nostalgist.launchSystem('atari7800', options)
-  }
-
-  static async fds (options) {
-    return await Nostalgist.launchSystem('fds', options)
-  }
-
-  static async gamegear (options) {
-    return await Nostalgist.launchSystem('gamegear', options)
-  }
-
-  static async gb (options) {
-    return await Nostalgist.launchSystem('gb', options)
-  }
-
-  static async gba (options) {
-    return await Nostalgist.launchSystem('gba', options)
-  }
-
-  static async gbc (options) {
-    return await Nostalgist.launchSystem('gbc', options)
-  }
-
-  static async megadrive (options) {
-    return await Nostalgist.launchSystem('megadrive', options)
-  }
-
-  static async nes (options) {
-    return await Nostalgist.launchSystem('nes', options)
-  }
-
-  static async ngp (options) {
-    return await Nostalgist.launchSystem('ngp', options)
-  }
-
-  static async ngpc (options) {
-    return await Nostalgist.launchSystem('ngpc', options)
-  }
-
-  static async sms (options) {
-    return await Nostalgist.launchSystem('sms', options)
-  }
-
-  static async snes (options) {
-    return await Nostalgist.launchSystem('snes', options)
-  }
-
-  static async vb (options) {
-    return await Nostalgist.launchSystem('vb', options)
-  }
-
-  static async wonderswan (options) {
-    return await Nostalgist.launchSystem('wonderswan', options)
-  }
-
-  static async wonderswancolor (options) {
-    return await Nostalgist.launchSystem('wonderswancolor', options)
-  }
-
   private options = {}
   private emulatorOptions = {}
   private emulator = undefined
@@ -140,8 +39,149 @@ export class Nostalgist {
   private constructor(options) {
     this.options = {
       ...Nostalgist.globalOptions,
-      ...options
+      ...options,
     }
+  }
+
+  static resetToDefaultOptions() {
+    Nostalgist.configure(getDefaultOptions())
+  }
+
+  static configure(options) {
+    Nostalgist.globalOptions = {
+      ...Nostalgist.globalOptions,
+      ...options,
+    }
+  }
+
+  static async launch(options) {
+    const nostalgist = new Nostalgist(options)
+    await nostalgist.launch()
+    return nostalgist
+  }
+
+  static async arcade(options) {
+    return await Nostalgist.launchSystem('arcade', options)
+  }
+
+  static async atari2600(options) {
+    return await Nostalgist.launchSystem('atari2600', options)
+  }
+
+  static async atari5200(options) {
+    return await Nostalgist.launchSystem('atari5200', options)
+  }
+
+  static async atari7800(options) {
+    return await Nostalgist.launchSystem('atari7800', options)
+  }
+
+  static async fds(options) {
+    return await Nostalgist.launchSystem('fds', options)
+  }
+
+  static async gamegear(options) {
+    return await Nostalgist.launchSystem('gamegear', options)
+  }
+
+  static async gb(options) {
+    return await Nostalgist.launchSystem('gb', options)
+  }
+
+  static async gba(options) {
+    return await Nostalgist.launchSystem('gba', options)
+  }
+
+  static async gbc(options) {
+    return await Nostalgist.launchSystem('gbc', options)
+  }
+
+  static async megadrive(options) {
+    return await Nostalgist.launchSystem('megadrive', options)
+  }
+
+  static async nes(options) {
+    return await Nostalgist.launchSystem('nes', options)
+  }
+
+  static async ngp(options) {
+    return await Nostalgist.launchSystem('ngp', options)
+  }
+
+  static async ngpc(options) {
+    return await Nostalgist.launchSystem('ngpc', options)
+  }
+
+  static async sms(options) {
+    return await Nostalgist.launchSystem('sms', options)
+  }
+
+  static async snes(options) {
+    return await Nostalgist.launchSystem('snes', options)
+  }
+
+  static async vb(options) {
+    return await Nostalgist.launchSystem('vb', options)
+  }
+
+  static async wonderswan(options) {
+    return await Nostalgist.launchSystem('wonderswan', options)
+  }
+
+  static async wonderswancolor(options) {
+    return await Nostalgist.launchSystem('wonderswancolor', options)
+  }
+
+  private static getCoreForSystem(system) {
+    return systemCoreMap[system]
+  }
+
+  private static async launchSystem(system, options) {
+    if (typeof options === 'string') {
+      options = { rom: options }
+    }
+    const core = await Nostalgist.getCoreForSystem(system)
+    return await Nostalgist.launch({ ...options, core })
+  }
+
+  getEmulator() {
+    const { emulator } = this
+    if (!emulator) {
+      throw new Error('emulator is not ready')
+    }
+    return emulator
+  }
+
+  getEmulatorOptions() {
+    return this.emulatorOptions
+  }
+
+  getOptions() {
+    return this.options
+  }
+
+  saveState() {
+    return this.getEmulator().saveState()
+  }
+
+  loadState() {
+    return this.getEmulator().loadState()
+  }
+
+  resume() {
+    return this.getEmulator().resume()
+  }
+
+  pause() {
+    return this.getEmulator().pause()
+  }
+
+  restart() {
+    return this.getEmulator().restart()
+  }
+
+  exit() {
+    return this.getEmulator().exit()
   }
 
   private async launch() {
@@ -157,11 +197,7 @@ export class Nostalgist {
     const element = this.getElementOption()
     const retroarch = this.getRetroarchOption()
     const retroarchCore = this.getRetroarchCoreOption()
-    const [core, rom, bios] = await Promise.all([
-      this.getCoreOption(),
-      this.getRomOption(),
-      this.getBiosOption(),
-    ])
+    const [core, rom, bios] = await Promise.all([this.getCoreOption(), this.getRomOption(), this.getBiosOption()])
     const emulatorOptions = { element, core, rom, bios, retroarch, retroarchCore }
     this.emulatorOptions = emulatorOptions
   }
@@ -211,7 +247,7 @@ export class Nostalgist {
       fileContent = file
     } else if (typeof file === 'string') {
       fileName = baseName(file)
-      let resolvedRom = await resolveFunction(file)
+      const resolvedRom = await resolveFunction(file)
       if (resolvedRom instanceof Blob) {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {
@@ -256,19 +292,17 @@ export class Nostalgist {
   }
 
   private getRetroarchOption() {
-    const retroarch = {
+    return {
       ...Nostalgist.globalOptions.retroarchConfig,
       ...this.options.retroarchConfig,
     }
-    return retroarch
   }
 
   private getRetroarchCoreOption() {
-    const retroarchCore = {
+    return {
       ...Nostalgist.globalOptions.retroarchCoreConfig,
       ...this.options.retroarchCoreConfig,
     }
-    return retroarchCore
   }
 
   private loadEmulator() {
@@ -278,46 +312,6 @@ export class Nostalgist {
   }
 
   private async launchEmulator() {
-    return this.getEmulator().launch()
-  }
-
-  getEmulator() {
-    const { emulator } = this
-    if (!emulator) {
-      throw new Error('emulator is not ready')
-    }
-    return emulator
-  }
-
-  getEmulatorOptions() {
-    return this.emulatorOptions
-  }
-
-  getOptions() {
-    return this.options
-  }
-
-  saveState() {
-    return this.getEmulator().saveState()
-  }
-
-  loadState() {
-    return this.getEmulator().loadState()
-  }
-
-  resume() {
-    return this.getEmulator().resume()
-  }
-
-  pause() {
-    return this.getEmulator().pause()
-  }
-
-  restart() {
-    return this.getEmulator().restart()
-  }
-
-  exit() {
-    return this.getEmulator().exit()
+    return await this.getEmulator().launch()
   }
 }
