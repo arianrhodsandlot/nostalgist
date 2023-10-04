@@ -40,6 +40,7 @@ const defaultRetroarchConfig = {
 
 export function getDefaultOptions() {
   return {
+    element: '#canvas',
     runEmulatorManually: false,
     retroarchConfig: defaultRetroarchConfig,
     retroarchCoreConfig: {},

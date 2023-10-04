@@ -164,8 +164,8 @@ export class Nostalgist {
     return this.getEmulator().saveState()
   }
 
-  loadState() {
-    return this.getEmulator().loadState()
+  loadState(...args) {
+    return this.getEmulator().loadState(...args)
   }
 
   resume() {
@@ -182,6 +182,10 @@ export class Nostalgist {
 
   exit() {
     return this.getEmulator().exit()
+  }
+
+  resize(...args) {
+    return this.getEmulator().resize(...args)
   }
 
   private async launch() {
@@ -212,13 +216,18 @@ export class Nostalgist {
         element = document.createElement('canvas')
       }
     }
+    if (!element.isConnected) {
+      document.body.append(element)
+    }
+    element.id = 'canvas'
     return element
   }
 
   private async getCoreOption() {
     let { core } = this.options
-
+    let name = ''
     if (typeof core === 'string') {
+      name = core
       const { resolveCoreJs } = this.options
       const coreJs = resolveCoreJs(core)
       const { resolveCoreWasm } = this.options
@@ -233,7 +242,7 @@ export class Nostalgist {
     if (typeof wasm === 'string') {
       wasm = await http(wasm).arrayBuffer()
     }
-    return { js, wasm }
+    return { name, js, wasm }
   }
 
   private async resolveFile(file, resolveFunction) {

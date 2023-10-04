@@ -1,4 +1,16 @@
+import ini from 'ini'
+import { kebabCase } from 'lodash-es'
+import { coreFullNameMap } from './constants'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
+import { blobToBuffer } from './utils'
+
+const encoder = new TextEncoder()
+
+function delay(time: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, time)
+  })
+}
 
 // Commands reference https://docs.libretro.com/development/retroarch/network-control-interface/
 type RetroArchCommand =
@@ -50,22 +62,22 @@ function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclaration>) 
   }
 }
 
+type GameStatus = 'initial' | 'paused' | 'running'
+
 export class Emulator {
   private options: options
   private emscripten
   private messageQueue: [Uint8Array, number][] = []
+  private gameStatus: GameStatus = 'initial'
 
   constructor(options) {
     this.options = options
   }
 
   private get stateFileName() {
-    if (!this.rom) {
-      throw new Error('rom is not ready')
-    }
-    const { name } = this.rom.fileAccessor
-    const baseName = name.slice(0, name.lastIndexOf('.'))
-    const coreFullName = coreFullNameMap[this.core]
+    const [{ fileName }] = this.options.rom
+    const baseName = fileName.slice(0, fileName.lastIndexOf('.'))
+    const coreFullName = coreFullNameMap[this.options.core.name]
     return `${raUserdataDir}states/${coreFullName}/${baseName}.state`
   }
 
@@ -82,17 +94,17 @@ export class Emulator {
     this.setupRaConfigFile()
     this.setupRaCoreConfigFile()
 
-    const launch = () => {
-      this.runMain()
-      this.setupDOM()
-    }
-
     if (this.options.waitForInteraction) {
-      this.options.waitForInteraction({ done: launch })
+      this.options.waitForInteraction({
+        done() {
+          this.runMain()
+        },
+      })
     } else {
-      launch()
+      this.runMain()
     }
   }
+
   resume() {
     if (this.gameStatus === 'paused') {
       this.sendCommand('PAUSE_TOGGLE')
@@ -114,14 +126,14 @@ export class Emulator {
 
   async saveState() {
     this.clearStateFile()
-    if (!this.rom || !this.emscripten) {
+    if (!this.emscripten) {
       return
     }
     this.sendCommand('SAVE_STATE')
-    const shouldSaveThumbnail = true
+    const savestateThumbnailEnable = this.options.retroarch.savestate_thumbnail_enable
     let stateBuffer: Buffer
     let stateThumbnailBuffer: Buffer | undefined
-    if (shouldSaveThumbnail) {
+    if (savestateThumbnailEnable) {
       ;[stateBuffer, stateThumbnailBuffer] = await Promise.all([
         this.waitForEmscriptenFile(this.stateFileName),
         this.waitForEmscriptenFile(this.stateThumbnailFileName),
@@ -130,13 +142,12 @@ export class Emulator {
       stateBuffer = await this.waitForEmscriptenFile(this.stateFileName)
     }
     this.clearStateFile()
-    return {
-      name: this.rom?.fileAccessor.name,
-      core: this.core,
-      createTime: Date.now(),
-      blob: new Blob([stateBuffer], { type: 'application/octet-stream' }),
-      thumbnailBlob: stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], { type: 'image/png' }) : undefined,
-    }
+
+    const state = new Blob([stateBuffer], { type: 'application/octet-stream' })
+    const thumbnail = stateThumbnailBuffer
+      ? new Blob([stateThumbnailBuffer], { type: 'application/octet-stream' })
+      : undefined
+    return { state, thumbnail }
   }
 
   async loadState(blob: Blob) {
@@ -163,10 +174,15 @@ export class Emulator {
     this.previousActiveElement?.focus?.()
   }
 
+  resize(width: number, height: number) {
+    const { Module } = this.emscripten
+    Module.setCanvasSize(width, height)
+  }
+
   private async setupFileSystem() {
     const { Module, FS, PATH, ERRNO_CODES } = this.emscripten
 
-    Module.canvas = this.canvas
+    Module.canvas = this.options.element
     Module.preRun = [
       () =>
         FS.init(() => {
@@ -177,7 +193,7 @@ export class Emulator {
     const emscriptenFS = await createEmscriptenFS({ FS, PATH, ERRNO_CODES })
     FS.mount(emscriptenFS, { root: '/home' }, '/home')
 
-    if (this.rom) {
+    if (this.options.rom.length > 0) {
       FS.mkdirTree(`${raUserdataDir}content/`)
     }
 
@@ -190,43 +206,31 @@ export class Emulator {
       waitTime += 5
     }
 
-    if (this.rom) {
-      const blob = await this.rom.getBlob()
-      const fileName = this.rom.fileAccessor.name
-      const buffer = await blobToBuffer(blob)
-      FS.createDataFile('/', fileName, buffer, true, false)
-      const data = FS.readFile(fileName, { encoding: 'binary' })
-      FS.writeFile(`${raUserdataDir}content/${fileName}`, data, { encoding: 'binary' })
-      FS.unlink(fileName)
+    await Promise.all(
+      this.options.rom.map(async ({ fileName, fileContent }) => {
+        const buffer = await blobToBuffer(fileContent)
+        FS.createDataFile('/', fileName, buffer, true, false)
+        const data = FS.readFile(fileName, { encoding: 'binary' })
+        FS.writeFile(`${raUserdataDir}content/${fileName}`, data, { encoding: 'binary' })
+        FS.unlink(fileName)
+      }),
+    )
 
-      if (this.additionalFiles) {
-        for (const { name, blob } of this.additionalFiles) {
-          const fileName = name
-          const buffer = await blobToBuffer(blob)
-          FS.createDataFile('/', fileName, buffer, true, false)
-          const data = FS.readFile(fileName, { encoding: 'binary' })
-          FS.writeFile(`${raUserdataDir}content/${fileName}`, data, { encoding: 'binary' })
-          FS.unlink(fileName)
-        }
-      }
-    }
-
-    if (this.biosFiles) {
-      FS.mkdirTree(`${raUserdataDir}system/`)
-      for (const { name, blob } of this.biosFiles) {
-        const fileName = name
-        const buffer = await blobToBuffer(blob)
+    await Promise.all(
+      this.options.bios.map(async ({ fileName, fileContent }) => {
+        const buffer = await blobToBuffer(fileContent)
         FS.createDataFile('/', fileName, buffer, true, false)
         const data = FS.readFile(fileName, { encoding: 'binary' })
         FS.writeFile(`${raUserdataDir}system/${fileName}`, data, { encoding: 'binary' })
         FS.unlink(fileName)
-      }
-    }
+      }),
+    )
   }
 
   private async setupEmscripten() {
     // @ts-expect-error for retroarch fast forward
     if (typeof window === 'object') {
+      // @ts-expect-error for retroarch fast forward
       window.setImmediate ??= window.setTimeout
     }
 
@@ -287,28 +291,42 @@ export class Emulator {
   }
 
   private async setupRaConfigFile() {
-    this.writeConfigFile({ path: raConfigPath, config })
+    this.writeConfigFile({ path: raConfigPath, config: this.options.retroarch })
   }
 
   private setupRaCoreConfigFile() {
     const raCoreConfig = {
-      ...defaultRetroarchCoresConfig[this.core],
-      ...this.coreConfig?.[this.core],
+      // ...defaultRetroarchCoresConfig[this.core],
+      // ...this.coreConfig?.[this.core],
     }
-    if (Object.keys(raCoreConfig)) {
-      const coreFullName = coreFullNameMap[this.core]
-      const raCoreConfigPath = join(raCoreConfigDir, coreFullName, `${coreFullName}.opt`)
-      this.writeConfigFile({ path: raCoreConfigPath, config: raCoreConfig })
-    }
+    // if (Object.keys(raCoreConfig)) {
+    //   const coreFullName = coreFullNameMap[this.core]
+    //   const raCoreConfigPath = join(raCoreConfigDir, coreFullName, `${coreFullName}.opt`)
+    //   this.writeConfigFile({ path: raCoreConfigPath, config: raCoreConfig })
+    // }
   }
 
   private runMain() {
     const { Module, JSEvents } = this.emscripten
     const raArgs: string[] = []
-    if (this.rom) {
-      raArgs.push(`/home/web_user/retroarch/userdata/content/${this.rom.fileAccessor.name}`)
+    if (this.options.rom.length > 0) {
+      const [{ fileName }] = this.options.rom
+      raArgs.push(`/home/web_user/retroarch/userdata/content/${fileName}`)
     }
     Module.callMain(raArgs)
+
+    this.gameStatus = 'running'
+
+    // tell retroarch that controllers are connected
+    for (const gamepad of navigator.getGamepads?.() ?? []) {
+      if (gamepad) {
+        window.dispatchEvent(new GamepadEvent('gamepadconnected', { gamepad }))
+      }
+    }
+
+    if (this.options) {
+      return
+    }
 
     // Emscripten module register keyboard events to document, which make custome interactions unavilable.
     // Let's modify the default event liseners
@@ -323,22 +341,11 @@ export class Emulator {
         ...globalKeyboardEventHandler,
         handlerFunc: (...args) => {
           const [event] = args
-          if (event?.target === this.canvas) {
+          if (event?.target === this.options.element) {
             handlerFunc(...args)
           }
         },
       })
-    }
-  }
-
-  private async setupDOM() {
-    updateStyle(this.canvas, { visibility: 'visible' })
-
-    // tell retroarch that controllers are connected
-    for (const gamepad of navigator.getGamepads?.() ?? []) {
-      if (gamepad) {
-        window.dispatchEvent(new GamepadEvent('gamepadconnected', { gamepad }))
-      }
     }
   }
 
@@ -372,5 +379,9 @@ export class Emulator {
       FS.unlink(this.stateFileName)
       FS.unlink(this.stateThumbnailFileName)
     } catch {}
+  }
+
+  private cleanupDOM() {
+    this.options.element.remove()
   }
 }
