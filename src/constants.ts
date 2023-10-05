@@ -1,4 +1,4 @@
-export const coreFullNameMap = {
+export const coreFullNameMap: Record<string, string> = {
   a5200: 'a5200',
   fbneo: 'FinalBurn Neo',
   fceumm: 'FCEUmm',

@@ -2,6 +2,8 @@ import ini from 'ini'
 import { kebabCase } from 'lodash-es'
 import { coreFullNameMap } from './constants'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
+import { EmulatorOptions } from './types/emulator-options'
+import { RetroArchCommand } from './types/retroarch-command'
 import { blobToBuffer } from './utils'
 
 const encoder = new TextEncoder()
@@ -11,40 +13,6 @@ function delay(time: number) {
     setTimeout(resolve, time)
   })
 }
-
-// Commands reference https://docs.libretro.com/development/retroarch/network-control-interface/
-type RetroArchCommand =
-  | 'FAST_FORWARD'
-  | 'FAST_FORWARD_HOLD'
-  | 'LOAD_STATE'
-  | 'SAVE_STATE'
-  | 'FULLSCREEN_TOGGLE'
-  | 'QUIT'
-  | 'STATE_SLOT_PLUS'
-  | 'STATE_SLOT_MINUS'
-  | 'REWIND'
-  | 'MOVIE_RECORD_TOGGLE'
-  | 'PAUSE_TOGGLE'
-  | 'FRAMEADVANCE'
-  | 'RESET'
-  | 'SHADER_NEXT'
-  | 'SHADER_PREV'
-  | 'CHEAT_INDEX_PLUS'
-  | 'CHEAT_INDEX_MINUS'
-  | 'CHEAT_TOGGLE'
-  | 'SCREENSHOT'
-  | 'MUTE'
-  | 'NETPLAY_FLIP'
-  | 'SLOWMOTION'
-  | 'VOLUME_UP'
-  | 'VOLUME_DOWN'
-  | 'OVERLAY_NEXT'
-  | 'DISK_EJECT_TOGGLE'
-  | 'DISK_NEXT'
-  | 'DISK_PREV'
-  | 'GRAB_MOUSE_TOGGLE'
-  | 'MENU_TOGGLE'
-
 const raUserdataDir = '/home/web_user/retroarch/userdata/'
 const raCoreConfigDir = `${raUserdataDir}config/`
 const raConfigPath = `${raUserdataDir}retroarch.cfg`
@@ -65,12 +33,12 @@ function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclaration>) 
 type GameStatus = 'initial' | 'paused' | 'running'
 
 export class Emulator {
-  private options: options
-  private emscripten
+  private options: EmulatorOptions
+  private emscripten: any
   private messageQueue: [Uint8Array, number][] = []
   private gameStatus: GameStatus = 'initial'
 
-  constructor(options) {
+  constructor(options: EmulatorOptions) {
     this.options = options
   }
 
@@ -162,7 +130,6 @@ export class Emulator {
   }
 
   exit(statusCode = 0) {
-    this.processStatus = 'terminated'
     if (this.emscripten) {
       const { FS, exit, JSEvents } = this.emscripten
       exit(statusCode)
@@ -228,7 +195,6 @@ export class Emulator {
   }
 
   private async setupEmscripten() {
-    // @ts-expect-error for retroarch fast forward
     if (typeof window === 'object') {
       // @ts-expect-error for retroarch fast forward
       window.setImmediate ??= window.setTimeout
@@ -277,7 +243,7 @@ export class Emulator {
     return null
   }
 
-  private writeConfigFile({ path, config }) {
+  private writeConfigFile({ path, config }: { path: string; config: Record<string, any> }) {
     const { FS } = this.emscripten
     const dir = path.slice(0, path.lastIndexOf('/'))
     FS.mkdirTree(dir)
@@ -290,15 +256,15 @@ export class Emulator {
     FS.writeFile(path, configContent)
   }
 
-  private async setupRaConfigFile() {
+  private setupRaConfigFile() {
     this.writeConfigFile({ path: raConfigPath, config: this.options.retroarch })
   }
 
   private setupRaCoreConfigFile() {
-    const raCoreConfig = {
-      // ...defaultRetroarchCoresConfig[this.core],
-      // ...this.coreConfig?.[this.core],
-    }
+    // const raCoreConfig = {
+    // ...defaultRetroarchCoresConfig[this.core],
+    // ...this.coreConfig?.[this.core],
+    // }
     // if (Object.keys(raCoreConfig)) {
     //   const coreFullName = coreFullNameMap[this.core]
     //   const raCoreConfigPath = join(raCoreConfigDir, coreFullName, `${coreFullName}.opt`)
@@ -332,14 +298,15 @@ export class Emulator {
     // Let's modify the default event liseners
     const keyboardEvents = new Set(['keyup', 'keydown', 'keypress'])
     const globalKeyboardEventHandlers = JSEvents.eventHandlers.filter(
-      ({ eventTypeString, target }) => keyboardEvents.has(eventTypeString) && target === document,
+      ({ eventTypeString, target }: { eventTypeString: string; target: Element | Document }) =>
+        keyboardEvents.has(eventTypeString) && target === document,
     )
     for (const globalKeyboardEventHandler of globalKeyboardEventHandlers) {
       const { eventTypeString, target, handlerFunc } = globalKeyboardEventHandler
       JSEvents.registerOrRemoveHandler({ eventTypeString, target })
       JSEvents.registerOrRemoveHandler({
         ...globalKeyboardEventHandler,
-        handlerFunc: (...args) => {
+        handlerFunc: (...args: [Event]) => {
           const [event] = args
           if (event?.target === this.options.element) {
             handlerFunc(...args)
@@ -349,7 +316,7 @@ export class Emulator {
     }
   }
 
-  private async waitForEmscriptenFile(fileName) {
+  private async waitForEmscriptenFile(fileName: string) {
     const { FS } = this.emscripten
     const maxRetries = 30
     let buffer

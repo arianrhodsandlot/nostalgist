@@ -95,7 +95,7 @@ load the state of current game.
 ```js
 const nostalgist = await Nostalgist.nes('https://example.com/game.nes')
 const state = await (await fetch('game.state')).blob()
-const state = await nostalgist.loadState(state)
+await nostalgist.loadState(state)
 ```
 
 ### nostalgist.pause

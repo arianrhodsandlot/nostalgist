@@ -1,8 +1,17 @@
 import { Emulator } from './emulator'
 import { http } from './http'
 import { getDefaultOptions } from './options'
+import { EmulatorOptions } from './types/emulator-options'
+import {
+  NostalgistLaunchOptions,
+  NostalgistLaunchRomOptions,
+  NostalgistOptions,
+  NostalgistOptionsFile,
+  NostalgistOptionsPartial,
+  NostalgistResolveFileFunction,
+} from './types/nostalgist-options'
 
-const systemCoreMap = {
+const systemCoreMap: Record<string, string> = {
   arcade: 'fbneo',
   atari2600: 'stella2014',
   atari5200: 'a5200',
@@ -32,116 +41,115 @@ function baseName(url: string) {
 export class Nostalgist {
   private static globalOptions = getDefaultOptions()
 
-  private options = {}
-  private emulatorOptions = {}
-  private emulator = undefined
+  private options: NostalgistOptions
+  private emulatorOptions: EmulatorOptions | undefined
+  private emulator: Emulator | undefined
 
-  private constructor(options) {
-    this.options = {
+  private constructor(options: NostalgistLaunchOptions) {
+    const mergedOptions = {
       ...Nostalgist.globalOptions,
       ...options,
     }
+    this.options = mergedOptions
   }
 
   static resetToDefaultOptions() {
     Nostalgist.configure(getDefaultOptions())
   }
 
-  static configure(options) {
+  static configure(options: NostalgistOptionsPartial) {
     Nostalgist.globalOptions = {
       ...Nostalgist.globalOptions,
       ...options,
     }
   }
 
-  static async launch(options) {
+  static async launch(options: NostalgistLaunchOptions) {
     const nostalgist = new Nostalgist(options)
     await nostalgist.launch()
     return nostalgist
   }
 
-  static async arcade(options) {
+  static async arcade(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('arcade', options)
   }
 
-  static async atari2600(options) {
+  static async atari2600(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('atari2600', options)
   }
 
-  static async atari5200(options) {
+  static async atari5200(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('atari5200', options)
   }
 
-  static async atari7800(options) {
+  static async atari7800(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('atari7800', options)
   }
 
-  static async fds(options) {
+  static async fds(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('fds', options)
   }
 
-  static async gamegear(options) {
+  static async gamegear(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gamegear', options)
   }
 
-  static async gb(options) {
+  static async gb(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gb', options)
   }
 
-  static async gba(options) {
+  static async gba(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gba', options)
   }
 
-  static async gbc(options) {
+  static async gbc(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gbc', options)
   }
 
-  static async megadrive(options) {
+  static async megadrive(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('megadrive', options)
   }
 
-  static async nes(options) {
+  static async nes(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('nes', options)
   }
 
-  static async ngp(options) {
+  static async ngp(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('ngp', options)
   }
 
-  static async ngpc(options) {
+  static async ngpc(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('ngpc', options)
   }
 
-  static async sms(options) {
+  static async sms(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('sms', options)
   }
 
-  static async snes(options) {
+  static async snes(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('snes', options)
   }
 
-  static async vb(options) {
+  static async vb(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('vb', options)
   }
 
-  static async wonderswan(options) {
+  static async wonderswan(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('wonderswan', options)
   }
 
-  static async wonderswancolor(options) {
+  static async wonderswancolor(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('wonderswancolor', options)
   }
 
-  private static getCoreForSystem(system) {
+  private static getCoreForSystem(system: string) {
     return systemCoreMap[system]
   }
 
-  private static async launchSystem(system, options) {
-    if (typeof options === 'string') {
-      options = { rom: options }
-    }
-    const core = await Nostalgist.getCoreForSystem(system)
-    return await Nostalgist.launch({ ...options, core })
+  private static async launchSystem(system: string, options: string | NostalgistLaunchRomOptions) {
+    const launchOption = typeof options === 'string' ? { rom: options } : options
+    const core = Nostalgist.getCoreForSystem(system)
+    return await Nostalgist.launch({ ...launchOption, core })
   }
 
   getEmulator() {
@@ -153,6 +161,9 @@ export class Nostalgist {
   }
 
   getEmulatorOptions() {
+    if (!this.emulatorOptions) {
+      throw new Error('emulator options are not ready')
+    }
     return this.emulatorOptions
   }
 
@@ -164,8 +175,8 @@ export class Nostalgist {
     return this.getEmulator().saveState()
   }
 
-  loadState(...args) {
-    return this.getEmulator().loadState(...args)
+  loadState(state: Blob) {
+    return this.getEmulator().loadState(state)
   }
 
   resume() {
@@ -184,8 +195,8 @@ export class Nostalgist {
     return this.getEmulator().exit()
   }
 
-  resize(...args) {
-    return this.getEmulator().resize(...args)
+  resize(width: number, height: number) {
+    return this.getEmulator().resize(width, height)
   }
 
   private async launch() {
@@ -207,47 +218,55 @@ export class Nostalgist {
   }
 
   private getElementOption() {
+    if (typeof document !== 'object') {
+      throw new TypeError('document must be an object')
+    }
+
     let { element } = this.options
-    if (typeof document === 'object') {
-      if (typeof element === 'string') {
-        element = document.body.querySelector(element)
-      }
-      if (!element) {
-        element = document.createElement('canvas')
-      }
+    if (typeof element === 'string') {
+      element = document.body.querySelector<HTMLCanvasElement>(element) || ''
     }
-    if (!element.isConnected) {
-      document.body.append(element)
+    if (!element) {
+      element = document.createElement('canvas')
     }
-    element.id = 'canvas'
-    return element
+
+    if (element instanceof HTMLCanvasElement) {
+      if (!element.isConnected) {
+        document.body.append(element)
+      }
+      element.id = 'canvas'
+      return element
+    }
+
+    throw new TypeError('invalid element')
   }
 
   private async getCoreOption() {
-    let { core } = this.options
+    const { core } = this.options
+    const { resolveCoreJs, resolveCoreWasm } = this.options
     let name = ''
+    const coreDict: { js: string; wasm: string | ArrayBuffer } = { js: '', wasm: '' }
     if (typeof core === 'string') {
       name = core
-      const { resolveCoreJs } = this.options
       const coreJs = resolveCoreJs(this.options)
-      const { resolveCoreWasm } = this.options
       const coreWasm = resolveCoreWasm(this.options)
-      core = { js: coreJs, wasm: coreWasm }
+      coreDict.js = coreJs
+      coreDict.wasm = coreWasm
     }
 
-    let { js, wasm } = core
+    let { js, wasm } = coreDict
     if (typeof js === 'string') {
       js = await http(js).text()
     }
     if (typeof wasm === 'string') {
-      wasm = await http(wasm).arrayBuffer()
+      wasm = await http(resolveCoreWasm(this.options)).arrayBuffer()
     }
     return { name, js, wasm }
   }
 
-  private async resolveFile(file, resolveFunction) {
+  private async resolveFile(file: NostalgistOptionsFile, resolveFunction: NostalgistResolveFileFunction) {
     let fileName = ''
-    let fileContent: Blob
+    let fileContent: Blob | false = false
 
     if (file instanceof File) {
       fileContent = file
@@ -256,7 +275,7 @@ export class Nostalgist {
       fileContent = file
     } else if (typeof file === 'string') {
       fileName = baseName(file)
-      const resolvedRom = await resolveFunction(this.options)
+      const resolvedRom = resolveFunction(this.options)
       if (resolvedRom instanceof Blob) {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {
@@ -273,7 +292,7 @@ export class Nostalgist {
     }
 
     if (!fileContent) {
-      throw new Error('file is invalid')
+      throw new TypeError('file is invalid')
     }
 
     fileName ||= 'rom.bin'
@@ -282,22 +301,22 @@ export class Nostalgist {
   }
 
   private async getRomOption() {
-    const { rom } = this.options
+    const { rom, resolveRom } = this.options
     if (!rom) {
       return []
     }
     const romFiles = Array.isArray(rom) ? rom : [rom]
 
-    return await Promise.all(romFiles.map((romFile) => this.resolveFile(romFile, this.options.resolveRom)))
+    return await Promise.all(romFiles.map((romFile) => this.resolveFile(romFile, resolveRom)))
   }
 
   private async getBiosOption() {
-    const { bios } = this.options
-    if (!bios || bios.length === 0) {
+    const { bios, resolveBios } = this.options
+    if (!bios) {
       return []
     }
     const biosFiles = Array.isArray(bios) ? bios : [bios]
-    return await Promise.all(biosFiles.map((biosFile) => this.resolveFile(biosFile, this.options.resolveBios)))
+    return await Promise.all(biosFiles.map((biosFile) => this.resolveFile(biosFile, resolveBios)))
   }
 
   private getRetroarchOption() {

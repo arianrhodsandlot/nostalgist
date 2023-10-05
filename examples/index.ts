@@ -2,19 +2,21 @@ import { Nostalgist } from '../src'
 
 Nostalgist.configure({
   resolveCoreJs({ core }) {
-    return `/cores/${encodeURIComponent(core)}_libretro.js`
+    return `/cores/${core}_libretro.js`
   },
 
   resolveCoreWasm({ core }) {
-    return `/cores/${encodeURIComponent(core)}_libretro.wasm`
+    return `/cores/${core}_libretro.wasm`
   },
 
   resolveRom({ core, rom }) {
     const directory = {
       genesis_plus_gx: 'megadrive',
       fceumm: 'nes',
-    }[core]
-    return `/roms/${encodeURIComponent(directory)}/${encodeURIComponent(rom)}`
+    }[`${core}`]
+    if (directory && typeof rom === 'string') {
+      return `/roms/${encodeURIComponent(directory)}/${encodeURIComponent(rom)}`
+    }
   },
 })
 
