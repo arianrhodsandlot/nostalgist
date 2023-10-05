@@ -4,11 +4,11 @@ import { Nostalgist } from '../src'
 const testNesRomUrl =
   'https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/Super%20Tilt%20Bro%20%28USA%29.nes'
 
-function resolveRom(rom: string) {
+function resolveRom({ rom }) {
   return `https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/${rom}`
 }
 
-function resolveBios(bios: string) {
+function resolveBios({ bios }) {
   return `https://buildbot.libretro.com/assets/system/${bios}`
 }
 

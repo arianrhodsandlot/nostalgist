@@ -229,9 +229,9 @@ export class Nostalgist {
     if (typeof core === 'string') {
       name = core
       const { resolveCoreJs } = this.options
-      const coreJs = resolveCoreJs(core)
+      const coreJs = resolveCoreJs(this.options)
       const { resolveCoreWasm } = this.options
-      const coreWasm = resolveCoreWasm(core)
+      const coreWasm = resolveCoreWasm(this.options)
       core = { js: coreJs, wasm: coreWasm }
     }
 
@@ -256,7 +256,7 @@ export class Nostalgist {
       fileContent = file
     } else if (typeof file === 'string') {
       fileName = baseName(file)
-      const resolvedRom = await resolveFunction(file)
+      const resolvedRom = await resolveFunction(this.options)
       if (resolvedRom instanceof Blob) {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {
@@ -297,7 +297,7 @@ export class Nostalgist {
       return []
     }
     const biosFiles = Array.isArray(bios) ? bios : [bios]
-    return await Promise.all(biosFiles.map((romFile) => this.resolveFile(romFile, this.options.resolveBios)))
+    return await Promise.all(biosFiles.map((biosFile) => this.resolveFile(biosFile, this.options.resolveBios)))
   }
 
   private getRetroarchOption() {

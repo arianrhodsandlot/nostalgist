@@ -62,17 +62,17 @@ await Nostalgist.launch({
 change the global configuration for every Nostalgist instance.
 #### example
 ```js
-Nostalgist.config({
-  resolveCoreJs(core) {
+Nostalgist.configure({
+  resolveCoreJs({ core }) {
     return `https://web.libretro.com/${core}_libretro.js`
   },
-  resolveCoreWasm(wasmBinary) {
-    return `https://web.libretro.com/${wasmBinary}_libretro.wasm`
+  resolveCoreWasm({ wasm }) {
+    return `https://web.libretro.com/${wasm}_libretro.wasm`
   },
-  resolveRom(rom) {
+  resolveRom({ rom }) {
     return rom,
   },
-  resolveBios(bios) {
+  resolveBios({ bios }) {
     return bios,
   },
   retroarchConfig: {}

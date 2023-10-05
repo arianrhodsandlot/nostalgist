@@ -2,6 +2,9 @@
   "name": "nostalgist",
   "module": "src/index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "vite examples"
+  },
   "devDependencies": {
     "@arianrhodsandlot/eslint-config": "0.8.2",
     "@happy-dom/global-registrator": "12.5.0",
