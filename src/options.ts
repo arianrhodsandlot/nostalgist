@@ -44,26 +44,20 @@ export function getDefaultOptions() {
     retroarchConfig: defaultRetroarchConfig,
     retroarchCoreConfig: {},
 
-    resolveCoreJs(core) {
+    resolveCoreJs({ core }) {
       return `https://web.libretro.com/${core}_libretro.js`
     },
 
-    resolveCoreWasm(core) {
+    resolveCoreWasm({ core }) {
       return `https://web.libretro.com/${core}_libretro.wasm`
     },
 
-    resolveRom({ rom }) {
-      if (!rom) {
-        return []
-      }
-      return rom
+    resolveRom({ file }) {
+      return file || []
     },
 
-    resolveBios({ bios }) {
-      if (!bios) {
-        return []
-      }
-      return bios
+    resolveBios({ file }) {
+      return file || []
     },
   }
   return defaultOptions

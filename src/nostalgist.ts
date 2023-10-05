@@ -242,24 +242,20 @@ export class Nostalgist {
   }
 
   private async getCoreOption() {
-    const { core } = this.options
-    const { resolveCoreJs, resolveCoreWasm } = this.options
-    let name = ''
-    const coreDict: { js: string; wasm: string | ArrayBuffer } = { js: '', wasm: '' }
-    if (typeof core === 'string') {
-      name = core
-      const coreJs = resolveCoreJs(this.options)
-      const coreWasm = resolveCoreWasm(this.options)
-      coreDict.js = coreJs
-      coreDict.wasm = coreWasm
-    }
+    const { core, resolveCoreJs, resolveCoreWasm } = this.options
+    const resolveParams = { core, options: this.options }
+    const name = ''
+    const coreDict =
+      typeof core === 'string'
+        ? { name: core, js: resolveCoreJs(resolveParams), wasm: resolveCoreWasm(resolveParams) }
+        : core
 
     let { js, wasm } = coreDict
     if (typeof js === 'string') {
       js = await http(js).text()
     }
     if (typeof wasm === 'string') {
-      wasm = await http(resolveCoreWasm(this.options)).arrayBuffer()
+      wasm = await http(wasm).arrayBuffer()
     }
     return { name, js, wasm }
   }
@@ -275,7 +271,7 @@ export class Nostalgist {
       fileContent = file
     } else if (typeof file === 'string') {
       fileName = baseName(file)
-      const resolvedRom = resolveFunction(this.options)
+      const resolvedRom = resolveFunction({ file, options: this.options })
       if (resolvedRom instanceof Blob) {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {

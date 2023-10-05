@@ -1,5 +1,4 @@
 import ini from 'ini'
-import { kebabCase } from 'lodash-es'
 import { coreFullNameMap } from './constants'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import { EmulatorOptions } from './types/emulator-options'
@@ -14,21 +13,8 @@ function delay(time: number) {
   })
 }
 const raUserdataDir = '/home/web_user/retroarch/userdata/'
-const raCoreConfigDir = `${raUserdataDir}config/`
+// const raCoreConfigDir = `${raUserdataDir}config/`
 const raConfigPath = `${raUserdataDir}retroarch.cfg`
-
-function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclaration>) {
-  if (!element) {
-    return
-  }
-  for (const rule in style) {
-    if (style[rule]) {
-      element.style.setProperty(kebabCase(rule), style[rule] as string)
-    } else {
-      element.style.removeProperty(rule)
-    }
-  }
-}
 
 type GameStatus = 'initial' | 'paused' | 'running'
 

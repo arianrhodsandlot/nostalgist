@@ -2,7 +2,7 @@ import { EmscriptenFS, FileSystem, initialize } from 'browserfs'
 
 const userdataDir = '/home/web_user/retroarch/userdata'
 
-export async function createEmscriptenFS({ FS, PATH, ERRNO_CODES }) {
+export function createEmscriptenFS({ FS, PATH, ERRNO_CODES }: any) {
   const inMemoryFS = new FileSystem.InMemory()
   const mountableFS = new FileSystem.MountableFileSystem()
   try {
@@ -14,7 +14,8 @@ export async function createEmscriptenFS({ FS, PATH, ERRNO_CODES }) {
 
   return new EmscriptenFS(FS, PATH, ERRNO_CODES)
 }
-export function getEmscriptenModuleOverrides(overrides: Partial<EmscriptenModule>) {
+
+export function getEmscriptenModuleOverrides(overrides: any) {
   let resolveRunDependenciesPromise: () => void
   const runDependenciesPromise = new Promise<void>((resolve) => {
     resolveRunDependenciesPromise = resolve

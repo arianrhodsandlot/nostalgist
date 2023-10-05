@@ -3,7 +3,7 @@ import { RetroArchConfig } from './retroarch-config'
 export type NostalgistOptionsFile = string | File | { fileName: string; fileContent: Blob }
 type NostalgistOptionsFiles = NostalgistOptionsFile | NostalgistOptionsFile[]
 
-interface NostalgistCoreObject {
+export interface NostalgistCoreDict {
   /** the name of core */
   name: string
 
@@ -14,18 +14,21 @@ interface NostalgistCoreObject {
   wasm: string | ArrayBuffer
 }
 
-export type NostalgistResolveFileFunction = (options: NostalgistOptions) => NostalgistOptionsFiles | undefined
+export type NostalgistResolveFileFunction = (params: {
+  file: NostalgistOptionsFiles
+  options: NostalgistOptions
+}) => NostalgistOptionsFiles | undefined
 
 export interface NostalgistOptions {
   element: string | HTMLCanvasElement
   rom?: NostalgistOptionsFiles
   bios?: NostalgistOptionsFiles
-  core: string | NostalgistCoreObject
+  core: string | NostalgistCoreDict
   retroarchConfig: RetroArchConfig
   retroarchCoreConfig: any
-  runEmulatorManually: false
-  resolveCoreJs: (options: NostalgistOptions) => string
-  resolveCoreWasm: (options: NostalgistOptions) => string
+  runEmulatorManually: boolean
+  resolveCoreJs: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string
+  resolveCoreWasm: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string | ArrayBuffer
   resolveRom: NostalgistResolveFileFunction
   resolveBios: NostalgistResolveFileFunction
 }
@@ -33,4 +36,6 @@ export interface NostalgistOptions {
 export type NostalgistOptionsPartial = Partial<NostalgistOptions>
 
 export interface NostalgistLaunchOptions extends Pick<NostalgistOptions, 'core'>, NostalgistOptionsPartial {}
-export interface NostalgistLaunchRomOptions extends Pick<NostalgistOptions, 'core' | 'rom'>, NostalgistOptionsPartial {}
+export interface NostalgistLaunchRomOptions extends Omit<NostalgistOptionsPartial, 'core'> {
+  rom: NostalgistOptionsFiles
+}

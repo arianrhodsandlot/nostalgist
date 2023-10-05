@@ -1,4 +1,4 @@
-import ky from 'ky-universal'
+import ky from 'ky'
 
 export const http = ky.create({
   timeout: false,
