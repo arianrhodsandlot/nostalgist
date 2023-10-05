@@ -93,10 +93,10 @@ export class Emulator {
   }
 
   async saveState() {
-    this.clearStateFile()
     if (!this.emscripten) {
-      return
+      throw new Error('emulator is not ready')
     }
+    this.clearStateFile()
     this.sendCommand('SAVE_STATE')
     const savestateThumbnailEnable = this.options.retroarch.savestate_thumbnail_enable
     let stateBuffer: Buffer
@@ -111,22 +111,23 @@ export class Emulator {
     }
     this.clearStateFile()
 
-    const state = new Blob([stateBuffer], { type: 'application/octet-stream' })
-    const thumbnail = stateThumbnailBuffer
-      ? new Blob([stateThumbnailBuffer], { type: 'application/octet-stream' })
-      : undefined
+    const blobProperty = { type: 'application/octet-stream' }
+    const state = new Blob([stateBuffer], blobProperty)
+    const thumbnail = stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], blobProperty) : undefined
     return { state, thumbnail }
   }
 
   async loadState(blob: Blob) {
-    this.clearStateFile()
-    if (this.emscripten) {
-      const { FS } = this.emscripten
-      const buffer = await blobToBuffer(blob)
-      FS.writeFile(this.stateFileName, buffer)
-      await this.waitForEmscriptenFile(this.stateFileName)
-      this.sendCommand('LOAD_STATE')
+    if (!this.emscripten) {
+      throw new Error('emulator is not ready')
     }
+
+    this.clearStateFile()
+    const { FS } = this.emscripten
+    const buffer = await blobToBuffer(blob)
+    FS.writeFile(this.stateFileName, buffer)
+    await this.waitForEmscriptenFile(this.stateFileName)
+    this.sendCommand('LOAD_STATE')
   }
 
   exit(statusCode = 0) {
