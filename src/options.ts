@@ -44,7 +44,7 @@ const coreVersion = 'v1.16.0'
 const coreDirectory = 'retroarch'
 
 function isUrl(string: string) {
-  return string.startsWith('http://') ||  string.startsWith('https://') ||  string.startsWith('//')
+  return string.startsWith('http://') || string.startsWith('https://') || string.startsWith('//')
 }
 
 export function getDefaultOptions() {
@@ -63,27 +63,25 @@ export function getDefaultOptions() {
     },
 
     resolveRom({ file }) {
-      if (typeof file === 'string') {
-        if (!isUrl(file)) {
-          let romRepo = ''
-          if (file.endsWith('.nes')) {
-            romRepo = 'retrobrews/nes-games'
-          } else if (file.endsWith('.sfc')) {
-            romRepo = 'retrobrews/snes-games'
-          } else if (file.endsWith('.gb') || file.endsWith('.gbc')) {
-            romRepo = 'retrobrews/gbc-games'
-          } else if (file.endsWith('.gba')) {
-            romRepo = 'retrobrews/gba-games'
-          } else if (file.endsWith('.sms')) {
-            romRepo = 'retrobrews/sms-games'
-          } else if (file.endsWith('.md') || file.endsWith('.bin')) {
-            romRepo = 'retrobrews/md-games'
-          }
-          if (romRepo) {
-            const encodedFile = encodeURIComponent(file)
-            return `${cdnBaseUrl}/${romRepo}@master/${encodedFile}`
-          }
-        } 
+      if (typeof file === 'string' && !isUrl(file)) {
+        let romRepo = ''
+        if (file.endsWith('.nes')) {
+          romRepo = 'retrobrews/nes-games'
+        } else if (file.endsWith('.sfc')) {
+          romRepo = 'retrobrews/snes-games'
+        } else if (file.endsWith('.gb') || file.endsWith('.gbc')) {
+          romRepo = 'retrobrews/gbc-games'
+        } else if (file.endsWith('.gba')) {
+          romRepo = 'retrobrews/gba-games'
+        } else if (file.endsWith('.sms')) {
+          romRepo = 'retrobrews/sms-games'
+        } else if (file.endsWith('.md') || file.endsWith('.bin')) {
+          romRepo = 'retrobrews/md-games'
+        }
+        if (romRepo) {
+          const encodedFile = encodeURIComponent(file)
+          return `${cdnBaseUrl}/${romRepo}@master/${encodedFile}`
+        }
       }
       return file || []
     },

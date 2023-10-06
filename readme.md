@@ -1,14 +1,14 @@
 # Nostalgist.js
 
 ## Overview
-Nostalgist.js is a library used for running emulators of retro consoles inside browsers.
+Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.
 
-Here is an basic examples showing what does it look like:
+Here is a basic examples showing what does it look like:
 
 ```js
 import { Nostalgist } from 'nostalgist'
 
-await Nostalgist.nes('supertiltbros.nes')
+await Nostalgist.nes('flappybird.nes')
 ```
 You can try this in stackblitz.
 
@@ -17,7 +17,7 @@ You can try this in stackblitz.
 Shortcuts for launching a NES game.
 #### example
 ```js
-await Nostalgist.launch('https://example.com/game.zip')
+await Nostalgist.launch('flappybird.nes')
 
 await Nostalgist.launch({
   core: 'fceumm',

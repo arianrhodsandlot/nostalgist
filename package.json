@@ -1,8 +1,11 @@
 {
   "name": "nostalgist",
+  "description": "",
+  "version": "1.0.0",
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
+    "build": "tsx scripts/build",
     "dev": "vite examples",
     "lint": "eslint src",
     "test": "vitest -c tests/vitest.config.ts"
@@ -13,12 +16,12 @@
     "@types/lodash-es": "4.17.9",
     "browserfs": "1.4.3",
     "buffer": "6.0.3",
-    "delay": "6.0.0",
     "eslint": "8.50.0",
     "happy-dom": "12.8.0",
     "ini": "4.1.1",
     "ky": "1.0.1",
     "lodash-es": "4.17.21",
+    "tsx": "3.13.0",
     "typescript": "5.2.2",
     "vite": "4.4.11",
     "vitest": "0.34.6"
