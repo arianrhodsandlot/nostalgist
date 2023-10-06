@@ -19,8 +19,8 @@ const raConfigPath = `${raUserdataDir}retroarch.cfg`
 type GameStatus = 'initial' | 'paused' | 'running'
 
 export class Emulator {
+  emscripten: any
   private options: EmulatorOptions
-  private emscripten: any
   private messageQueue: [Uint8Array, number][] = []
   private gameStatus: GameStatus = 'initial'
 
@@ -84,10 +84,14 @@ export class Emulator {
     this.gameStatus = 'paused'
   }
 
-  async saveState() {
+  getEmscripten() {
     if (!this.emscripten) {
       throw new Error('emulator is not ready')
     }
+    return this.emscripten
+  }
+
+  async saveState() {
     this.clearStateFile()
     this.sendCommand('SAVE_STATE')
     const savestateThumbnailEnable = this.options.retroarch.savestate_thumbnail_enable
@@ -110,12 +114,8 @@ export class Emulator {
   }
 
   async loadState(blob: Blob) {
-    if (!this.emscripten) {
-      throw new Error('emulator is not ready')
-    }
-
     this.clearStateFile()
-    const { FS } = this.emscripten
+    const { FS } = this.getEmscripten()
     const buffer = await blobToBuffer(blob)
     FS.writeFile(this.stateFileName, buffer)
     await this.waitForEmscriptenFile(this.stateFileName)
@@ -123,24 +123,23 @@ export class Emulator {
   }
 
   exit(statusCode = 0) {
-    if (this.emscripten) {
-      const { FS, exit, JSEvents } = this.emscripten
+    const { emscripten } = this
+    if (emscripten) {
+      const { FS, exit, JSEvents } = this.getEmscripten()
       exit(statusCode)
       FS.unmount('/home')
       JSEvents.removeAllEventListeners()
     }
     this.cleanupDOM()
-    // @ts-expect-error try to focus on previous active element
-    this.previousActiveElement?.focus?.()
   }
 
   resize(width: number, height: number) {
-    const { Module } = this.emscripten
+    const { Module } = this.getEmscripten()
     Module.setCanvasSize(width, height)
   }
 
   private async setupFileSystem() {
-    const { Module, FS, PATH, ERRNO_CODES } = this.emscripten
+    const { Module, FS, PATH, ERRNO_CODES } = this.getEmscripten()
 
     Module.canvas = this.options.element
     Module.preRun = [
@@ -210,7 +209,7 @@ export class Emulator {
     const initialModule = getEmscriptenModuleOverrides({ wasmBinary: this.options.core.wasm })
     this.emscripten = getEmscripten({ Module: initialModule })
 
-    const { Module } = this.emscripten
+    const { Module } = this.getEmscripten()
     await Promise.all([await this.setupFileSystem(), await Module.monitorRunDependencies()])
   }
   private sendCommand(msg: RetroArchCommand) {
@@ -237,7 +236,7 @@ export class Emulator {
   }
 
   private writeConfigFile({ path, config }: { path: string; config: Record<string, any> }) {
-    const { FS } = this.emscripten
+    const { FS } = this.getEmscripten()
     const dir = path.slice(0, path.lastIndexOf('/'))
     FS.mkdirTree(dir)
     for (const key in config) {
@@ -266,7 +265,7 @@ export class Emulator {
   }
 
   private runMain() {
-    const { Module, JSEvents } = this.emscripten
+    const { Module, JSEvents } = this.getEmscripten()
     const raArgs: string[] = []
     if (this.options.rom.length > 0) {
       const [{ fileName }] = this.options.rom
@@ -310,7 +309,7 @@ export class Emulator {
   }
 
   private async waitForEmscriptenFile(fileName: string) {
-    const { FS } = this.emscripten
+    const { FS } = this.getEmscripten()
     const maxRetries = 30
     let buffer
     let isFinished = false
@@ -334,7 +333,7 @@ export class Emulator {
   }
 
   private clearStateFile() {
-    const { FS } = this.emscripten
+    const { FS } = this.getEmscripten()
     try {
       FS.unlink(this.stateFileName)
       FS.unlink(this.stateThumbnailFileName)

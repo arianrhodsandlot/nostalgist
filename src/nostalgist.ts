@@ -167,6 +167,16 @@ export class Nostalgist {
     return this.emulatorOptions
   }
 
+  getEmulatorEmscriptenModule() {
+    const emulator = this.getEmulator()
+    return emulator.emscripten.Module
+  }
+
+  getEmulatorEmscriptenFS() {
+    const emulator = this.getEmulator()
+    return emulator.emscripten.FS
+  }
+
   getOptions() {
     return this.options
   }
