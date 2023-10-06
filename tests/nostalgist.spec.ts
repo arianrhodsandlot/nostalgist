@@ -22,16 +22,17 @@ describe('nostalgist', () => {
   })
 
   test('Nostalgist.nes', async () => {
-    const nostalgist = await Nostalgist.nes(testNesRomUrl)
+    const nostalgist = await Nostalgist.nes('flappybird.nes')
 
     const options = nostalgist.getOptions()
     expect(options.core).toBe('fceumm')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
+    expect(emulatorOptions.core.name).toBe('fceumm')
     expect(emulatorOptions.core.js).toBeTypeOf('string')
     expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
     expect(emulatorOptions.rom).toHaveLength(1)
-    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
+    expect(emulatorOptions.rom[0].fileName).toEqual('flappybird.nes')
     expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
     expect(emulatorOptions.bios).toEqual([])
   })
@@ -40,6 +41,7 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.nes({ rom: 'Super Tilt Bro (USA).nes', resolveRom })
     const emulatorOptions = nostalgist.getEmulatorOptions()
 
+    expect(emulatorOptions.core.name).toBe('fceumm')
     expect(emulatorOptions.core.js).toBeTypeOf('string')
     expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
     expect(emulatorOptions.rom).toHaveLength(1)
@@ -54,6 +56,7 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.nes('Super Tilt Bro (USA).nes')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
+    expect(emulatorOptions.core.name).toBe('fceumm')
     expect(emulatorOptions.core.js).toBeTypeOf('string')
     expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
     expect(emulatorOptions.rom).toHaveLength(1)
@@ -69,6 +72,7 @@ describe('nostalgist', () => {
     expect(options.core).toBe('nestopia')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
+    expect(emulatorOptions.core.name).toBe('nestopia')
     expect(emulatorOptions.core.js).toBeTypeOf('string')
     expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
     expect(emulatorOptions.rom).toHaveLength(1)
@@ -89,6 +93,7 @@ describe('nostalgist', () => {
     expect(options.core).toBe(core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
+    expect(emulatorOptions.core.name).toBe('fceumm')
     expect(emulatorOptions.core.js).toBeTypeOf('string')
     expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
     expect(emulatorOptions.rom).toHaveLength(1)
@@ -111,6 +116,7 @@ describe('nostalgist', () => {
     expect(options.core).toBe(core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
+    expect(emulatorOptions.core.name).toBe('fceumm')
     expect(emulatorOptions.core.js).toBeTypeOf('string')
     expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
     expect(emulatorOptions.rom).toHaveLength(1)
@@ -134,6 +140,7 @@ describe('nostalgist', () => {
     expect(options.core).toBe(core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
+    expect(emulatorOptions.core.name).toBe('fceumm')
     expect(emulatorOptions.core.js).toBeTypeOf('string')
     expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
     expect(emulatorOptions.rom).toHaveLength(2)
