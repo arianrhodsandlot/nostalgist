@@ -167,6 +167,10 @@ export class Nostalgist {
     return this.emulatorOptions
   }
 
+  async launchEmulator() {
+    return await this.getEmulator().launch()
+  }
+
   getEmulatorEmscriptenModule() {
     const emulator = this.getEmulator()
     return emulator.emscripten.Module
@@ -233,8 +237,15 @@ export class Nostalgist {
     }
 
     let { element } = this.options
-    if (typeof element === 'string') {
-      element = document.body.querySelector<HTMLCanvasElement>(element) || ''
+    if (typeof element === 'string' && element) {
+      const canvas = document.body.querySelector(element)
+      if (!canvas) {
+        throw new Error(`can not find element "${element}"`)
+      }
+      if (!(canvas instanceof HTMLCanvasElement)) {
+        throw new TypeError(`element "${element}" is not a canvas element`)
+      }
+      element = canvas
     }
     if (!element) {
       element = document.createElement('canvas')
@@ -342,9 +353,5 @@ export class Nostalgist {
     const emulatorOptions = this.getEmulatorOptions()
     const emulator = new Emulator(emulatorOptions)
     this.emulator = emulator
-  }
-
-  private async launchEmulator() {
-    return await this.getEmulator().launch()
   }
 }

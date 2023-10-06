@@ -12,7 +12,9 @@ async function runExample2() {
 }
 
 async function runExample3() {
-  await Nostalgist.gba('awerewolftale.gba')
+  await Nostalgist.gba({
+    rom: ['awerewolftale.gba'],
+  })
 }
 
 function main() {

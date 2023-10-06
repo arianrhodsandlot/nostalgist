@@ -20,12 +20,52 @@ export type NostalgistResolveFileFunction = (params: {
 }) => NostalgistOptionsFiles | undefined
 
 export interface NostalgistOptions {
+  /**
+   * The canvas element to use.
+   * @default '' an empty string
+   */
   element: string | HTMLCanvasElement
+
+  /**
+   * The rom needs to be launched.
+   *
+   * This property can be:
+   * + a string
+   * + a [File object](https://developer.mozilla.org/en-US/docs/Web/API/File)
+   * + an object, with a fileName property and a fileContent property. for example: { filename: 'xx.nes', fileContent: someBlob }
+   * + an array of above
+   */
   rom?: NostalgistOptionsFiles
+
+  /**
+   * The bios files needs to be launched with roms.
+   *
+   * This property can be:
+   * + a string
+   * + a [File object](https://developer.mozilla.org/en-US/docs/Web/API/File)
+   * + an object, with a fileName property and a fileContent property. for example: { filename: 'xx.nes', fileContent: someBlob }
+   * + an array of above
+   */
   bios?: NostalgistOptionsFiles
+
   core: string | NostalgistCoreDict
+
+  /**
+   * RetroArch config.
+   * Not all options can make effects in browser.
+   */
   retroarchConfig: RetroArchConfig
+
+  /**
+   * RetroArch core config.
+   * Not all options can make effects in browser.
+   */
   retroarchCoreConfig: any
+
+  /**
+   * If this is set to true, emulator will not run automatically.
+   * To run the emulator, `nostalgist.launchEmulator` should be called later.
+   */
   runEmulatorManually: boolean
   resolveCoreJs: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string
   resolveCoreWasm: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string | ArrayBuffer

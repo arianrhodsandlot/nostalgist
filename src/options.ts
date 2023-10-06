@@ -49,7 +49,7 @@ function isUrl(string: string) {
 
 export function getDefaultOptions() {
   const defaultOptions: Omit<NostalgistOptions, 'core'> = {
-    element: '#canvas',
+    element: '',
     runEmulatorManually: false,
     retroarchConfig: defaultRetroarchConfig,
     retroarchCoreConfig: {},
