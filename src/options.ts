@@ -37,6 +37,11 @@ const defaultRetroarchConfig: RetroArchConfig = {
   input_player4_analog_dpad_mode: 1,
 }
 
+const coreBaseUrl = 'https://cdn.jsdelivr.net/gh'
+const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
+const coreVersion = 'v1.16.0'
+const coreDirectory = 'retroarch'
+
 export function getDefaultOptions() {
   const defaultOptions: Omit<NostalgistOptions, 'core'> = {
     element: '#canvas',
@@ -45,11 +50,11 @@ export function getDefaultOptions() {
     retroarchCoreConfig: {},
 
     resolveCoreJs({ core }) {
-      return `https://web.libretro.com/${core}_libretro.js`
+      return `${coreBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`
     },
 
     resolveCoreWasm({ core }) {
-      return `https://web.libretro.com/${core}_libretro.wasm`
+      return `${coreBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`
     },
 
     resolveRom({ file }) {

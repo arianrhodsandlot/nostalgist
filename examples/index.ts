@@ -9,13 +9,13 @@ Nostalgist.configure({
     return `/cores/${core}_libretro.wasm`
   },
 
-  resolveRom({ core, rom }) {
+  resolveRom({ options: { core }, file }) {
     const directory = {
       genesis_plus_gx: 'megadrive',
       fceumm: 'nes',
     }[`${core}`]
-    if (directory && typeof rom === 'string') {
-      return `/roms/${encodeURIComponent(directory)}/${encodeURIComponent(rom)}`
+    if (directory && typeof file === 'string') {
+      return `/roms/${encodeURIComponent(directory)}/${encodeURIComponent(file)}`
     }
   },
 })
