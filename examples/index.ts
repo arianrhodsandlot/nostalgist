@@ -18,9 +18,9 @@ async function runExample3() {
 }
 
 function main() {
-  document.body.querySelector('#run-example-1').addEventListener('click', runExample1)
-  document.body.querySelector('#run-example-2').addEventListener('click', runExample2)
-  document.body.querySelector('#run-example-3').addEventListener('click', runExample3)
+  document.body.querySelector('#run-example-1')!.addEventListener('click', runExample1)
+  document.body.querySelector('#run-example-2')!.addEventListener('click', runExample2)
+  document.body.querySelector('#run-example-3')!.addEventListener('click', runExample3)
 }
 
 main()

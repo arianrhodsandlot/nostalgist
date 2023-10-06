@@ -1,5 +1,5 @@
-import { NostalgistOptions } from './types/nostalgist-options'
-import { RetroArchConfig } from './types/retroarch-config'
+import type { NostalgistOptions } from './types/nostalgist-options'
+import type { RetroArchConfig } from './types/retroarch-config'
 
 const defaultRetroarchConfig: RetroArchConfig = {
   menu_driver: 'rgui',

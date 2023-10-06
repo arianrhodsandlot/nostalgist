@@ -1,18 +1,11 @@
 type RetroArchInputButton = number | string
 
 export interface RetroArchInputPlayerConfig {
-  input_player1_a: RetroArchInputButton
   input_player1_a_axis: RetroArchInputButton
-  input_player1_a_btn: RetroArchInputButton
   input_player1_a_mbtn: RetroArchInputButton
   input_player1_analog_dpad_mode: RetroArchInputButton
-  input_player1_b: RetroArchInputButton
   input_player1_b_axis: RetroArchInputButton
-  input_player1_b_btn: RetroArchInputButton
   input_player1_b_mbtn: RetroArchInputButton
-  input_player1_down: RetroArchInputButton
-  input_player1_down_axis: RetroArchInputButton
-  input_player1_down_btn: RetroArchInputButton
   input_player1_down_mbtn: RetroArchInputButton
   input_player1_gun_aux_a: RetroArchInputButton
   input_player1_gun_aux_a_axis: RetroArchInputButton
@@ -58,95 +51,56 @@ export interface RetroArchInputPlayerConfig {
   input_player1_gun_trigger_axis: RetroArchInputButton
   input_player1_gun_trigger_btn: RetroArchInputButton
   input_player1_gun_trigger_mbtn: RetroArchInputButton
-  input_player1_joypad_index: RetroArchInputButton
-  input_player1_l: RetroArchInputButton
   input_player1_l_axis: RetroArchInputButton
-  input_player1_l_btn: RetroArchInputButton
   input_player1_l_mbtn: RetroArchInputButton
-  input_player1_l_x_minus: RetroArchInputButton
   input_player1_l_x_minus_axis: RetroArchInputButton
   input_player1_l_x_minus_btn: RetroArchInputButton
   input_player1_l_x_minus_mbtn: RetroArchInputButton
-  input_player1_l_x_plus: RetroArchInputButton
   input_player1_l_x_plus_axis: RetroArchInputButton
   input_player1_l_x_plus_btn: RetroArchInputButton
   input_player1_l_x_plus_mbtn: RetroArchInputButton
-  input_player1_l_y_minus: RetroArchInputButton
   input_player1_l_y_minus_axis: RetroArchInputButton
   input_player1_l_y_minus_btn: RetroArchInputButton
   input_player1_l_y_minus_mbtn: RetroArchInputButton
-  input_player1_l_y_plus: RetroArchInputButton
   input_player1_l_y_plus_axis: RetroArchInputButton
   input_player1_l_y_plus_btn: RetroArchInputButton
   input_player1_l_y_plus_mbtn: RetroArchInputButton
-  input_player1_l2: RetroArchInputButton
   input_player1_l2_axis: RetroArchInputButton
-  input_player1_l2_btn: RetroArchInputButton
   input_player1_l2_mbtn: RetroArchInputButton
-  input_player1_l3: RetroArchInputButton
   input_player1_l3_axis: RetroArchInputButton
-  input_player1_l3_btn: RetroArchInputButton
   input_player1_l3_mbtn: RetroArchInputButton
-  input_player1_left: RetroArchInputButton
-  input_player1_left_axis: RetroArchInputButton
-  input_player1_left_btn: RetroArchInputButton
   input_player1_left_mbtn: RetroArchInputButton
   input_player1_mouse_index: RetroArchInputButton
-  input_player1_r: RetroArchInputButton
   input_player1_r_axis: RetroArchInputButton
-  input_player1_r_btn: RetroArchInputButton
   input_player1_r_mbtn: RetroArchInputButton
-  input_player1_r_x_minus: RetroArchInputButton
   input_player1_r_x_minus_axis: RetroArchInputButton
   input_player1_r_x_minus_btn: RetroArchInputButton
   input_player1_r_x_minus_mbtn: RetroArchInputButton
-  input_player1_r_x_plus: RetroArchInputButton
   input_player1_r_x_plus_axis: RetroArchInputButton
   input_player1_r_x_plus_btn: RetroArchInputButton
   input_player1_r_x_plus_mbtn: RetroArchInputButton
-  input_player1_r_y_minus: RetroArchInputButton
   input_player1_r_y_minus_axis: RetroArchInputButton
   input_player1_r_y_minus_btn: RetroArchInputButton
   input_player1_r_y_minus_mbtn: RetroArchInputButton
-  input_player1_r_y_plus: RetroArchInputButton
   input_player1_r_y_plus_axis: RetroArchInputButton
   input_player1_r_y_plus_btn: RetroArchInputButton
   input_player1_r_y_plus_mbtn: RetroArchInputButton
-  input_player1_r2: RetroArchInputButton
   input_player1_r2_axis: RetroArchInputButton
-  input_player1_r2_btn: RetroArchInputButton
   input_player1_r2_mbtn: RetroArchInputButton
-  input_player1_r3: RetroArchInputButton
   input_player1_r3_axis: RetroArchInputButton
-  input_player1_r3_btn: RetroArchInputButton
   input_player1_r3_mbtn: RetroArchInputButton
-  input_player1_right: RetroArchInputButton
-  input_player1_right_axis: RetroArchInputButton
-  input_player1_right_btn: RetroArchInputButton
   input_player1_right_mbtn: RetroArchInputButton
-  input_player1_select: RetroArchInputButton
   input_player1_select_axis: RetroArchInputButton
-  input_player1_select_btn: RetroArchInputButton
   input_player1_select_mbtn: RetroArchInputButton
-  input_player1_start: RetroArchInputButton
   input_player1_start_axis: RetroArchInputButton
-  input_player1_start_btn: RetroArchInputButton
   input_player1_start_mbtn: RetroArchInputButton
-  input_player1_turbo: RetroArchInputButton
   input_player1_turbo_axis: RetroArchInputButton
   input_player1_turbo_btn: RetroArchInputButton
   input_player1_turbo_mbtn: RetroArchInputButton
-  input_player1_up: RetroArchInputButton
-  input_player1_up_axis: RetroArchInputButton
-  input_player1_up_btn: RetroArchInputButton
   input_player1_up_mbtn: RetroArchInputButton
-  input_player1_x: RetroArchInputButton
   input_player1_x_axis: RetroArchInputButton
-  input_player1_x_btn: RetroArchInputButton
   input_player1_x_mbtn: RetroArchInputButton
-  input_player1_y: RetroArchInputButton
   input_player1_y_axis: RetroArchInputButton
-  input_player1_y_btn: RetroArchInputButton
   input_player1_y_mbtn: RetroArchInputButton
   input_player2_a: RetroArchInputButton
   input_player2_a_axis: RetroArchInputButton
@@ -205,7 +159,6 @@ export interface RetroArchInputPlayerConfig {
   input_player2_gun_trigger_axis: RetroArchInputButton
   input_player2_gun_trigger_btn: RetroArchInputButton
   input_player2_gun_trigger_mbtn: RetroArchInputButton
-  input_player2_joypad_index: RetroArchInputButton
   input_player2_l: RetroArchInputButton
   input_player2_l_axis: RetroArchInputButton
   input_player2_l_btn: RetroArchInputButton
@@ -352,7 +305,6 @@ export interface RetroArchInputPlayerConfig {
   input_player3_gun_trigger_axis: RetroArchInputButton
   input_player3_gun_trigger_btn: RetroArchInputButton
   input_player3_gun_trigger_mbtn: RetroArchInputButton
-  input_player3_joypad_index: RetroArchInputButton
   input_player3_l: RetroArchInputButton
   input_player3_l_axis: RetroArchInputButton
   input_player3_l_btn: RetroArchInputButton
@@ -499,7 +451,6 @@ export interface RetroArchInputPlayerConfig {
   input_player4_gun_trigger_axis: RetroArchInputButton
   input_player4_gun_trigger_btn: RetroArchInputButton
   input_player4_gun_trigger_mbtn: RetroArchInputButton
-  input_player4_joypad_index: RetroArchInputButton
   input_player4_l: RetroArchInputButton
   input_player4_l_axis: RetroArchInputButton
   input_player4_l_btn: RetroArchInputButton

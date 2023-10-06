@@ -1,13 +1,13 @@
-import { RetroArchInputConfig } from './input'
-import { RetroArchInputPlayerConfig } from './input-player'
-import { RetroArchNotificationConfig } from './notification'
-import { RetroArchQuickMenuConfig } from './quick-menu'
-import { RetroArchRewindConfig } from './rewind'
-import { RetroArchRunAheadConfig } from './run-ahead'
-import { RetroArchSaveConfig } from './save'
-import { RetroArchSkeletonConfig } from './skeleton'
-import { RetroArchThemeConfig } from './theme'
-import { RetroArchVideoConfig } from './video'
+import type { RetroArchInputConfig } from './input'
+import type { RetroArchInputPlayerConfig } from './input-player'
+import type { RetroArchNotificationConfig } from './notification'
+import type { RetroArchQuickMenuConfig } from './quick-menu'
+import type { RetroArchRewindConfig } from './rewind'
+import type { RetroArchRunAheadConfig } from './run-ahead'
+import type { RetroArchSaveConfig } from './save'
+import type { RetroArchSkeletonConfig } from './skeleton'
+import type { RetroArchThemeConfig } from './theme'
+import type { RetroArchVideoConfig } from './video'
 
 interface RetroArchFullConfig
   extends RetroArchInputConfig,

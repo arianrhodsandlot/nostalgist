@@ -1,3 +1,5 @@
+import type { RetroArchConfig } from './retroarch-config'
+
 export interface EmulatorOptions {
   element: HTMLCanvasElement
   core: {
@@ -14,4 +16,5 @@ export interface EmulatorOptions {
   bios: { fileName: string; fileContent: Blob }[]
   retroarch: RetroArchConfig
   retroarchCore: any
+  waitForInteraction: ((params: { done: () => void }) => void) | undefined
 }

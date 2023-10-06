@@ -1,17 +1,38 @@
 {
   "name": "nostalgist",
-  "description": "",
-  "version": "1.0.0",
-  "module": "src/index.ts",
+  "description": "Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.",
+  "version": "0.1.0",
+  "author": {
+    "name": "arianrhodsandlot",
+    "email": "theguidanceofawhitetower@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arianrhodsandlot/nostalgist"
+  },
+  "license":"MIT",
+  "files": ["dist"],
+	"keywords": ["retroarch", "emulator", "emscripten"],
   "type": "module",
+  "main": "./dist/nostalgist.umd.js",
+  "module": "./dist/nostalgist.js",
+  "browser": "./dist/nostalgist.umd.js",
+  "jsdelivr": "./dist/nostalgist.umd.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/nostalgist.js",
+      "require": "./dist/nostalgist.umd.js"
+    }
+  },
   "scripts": {
-    "build": "tsx scripts/build",
+    "build": "tsx scripts/build && tsc",
     "dev": "vite examples",
     "lint": "eslint src",
     "test": "vitest -c tests/vitest.config.ts"
   },
   "devDependencies": {
-    "@arianrhodsandlot/eslint-config": "0.8.2",
+    "@arianrhodsandlot/eslint-config": "0.8.3",
     "@types/ini": "1.3.31",
     "@types/lodash-es": "4.17.9",
     "browserfs": "1.4.3",

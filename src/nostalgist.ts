@@ -1,8 +1,8 @@
 import { Emulator } from './emulator'
 import { http } from './http'
 import { getDefaultOptions } from './options'
-import { EmulatorOptions } from './types/emulator-options'
-import {
+import type { EmulatorOptions } from './types/emulator-options'
+import type {
   NostalgistLaunchOptions,
   NostalgistLaunchRomOptions,
   NostalgistOptions,
@@ -53,6 +53,9 @@ export class Nostalgist {
     this.options = mergedOptions
   }
 
+  /**
+   * Reset the global configuation set by `Nostalgist.configure` to default
+   */
   static resetToDefaultOptions() {
     Nostalgist.configure(getDefaultOptions())
   }
@@ -64,6 +67,9 @@ export class Nostalgist {
     }
   }
 
+  /**
+   * Launch an emulator
+   */
   static async launch(options: NostalgistLaunchOptions) {
     const nostalgist = new Nostalgist(options)
     await nostalgist.launch()
@@ -213,7 +219,10 @@ export class Nostalgist {
     return this.getEmulator().resize(width, height)
   }
 
-  private async launch() {
+  /**
+   * Load options and then launch corresponding emulator if should
+   */
+  private async launch(): Promise<void> {
     await this.loadEmulatorOptions()
     this.loadEmulator()
 
@@ -227,7 +236,15 @@ export class Nostalgist {
     const retroarch = this.getRetroarchOption()
     const retroarchCore = this.getRetroarchCoreOption()
     const [core, rom, bios] = await Promise.all([this.getCoreOption(), this.getRomOption(), this.getBiosOption()])
-    const emulatorOptions = { element, core, rom, bios, retroarch, retroarchCore }
+    const emulatorOptions = {
+      element,
+      core,
+      rom,
+      bios,
+      retroarch,
+      retroarchCore,
+      waitForInteraction: this.options.waitForInteraction,
+    }
     this.emulatorOptions = emulatorOptions
   }
 

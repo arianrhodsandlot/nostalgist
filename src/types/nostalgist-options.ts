@@ -1,4 +1,4 @@
-import { RetroArchConfig } from './retroarch-config'
+import type { RetroArchConfig } from './retroarch-config'
 
 export type NostalgistOptionsFile = string | File | { fileName: string; fileContent: Blob }
 type NostalgistOptionsFiles = NostalgistOptionsFile | NostalgistOptionsFile[]
@@ -71,11 +71,12 @@ export interface NostalgistOptions {
   resolveCoreWasm: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string | ArrayBuffer
   resolveRom: NostalgistResolveFileFunction
   resolveBios: NostalgistResolveFileFunction
+  waitForInteraction?: (params: { done: () => void }) => void
 }
 
 export type NostalgistOptionsPartial = Partial<NostalgistOptions>
 
-export interface NostalgistLaunchOptions extends Pick<NostalgistOptions, 'core'>, NostalgistOptionsPartial {}
+export type NostalgistLaunchOptions = Pick<NostalgistOptions, 'core'> & NostalgistOptionsPartial
 export interface NostalgistLaunchRomOptions extends Omit<NostalgistOptionsPartial, 'core'> {
   rom: NostalgistOptionsFiles
 }

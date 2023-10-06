@@ -1,8 +1,8 @@
 import ini from 'ini'
 import { coreFullNameMap } from './constants'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
-import { EmulatorOptions } from './types/emulator-options'
-import { RetroArchCommand } from './types/retroarch-command'
+import type { EmulatorOptions } from './types/emulator-options'
+import type { RetroArchCommand } from './types/retroarch-command'
 import { blobToBuffer } from './utils'
 
 const encoder = new TextEncoder()
@@ -56,7 +56,7 @@ export class Emulator {
 
     if (this.options.waitForInteraction) {
       this.options.waitForInteraction({
-        done() {
+        done: () => {
           this.runMain()
         },
       })

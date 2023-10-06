@@ -1,11 +1,9 @@
 export interface RetroArchVideoConfig {
   video_adaptive_vsync: boolean
   video_allow_rotate: boolean
-  video_aspect_ratio: number
   video_aspect_ratio_auto: boolean
   video_autoswitch_pal_threshold: number
   video_autoswitch_refresh_rate: number
-  video_black_frame_insertion: number
   video_context_driver: string
   video_crop_overscan: boolean
   video_ctx_scaling: boolean
@@ -30,8 +28,6 @@ export interface RetroArchVideoConfig {
   video_hdr_display_contrast: number
   video_hdr_enable: boolean
   video_hdr_expand_gamut: boolean
-  video_hdr_max_nits: number
-  video_hdr_paper_white_nits: number
   video_max_frame_latency: number
   video_max_swapchain_images: number
   video_message_color: string

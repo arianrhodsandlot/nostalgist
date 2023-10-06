@@ -3,7 +3,9 @@
     "allowImportingTsExtensions": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "declaration":true,
     "downlevelIteration": true,
+    "emitDeclarationOnly": true,
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
@@ -11,9 +13,11 @@
     "module": "esnext",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
-    "noEmit": true,
+    "outDir": "dist/types",
+    "removeComments": false,
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-  }
+  },
+  "include": ["src"]
 }
