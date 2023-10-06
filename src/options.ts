@@ -37,10 +37,15 @@ const defaultRetroarchConfig: RetroArchConfig = {
   input_player4_analog_dpad_mode: 1,
 }
 
-const coreBaseUrl = 'https://cdn.jsdelivr.net/gh'
+const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
+
 const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
 const coreVersion = 'v1.16.0'
 const coreDirectory = 'retroarch'
+
+function isUrl(string: string) {
+  return string.startsWith('http://') ||  string.startsWith('https://') ||  string.startsWith('//')
+}
 
 export function getDefaultOptions() {
   const defaultOptions: Omit<NostalgistOptions, 'core'> = {
@@ -50,14 +55,36 @@ export function getDefaultOptions() {
     retroarchCoreConfig: {},
 
     resolveCoreJs({ core }) {
-      return `${coreBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`
+      return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`
     },
 
     resolveCoreWasm({ core }) {
-      return `${coreBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`
+      return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`
     },
 
     resolveRom({ file }) {
+      if (typeof file === 'string') {
+        if (!isUrl(file)) {
+          let romRepo = ''
+          if (file.endsWith('.nes')) {
+            romRepo = 'retrobrews/nes-games'
+          } else if (file.endsWith('.sfc')) {
+            romRepo = 'retrobrews/snes-games'
+          } else if (file.endsWith('.gb') || file.endsWith('.gbc')) {
+            romRepo = 'retrobrews/gbc-games'
+          } else if (file.endsWith('.gba')) {
+            romRepo = 'retrobrews/gba-games'
+          } else if (file.endsWith('.sms')) {
+            romRepo = 'retrobrews/sms-games'
+          } else if (file.endsWith('.md') || file.endsWith('.bin')) {
+            romRepo = 'retrobrews/md-games'
+          }
+          if (romRepo) {
+            const encodedFile = encodeURIComponent(file)
+            return `${cdnBaseUrl}/${romRepo}@master/${encodedFile}`
+          }
+        } 
+      }
       return file || []
     },
 
