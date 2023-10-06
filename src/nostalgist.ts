@@ -244,13 +244,12 @@ export class Nostalgist {
   private async getCoreOption() {
     const { core, resolveCoreJs, resolveCoreWasm } = this.options
     const resolveParams = { core, options: this.options }
-    const name = ''
     const coreDict =
       typeof core === 'string'
         ? { name: core, js: resolveCoreJs(resolveParams), wasm: resolveCoreWasm(resolveParams) }
         : core
 
-    let { js, wasm } = coreDict
+    let { name, js, wasm } = coreDict
     if (typeof js === 'string') {
       js = await http(js).text()
     }

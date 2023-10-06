@@ -1,14 +1,11 @@
 import { Nostalgist } from '../src'
 
 async function runExample1() {
-  await Nostalgist.nes('assimilate.nes')
+  await Nostalgist.nes('flappybird.nes')
 }
 
 async function runExample2() {
-  const nostalgist = await Nostalgist.launch({
-    rom: 'astroperdido.bin',
-    core: 'genesis_plus_gx',
-  })
+  const nostalgist = await Nostalgist.megadrive('astroperdido.bin')
   await new Promise((resolve) => setTimeout(resolve, 1000))
   const state = await nostalgist.saveState()
   console.log(state)

@@ -29,9 +29,15 @@ export class Emulator {
   }
 
   private get stateFileName() {
-    const [{ fileName }] = this.options.rom
+    const {
+      rom: [{ fileName }],
+      core,
+    } = this.options
     const baseName = fileName.slice(0, fileName.lastIndexOf('.'))
-    const coreFullName = coreFullNameMap[this.options.core.name]
+    const coreFullName = coreFullNameMap[core.name]
+    if (!coreFullName) {
+      throw new Error(`invalid core name: ${core.name}`)
+    }
     return `${raUserdataDir}states/${coreFullName}/${baseName}.state`
   }
 
