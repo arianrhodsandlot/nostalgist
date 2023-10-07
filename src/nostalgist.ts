@@ -54,12 +54,27 @@ export class Nostalgist {
   }
 
   /**
-   * Reset the global configuation set by `Nostalgist.configure` to default
+   * Reset the global configuation set by `Nostalgist.configure` to default.
    */
   static resetToDefaultOptions() {
     Nostalgist.configure(getDefaultOptions())
   }
 
+  /**
+   * Update the global configuation for `Nostalgist.launch` or other shortcuts, like `Nostalgist.nes`
+   *
+   * You may want to specify how to resolve ROMs and RetroArch cores here.
+   *
+   * @example
+   * ```js
+   * Nostalgist.configure({
+   *   resolveRom({ file }) {
+   *     return `https://example.com/roms/${file}`
+   *   },
+   *   // other configuation can also be specified here
+   * })
+   * ```
+   */
   static configure(options: NostalgistOptionsPartial) {
     Nostalgist.globalOptions = {
       ...Nostalgist.globalOptions,
@@ -68,7 +83,46 @@ export class Nostalgist {
   }
 
   /**
-   * Launch an emulator
+   * Launch an emulator and return an `Promise` of the instance of the emulator.
+   *
+   * @example
+   *
+   * A simple example:
+   * ```js
+   * const nostalgist = await Nostalgist.launch({
+   *   core: 'fceumm',
+   *   rom: 'flappybird.nes',
+   * })
+   * ```
+   *
+   * @example
+   *
+   * A mor complex one:
+   * ```js
+   * const nostalgist = await Nostalgist.launch({
+   *   element: document.querySelector('.emulator-canvas'),
+   *   core: 'fbneo',
+   *   rom: ['mslug.zip'],
+   *   bios: ['neogeo.zip'],
+   *   retroarchConfig: {
+   *     rewind_enable: true,
+   *     savestate_thumbnail_enable: true,
+   *   }
+   *   runEmulatorManually: false,
+   *   resolveCoreJs({ core }) {
+   *     return `https://example.com/core/${core}_libretro.js`
+   *   },
+   *   resolveCoreWasm({ core }) {
+   *     return `https://example.com/core/${core}_libretro.wasm`
+   *   },
+   *   resolveRom({ file }) {
+   *     return `https://example.com/roms/${file}`
+   *   },
+   *   resolveBios({ file }) {
+   *     return `https://example.com/system/${file}`
+   *   },
+   * })
+   * ```
    */
   static async launch(options: NostalgistLaunchOptions) {
     const nostalgist = new Nostalgist(options)

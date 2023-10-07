@@ -26,6 +26,8 @@ export interface NostalgistOptions {
    */
   element: string | HTMLCanvasElement
 
+  core: string | NostalgistCoreDict
+
   /**
    * The rom needs to be launched.
    *
@@ -48,8 +50,6 @@ export interface NostalgistOptions {
    */
   bios?: NostalgistOptionsFiles
 
-  core: string | NostalgistCoreDict
-
   /**
    * RetroArch config.
    * Not all options can make effects in browser.
@@ -65,6 +65,7 @@ export interface NostalgistOptions {
   /**
    * If this is set to true, emulator will not run automatically.
    * To run the emulator, `nostalgist.launchEmulator` should be called later.
+   * @default `false`
    */
   runEmulatorManually: boolean
   resolveCoreJs: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string
