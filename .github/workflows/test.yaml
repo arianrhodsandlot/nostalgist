@@ -1,20 +1,44 @@
 name: test
 on: [push]
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v2
         with:
           version: 8
           run_install: true
-
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: pnpm
-
       - run: pnpm lint
-      - run: pnpm t
+
+  test-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm test:integration
+
+  test-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm test:e2e

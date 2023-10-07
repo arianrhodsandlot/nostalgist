@@ -76,30 +76,6 @@ export class Nostalgist {
     return nostalgist
   }
 
-  static async arcade(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('arcade', options)
-  }
-
-  static async atari2600(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('atari2600', options)
-  }
-
-  static async atari5200(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('atari5200', options)
-  }
-
-  static async atari7800(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('atari7800', options)
-  }
-
-  static async fds(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('fds', options)
-  }
-
-  static async gamegear(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('gamegear', options)
-  }
-
   static async gb(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gb', options)
   }
@@ -120,32 +96,8 @@ export class Nostalgist {
     return await Nostalgist.launchSystem('nes', options)
   }
 
-  static async ngp(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('ngp', options)
-  }
-
-  static async ngpc(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('ngpc', options)
-  }
-
-  static async sms(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('sms', options)
-  }
-
   static async snes(options: string | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('snes', options)
-  }
-
-  static async vb(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('vb', options)
-  }
-
-  static async wonderswan(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('wonderswan', options)
-  }
-
-  static async wonderswancolor(options: string | NostalgistLaunchRomOptions) {
-    return await Nostalgist.launchSystem('wonderswancolor', options)
   }
 
   private static getCoreForSystem(system: string) {
