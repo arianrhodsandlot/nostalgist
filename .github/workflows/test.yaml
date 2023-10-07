@@ -41,4 +41,5 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+      - run: playwright install chromium
       - run: pnpm test:e2e
