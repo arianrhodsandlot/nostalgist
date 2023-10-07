@@ -32,15 +32,71 @@ export interface NostalgistOptions {
    * The rom needs to be launched.
    *
    * This property can be:
-   * + a string
-   * + a [File object](https://developer.mozilla.org/en-US/docs/Web/API/File)
-   * + an object, with a fileName property and a fileContent property. for example: { filename: 'xx.nes', fileContent: someBlob }
-   * + an array of above
+   * + a string.
+   * + a [File object](https://developer.mozilla.org/en-US/docs/Web/API/File).
+   * + a plain object, with a fileName property and a fileContent property.
+   * + an array of above.
+   *
+   * @example
+   * If it's a url, that's saying, it starts with `"http://"` or `"https://"`, a request will be sent to grab its content.
+   * ```js
+   * const nostalgist = await Nostalgist.launch({
+   *   rom: 'https://example.com/contra.nes'
+   * })
+   * ```
+   *
+   * @example
+   * If it's a normal string, it will be passed to `options.resolveRom`, another function option that should return a url string or a `Blob`.
+   * ```js
+   * const nostalgist = await Nostalgist.launch({
+   *   rom: 'contra.nes',
+   *   resolveRom({ file }) {
+   *     return `https://example.com/roms/${file}`
+   *   },
+   * })
+   * ```
+   *
+   * Bear in mind if you want to load your ROM via url, you should make sure you can access that url by CORS.
+   *
+   * @example
+   * If it's a `File` object, its content and file name will be directly used for emulation.
+   * ```js
+   * const rom = await showFilePicker()
+   * const nostalgist = await Nostalgist.launch({
+   *   rom,
+   * })
+   * 
+   * ```
+   *
+   * @example
+   * If it's an plain object, here is an example.
+   * ```js
+   * const fileContent = await fetch('http://example.com/contra.nes')
+   * const nostalgist = await Nostalgist.launch({
+   *   rom: {
+   *     fileName: 'contra.nes',
+   *     fileContent,
+   *   }
+   * })
+   * ```
+   *
+   * @example
+   * For some situations, we may need multiple files for emulation. Then we need to pass an array here.
+   * ```js
+   * const blob = await showFilePicker()
+   * const fileContent = await fetch('http://example.com/contra.nes')
+   * const nostalgist = await Nostalgist.launch({
+   *   rom: ['rom1.bin', blob, {
+   *     fileName: 'rom2.bin',
+   *     fileContent,
+   *   }]
+   * })
+   * ```
    */
   rom?: NostalgistOptionsFiles
 
   /**
-   * The bios files needs to be launched with roms.
+   * The BIOS files needed to be launched with roms.
    *
    * This property can be:
    * + a string
@@ -65,7 +121,7 @@ export interface NostalgistOptions {
   /**
    * If this is set to true, emulator will not run automatically.
    * To run the emulator, `nostalgist.launchEmulator` should be called later.
-   * @default `false`
+   * Default value is `false`.
    */
   runEmulatorManually: boolean
   resolveCoreJs: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string

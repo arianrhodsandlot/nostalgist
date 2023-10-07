@@ -83,10 +83,9 @@ export class Nostalgist {
   }
 
   /**
-   * Launch an emulator and return an `Promise` of the instance of the emulator.
+   * Launch an emulator and return a `Promise` of the instance of the emulator.
    *
    * @example
-   *
    * A simple example:
    * ```js
    * const nostalgist = await Nostalgist.launch({
@@ -96,8 +95,7 @@ export class Nostalgist {
    * ```
    *
    * @example
-   *
-   * A mor complex one:
+   * A more complex one:
    * ```js
    * const nostalgist = await Nostalgist.launch({
    *   element: document.querySelector('.emulator-canvas'),
