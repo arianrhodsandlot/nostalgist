@@ -70,7 +70,7 @@ test.describe('instance methods', () => {
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(500)
 
-    await canvas.press('Enter', { delay: 500 })
+    await canvas.press('Enter', { delay: 800 })
 
     await page.getByText('pause', { exact: true }).click()
     await expect(canvas).toHaveScreenshot('pause-and-resume.png')
