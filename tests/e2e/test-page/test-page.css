@@ -6,3 +6,8 @@
 .container {
   padding-bottom: 10px 0;
 }
+
+canvas {
+  width: 800px;
+  height: 600px;
+}
