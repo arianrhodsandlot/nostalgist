@@ -10,6 +10,7 @@ import type {
   NostalgistOptionsPartial,
   NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
+import { isAbsoluteUrl } from './utils'
 
 const systemCoreMap: Record<string, string> = {
   arcade: 'fbneo',
@@ -285,10 +286,9 @@ export class Nostalgist {
 
   private async getCoreOption() {
     const { core, resolveCoreJs, resolveCoreWasm } = this.options
-    const resolveParams = { core, options: this.options }
     const coreDict =
       typeof core === 'string'
-        ? { name: core, js: resolveCoreJs(resolveParams), wasm: resolveCoreWasm(resolveParams) }
+        ? { name: core, js: await resolveCoreJs(core, this.options), wasm: await resolveCoreWasm(core, this.options) }
         : core
 
     let { name, js, wasm } = coreDict
@@ -312,7 +312,7 @@ export class Nostalgist {
       fileContent = file
     } else if (typeof file === 'string') {
       fileName = baseName(file)
-      const resolvedRom = resolveFunction({ file, options: this.options })
+      const resolvedRom = await resolveFunction(file, this.options)
       if (resolvedRom instanceof Blob) {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {

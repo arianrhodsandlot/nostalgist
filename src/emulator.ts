@@ -203,7 +203,7 @@ export class Emulator {
     if (!jsBlobUrl) {
       return
     }
-    const { getEmscripten } = await import(/* @vite-ignore */ jsBlobUrl)
+    const { getEmscripten } = await import(/* @vite-ignore */ /* webpackIgnore: true */ jsBlobUrl)
     URL.revokeObjectURL(jsBlobUrl)
 
     const initialModule = getEmscriptenModuleOverrides({ wasmBinary: this.options.core.wasm })

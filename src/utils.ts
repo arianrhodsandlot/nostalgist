@@ -2,6 +2,16 @@
 import { Buffer } from 'buffer/index'
 import { kebabCase } from 'lodash-es'
 
+export function isAbsoluteUrl(string: string) {
+  if (!string) {
+    return false
+  }
+  if (typeof string !== 'string') {
+    return false
+  }
+  return string.startsWith('http://') || string.startsWith('https://') || string.startsWith('//')
+}
+
 export async function blobToBuffer(blob: Blob) {
   const arrayBuffer = await blob.arrayBuffer()
   return Buffer.from(arrayBuffer)

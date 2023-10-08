@@ -1,5 +1,7 @@
 import type { RetroArchConfig } from './retroarch-config'
 
+type MaybePromise<T> = T | Promise<T>
+
 export type NostalgistOptionsFile = string | File | { fileName: string; fileContent: Blob }
 type NostalgistOptionsFiles = NostalgistOptionsFile | NostalgistOptionsFile[]
 
@@ -14,10 +16,10 @@ export interface NostalgistCoreDict {
   wasm: string | ArrayBuffer
 }
 
-export type NostalgistResolveFileFunction = (params: {
-  file: NostalgistOptionsFiles
-  options: NostalgistOptions
-}) => NostalgistOptionsFiles | undefined
+export type NostalgistResolveFileFunction = (
+  file: NostalgistOptionsFiles,
+  options: NostalgistOptions,
+) => MaybePromise<NostalgistOptionsFiles | undefined>
 
 export interface NostalgistOptions {
   /**
@@ -65,7 +67,7 @@ export interface NostalgistOptions {
    * const nostalgist = await Nostalgist.launch({
    *   rom,
    * })
-   * 
+   *
    * ```
    *
    * @example
@@ -113,8 +115,7 @@ export interface NostalgistOptions {
   retroarchConfig: RetroArchConfig
 
   /**
-   * RetroArch core config.
-   * Not all options can make effects in browser.
+   * WIP, do not use this property
    */
   retroarchCoreConfig: any
 
@@ -124,8 +125,8 @@ export interface NostalgistOptions {
    * Default value is `false`.
    */
   runEmulatorManually: boolean
-  resolveCoreJs: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string
-  resolveCoreWasm: (params: { core: NostalgistOptions['core']; options: NostalgistOptions }) => string | ArrayBuffer
+  resolveCoreJs: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string>
+  resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string | ArrayBuffer>
   resolveRom: NostalgistResolveFileFunction
   resolveBios: NostalgistResolveFileFunction
   waitForInteraction?: (params: { done: () => void }) => void
