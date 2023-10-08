@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+          registry-url: 'https://registry.npmjs.org/'
       - run: pnpm i
       - run: pnpm build
       - run: npm publish
