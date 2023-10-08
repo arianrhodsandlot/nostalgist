@@ -29,6 +29,6 @@ jobs:
           cache: pnpm
       - run: pnpm i
       - run: pnpm build
-      - run: pnpm publish --no-git-checks
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
