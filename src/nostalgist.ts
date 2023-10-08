@@ -39,6 +39,8 @@ function baseName(url: string) {
 }
 
 export class Nostalgist {
+  static Nostalgist: Nostalgist
+
   private static globalOptions = getDefaultOptions()
 
   private options: NostalgistOptions

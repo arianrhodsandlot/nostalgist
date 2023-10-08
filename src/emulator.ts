@@ -205,13 +205,13 @@ export class Emulator {
     if (!jsBlobUrl) {
       return
     }
-    const { getEmscripten } = await (() => {
+    const { getEmscripten } = await (async () => {
       try {
-        return import(/* @vite-ignore */ /* webpackIgnore: true */ jsBlobUrl)
+        return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsBlobUrl)
       } catch {
         // a dirty hack for using with SystemJS, for example, in StackBlitz
         // eslint-disable-next-line no-eval
-        return eval('import(jsBlobUrl)')
+        return await eval('import(jsBlobUrl)')
       }
     })()
     URL.revokeObjectURL(jsBlobUrl)
