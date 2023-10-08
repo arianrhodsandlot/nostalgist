@@ -37,3 +37,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           registry: "https://npm.pkg.github.com"
+          access:  ${{ format('@{0}', github.repository_owner) }}
