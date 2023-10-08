@@ -28,7 +28,6 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - run: pnpm i
       - run: pnpm build
       - run: git status
       - run: pnpm publish
