@@ -44,6 +44,11 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+      - uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright
       - run: pnpm playwright install chromium
       - run: pnpm build
       - run: pnpm test:e2e
