@@ -1,3 +1,5 @@
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import type { Buffer } from 'buffer/index'
 import ini from 'ini'
 import { coreFullNameMap } from './constants'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
