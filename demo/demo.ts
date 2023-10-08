@@ -46,6 +46,10 @@ function resize() {
   nostalgist.resize({ width: 400, height: 400 })
 }
 
+function exit() {
+  nostalgist.exit({ removeCanvas: false })
+}
+
 document.body.addEventListener('click', async function listener({ target }) {
   if (!(target instanceof HTMLButtonElement)) {
     return
@@ -61,6 +65,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     resume,
     restart,
     resize,
+    exit,
   }
   const textContent = target.textContent || ''
   if (textContent in handlers) {

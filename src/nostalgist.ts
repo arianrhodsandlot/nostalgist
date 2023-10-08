@@ -201,28 +201,31 @@ export class Nostalgist {
     return this.options
   }
 
-  saveState() {
-    return this.getEmulator().saveState()
+  async saveState() {
+    return await this.getEmulator().saveState()
   }
 
-  loadState(state: Blob) {
-    return this.getEmulator().loadState(state)
+  async loadState(state: Blob) {
+    await this.getEmulator().loadState(state)
   }
 
   resume() {
-    return this.getEmulator().resume()
+    this.getEmulator().resume()
   }
 
   pause() {
-    return this.getEmulator().pause()
+    this.getEmulator().pause()
   }
 
   restart() {
-    return this.getEmulator().restart()
+    this.getEmulator().restart()
   }
 
-  exit() {
-    return this.getEmulator().exit()
+  exit({ removeCanvas = true }: { removeCanvas?: boolean } = {}) {
+    this.getEmulator().exit()
+    if (removeCanvas) {
+      this.getCanvas().remove()
+    }
   }
 
   resize(size: { width: number; height: number }) {

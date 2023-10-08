@@ -136,7 +136,6 @@ export class Emulator {
       FS.unmount('/home')
       JSEvents.removeAllEventListeners()
     }
-    this.cleanupDOM()
   }
 
   resize({ width, height }: { width: number; height: number }) {
@@ -350,9 +349,5 @@ export class Emulator {
       FS.unlink(this.stateFileName)
       FS.unlink(this.stateThumbnailFileName)
     } catch {}
-  }
-
-  private cleanupDOM() {
-    this.options.element.remove()
   }
 }
