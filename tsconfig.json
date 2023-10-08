@@ -17,7 +17,7 @@
     "removeComments": false,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext",
+    "target": "esnext"
   },
-  "include": ["src", "docs"]
+  "include": ["src"]
 }
