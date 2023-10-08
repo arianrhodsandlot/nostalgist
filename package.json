@@ -1,7 +1,7 @@
 {
   "name": "nostalgist",
   "description": "Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "arianrhodsandlot",
     "email": "theguidanceofawhitetower@gmail.com"
@@ -50,8 +50,8 @@
     "@types/lodash-es": "4.17.9",
     "browserfs": "1.4.3",
     "buffer": "6.0.3",
-    "eslint": "8.50.0",
-    "happy-dom": "12.8.0",
+    "eslint": "8.51.0",
+    "happy-dom": "12.9.0",
     "ini": "4.1.1",
     "is-ci": "3.0.1",
     "ky": "1.0.1",
