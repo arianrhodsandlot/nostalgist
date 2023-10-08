@@ -1,51 +1,5 @@
 name: test
 on: [push]
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm lint
-
-  test-integration:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm test:integration
-
-  test-e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: pnpm
-      - uses: actions/cache@v3
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright
-      - run: pnpm playwright install chromium
-      - run: pnpm build
-      - run: pnpm test:e2e
+  test:
+    uses: ./.github/workflows/test-jobs.yaml
