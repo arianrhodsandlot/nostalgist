@@ -1,4 +1,4 @@
-name: publish package to NPM
+name: publish
 on:
   release:
     types: [published]
@@ -15,8 +15,9 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
       - run: pnpm i
       - run: pnpm build
-      - run: pnpm publish
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
