@@ -65,6 +65,10 @@ export class Emulator {
     } else {
       this.runMain()
     }
+    const { size } = this.options
+    if (typeof size === 'object') {
+      this.resize(size)
+    }
   }
 
   resume() {
@@ -135,7 +139,7 @@ export class Emulator {
     this.cleanupDOM()
   }
 
-  resize(width: number, height: number) {
+  resize({ width, height }: { width: number; height: number }) {
     const { Module } = this.getEmscripten()
     Module.setCanvasSize(width, height)
   }
@@ -189,17 +193,15 @@ export class Emulator {
   }
 
   private async setupEmscripten() {
+    const { js, wasm } = this.options.core
     if (typeof window === 'object') {
       // @ts-expect-error for retroarch fast forward
       window.setImmediate ??= window.setTimeout
     }
 
-    const jsContent = `
-    export function getEmscripten({ Module }) {
-      ${this.options.core.js}
-      return { PATH, FS, ERRNO_CODES, JSEvents, ENV, Module, exit: _emscripten_force_exit }
-    }
-    `
+    const jsContent = js.startsWith('var Module')
+      ? `export function getEmscripten({ Module }) {${js};return { PATH, FS, ERRNO_CODES, JSEvents, ENV, Module, exit: _emscripten_force_exit }}`
+      : js
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' })
     const jsBlobUrl = URL.createObjectURL(jsBlob)
     if (!jsBlobUrl) {
@@ -216,7 +218,7 @@ export class Emulator {
     })()
     URL.revokeObjectURL(jsBlobUrl)
 
-    const initialModule = getEmscriptenModuleOverrides({ wasmBinary: this.options.core.wasm })
+    const initialModule = getEmscriptenModuleOverrides({ wasmBinary: wasm })
     this.emscripten = getEmscripten({ Module: initialModule })
 
     const { Module } = this.getEmscripten()

@@ -28,6 +28,8 @@ export interface NostalgistOptions {
    */
   element: string | HTMLCanvasElement
 
+  size?: 'auto' | { width: number; height: number }
+
   core: string | NostalgistCoreDict
 
   /**

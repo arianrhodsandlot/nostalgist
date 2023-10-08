@@ -2,6 +2,7 @@ import type { RetroArchConfig } from './retroarch-config'
 
 export interface EmulatorOptions {
   element: HTMLCanvasElement
+  size?: 'auto' | { width: number; height: number }
   core: {
     /** the name of core */
     name: string

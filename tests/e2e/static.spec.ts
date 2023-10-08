@@ -44,4 +44,14 @@ test.describe('static methods', () => {
     await page.waitForTimeout(500)
     await expect(canvas).toHaveScreenshot('launch-nestopia.png')
   })
+
+  test('launch size', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('launchSize', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(500)
+    await expect(canvas).toHaveScreenshot('launch-size.png')
+  })
 })

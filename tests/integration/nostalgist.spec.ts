@@ -81,6 +81,29 @@ describe('nostalgist', () => {
     expect(emulatorOptions.bios).toEqual([])
   })
 
+  test('Nostalgist.launch with custom size', async () => {
+    const nostalgist = await Nostalgist.launch({
+      core: 'nestopia',
+      rom: testNesRomUrl,
+      size: {
+        width: 100,
+        height: 100,
+      },
+    })
+
+    const options = nostalgist.getOptions()
+    expect(options.core).toBe('nestopia')
+
+    const emulatorOptions = nostalgist.getEmulatorOptions()
+    expect(emulatorOptions.size).toEqual({ width: 100, height: 100 })
+    expect(emulatorOptions.core.js).toBeTypeOf('string')
+    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
+    expect(emulatorOptions.rom).toHaveLength(1)
+    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
+    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
+    expect(emulatorOptions.bios).toEqual([])
+  })
+
   test('Nostalgist.launch with custom emscripten core', async () => {
     const core = {
       name: 'fceumm',

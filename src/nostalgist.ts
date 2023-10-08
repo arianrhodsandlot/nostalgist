@@ -159,9 +159,9 @@ export class Nostalgist {
   }
 
   private static async launchSystem(system: string, options: string | NostalgistLaunchRomOptions) {
-    const launchOption = typeof options === 'string' ? { rom: options } : options
+    const launchOptions = typeof options === 'string' ? { rom: options } : options
     const core = Nostalgist.getCoreForSystem(system)
-    return await Nostalgist.launch({ ...launchOption, core })
+    return await Nostalgist.launch({ ...launchOptions, core })
   }
 
   getEmulator() {
@@ -177,6 +177,10 @@ export class Nostalgist {
       throw new Error('emulator options are not ready')
     }
     return this.emulatorOptions
+  }
+
+  getCanvas() {
+    return this.getEmulatorOptions().element
   }
 
   async launchEmulator() {
@@ -221,8 +225,8 @@ export class Nostalgist {
     return this.getEmulator().exit()
   }
 
-  resize(width: number, height: number) {
-    return this.getEmulator().resize(width, height)
+  resize(size: { width: number; height: number }) {
+    return this.getEmulator().resize(size)
   }
 
   /**
@@ -238,19 +242,13 @@ export class Nostalgist {
   }
 
   private async loadEmulatorOptions() {
+    const { waitForInteraction } = this.options
     const element = this.getElementOption()
+    const size = this.getSizeOption(element)
     const retroarch = this.getRetroarchOption()
     const retroarchCore = this.getRetroarchCoreOption()
     const [core, rom, bios] = await Promise.all([this.getCoreOption(), this.getRomOption(), this.getBiosOption()])
-    const emulatorOptions = {
-      element,
-      core,
-      rom,
-      bios,
-      retroarch,
-      retroarchCore,
-      waitForInteraction: this.options.waitForInteraction,
-    }
+    const emulatorOptions = { element, size, core, rom, bios, retroarch, retroarchCore, waitForInteraction }
     this.emulatorOptions = emulatorOptions
   }
 
@@ -283,6 +281,11 @@ export class Nostalgist {
     }
 
     throw new TypeError('invalid element')
+  }
+
+  private getSizeOption(element: HTMLCanvasElement) {
+    const { size } = this.options
+    return !size || size === 'auto' ? { width: element.offsetWidth, height: element.offsetHeight } : size
   }
 
   private async getCoreOption() {

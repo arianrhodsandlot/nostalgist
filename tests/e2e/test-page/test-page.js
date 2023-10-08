@@ -20,6 +20,10 @@ async function launchNestopia() {
   nostalgist = await Nostalgist.nes({ core: 'nestopia', rom: 'pong1k.nes' })
 }
 
+async function launchSize() {
+  nostalgist = await Nostalgist.nes({ core: 'nestopia', rom: 'pong1k.nes', size: { width: 100, height: 100 } })
+}
+
 async function saveState() {
   state = await nostalgist.saveState()
   console.info(state)
@@ -54,6 +58,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     megadrive,
     gbc,
     launchNestopia,
+    launchSize,
     saveState,
     loadState,
     pause,
