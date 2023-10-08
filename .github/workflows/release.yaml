@@ -30,11 +30,6 @@ jobs:
           cache: pnpm
       - run: pnpm i
       - run: pnpm build
-      - uses: JS-DevTools/npm-publish@v2
-        with:
-          token: ${{ secrets.NODE_AUTH_TOKEN }}
-      - uses: JS-DevTools/npm-publish@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          registry: "https://npm.pkg.github.com"
-          access:  ${{ format('@{0}', github.repository_owner) }}
+      - run: pnpm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
