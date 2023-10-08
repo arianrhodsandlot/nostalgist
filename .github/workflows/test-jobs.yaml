@@ -8,11 +8,11 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-          run_install: true
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: pnpm
+      - run: pnpm i
       - run: pnpm lint
 
   test-integration:
@@ -22,11 +22,11 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-          run_install: true
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: pnpm
+      - run: pnpm i
       - run: pnpm test:integration
 
   test-e2e:
@@ -36,7 +36,6 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-          run_install: true
       - uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -46,6 +45,7 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright
+      - run: pnpm i
       - run: pnpm playwright install chromium
       - run: pnpm build
       - run: pnpm test:e2e
