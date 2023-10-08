@@ -8,7 +8,6 @@ export default defineConfig({
   },
   testMatch: 'tests/e2e/**/*.spec.ts',
   updateSnapshots: 'missing',
-  fullyParallel: true,
   snapshotPathTemplate: '{testDir}/snapshots/{testFilePath}/{testName}/{arg}{ext}',
   expect: {
     toHaveScreenshot: { maxDiffPixels: 100 },
