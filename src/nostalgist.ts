@@ -10,7 +10,6 @@ import type {
   NostalgistOptionsPartial,
   NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
-import { isAbsoluteUrl } from './utils'
 
 const systemCoreMap: Record<string, string> = {
   arcade: 'fbneo',
