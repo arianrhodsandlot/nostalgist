@@ -1,5 +1,7 @@
 name: test
-on: [push]
+on:
+  push:
+    branches-ignore: docs
 jobs:
   test:
     uses: ./.github/workflows/test-jobs.yaml
