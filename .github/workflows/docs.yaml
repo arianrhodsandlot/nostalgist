@@ -25,8 +25,10 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+      - id: pages
+        uses: actions/configure-pages@v3
       - run: pnpm i
-      - run: pnpm docs:build
+      - run: pnpm docs:build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
       - uses: actions/upload-pages-artifact@v2
         with:
           path: docs/dist

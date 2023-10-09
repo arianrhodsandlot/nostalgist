@@ -7,6 +7,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Nostialgist.js',
+      favicon: '/favicon.png',
       logo: {
         src: './src/assets/logo.png',
         replacesTitle: true,
