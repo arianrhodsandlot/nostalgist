@@ -18,7 +18,7 @@ describe('nostalgist', () => {
   })
 
   afterEach(() => {
-    Nostalgist.resetToDefaultOptions()
+    Nostalgist.resetToDefault()
   })
 
   test('Nostalgist.nes', async () => {

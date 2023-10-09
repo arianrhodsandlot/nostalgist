@@ -1,3 +1,4 @@
+import { systemCoreMap } from './constants'
 import { Emulator } from './emulator'
 import { http } from './http'
 import { getDefaultOptions } from './options'
@@ -10,27 +11,6 @@ import type {
   NostalgistOptionsPartial,
   NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
-
-const systemCoreMap: Record<string, string> = {
-  arcade: 'fbneo',
-  atari2600: 'stella2014',
-  atari5200: 'a5200',
-  atari7800: 'prosystem',
-  fds: 'fceumm',
-  gamegear: 'genesis_plus_gx',
-  gb: 'mgba',
-  gba: 'mgba',
-  gbc: 'mgba',
-  megadrive: 'genesis_plus_gx',
-  nes: 'fceumm',
-  ngp: 'mednafen_ngp',
-  ngpc: 'mednafen_ngp',
-  sms: 'genesis_plus_gx',
-  snes: 'snes9x',
-  vb: 'mednafen_vb',
-  wonderswan: 'mednafen_wswan',
-  wonderswancolor: 'mednafen_wswan',
-}
 
 function baseName(url: string) {
   let name = url.split('/').pop() || ''
@@ -58,7 +38,7 @@ export class Nostalgist {
   /**
    * Reset the global configuation set by `Nostalgist.configure` to default.
    */
-  static resetToDefaultOptions() {
+  static resetToDefault() {
     Nostalgist.configure(getDefaultOptions())
   }
 
@@ -187,12 +167,12 @@ export class Nostalgist {
     return await this.getEmulator().launch()
   }
 
-  getEmulatorEmscriptenModule() {
+  getEmscriptenModule() {
     const emulator = this.getEmulator()
     return emulator.emscripten.Module
   }
 
-  getEmulatorEmscriptenFS() {
+  getEmscriptenFS() {
     const emulator = this.getEmulator()
     return emulator.emscripten.FS
   }

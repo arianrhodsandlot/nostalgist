@@ -1,0 +1,58 @@
+---
+title: Getting Started
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+## Try it online
+If you want to take a quick look at Nostalgist.js, it's recommended to use some online editor to give it a try.
+
+### Stackblitz
+You can try Nostalgist.js in Stackblitz.
+<iframe style="width: 100%; aspect-ratio: 2/1;" frameborder="none" src="https://stackblitz.com/edit/js-phxocr?ctl=1&embed=1&file=index.js&hideNavigation=1&view=preview" ></iframe>
+
+## Build something more complex
+If you want to use Nostialgist.js to build something cool, here are some choices to import it into your project.
+
+### Use a package manager
+If you are building a modern frontend project, you can use npm or its alternatives to install it to your project.
+<Tabs>
+  <TabItem label="npm">
+  ```sh
+  npm i nostalgist
+  ```
+  </TabItem>
+  <TabItem label="yarn">
+  ```sh
+  yarn add nostalgist
+  ```
+  </TabItem>
+  <TabItem label="pnpm">
+  ```sh
+  pnpm i nostalgist
+  ```
+  </TabItem>
+  <TabItem label="bun">
+  ```sh
+  bun i nostalgist
+  ```
+  </TabItem>
+</Tabs>
+
+Then you can import it and start hacking.
+```js
+import { Nostalgist } from 'nostalgist'
+
+await Nostalgist.nes('flappybird')
+```
+
+### Use a CDN
+Simplely add a script tag with a CDN link to your HTML.
+```html
+<script src="https://unpkg.com/nostalgist"></script>
+```
+
+Then you can use the global variable `Nostalgist` in your code and start hacking.
+```js
+await Nostalgist.nes('flappybird')
+```
