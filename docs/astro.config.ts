@@ -28,6 +28,7 @@ export default defineConfig({
           items: [
             { label: 'Introduction', link: '/' },
             { label: 'Getting Started', link: '/guides/getting-started' },
+            { label: 'Under the Hood', link: '/guides/under-the-hood' },
             { label: 'Related', link: '/guides/related' },
           ],
         },
@@ -67,6 +68,9 @@ export default defineConfig({
           ],
         },
       ],
+      components: {
+        PageTitle: './src/components/page-title.astro',
+      },
     }),
   ],
 })
