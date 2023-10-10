@@ -12,9 +12,56 @@ import logo from '../../assets/logo.png'
 
 Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.
 
-Here is an simple live example showing how to use it.
-```js
-import { Nostalgist } from 'nostalgist'
+:::note
+Nostalgist.js **do not** privide any pirated content, like copyrighted ROM files or BIOS files.
+:::
 
-await Nostalgist.nes('flappybird.nes')
+## Introduction
+
+With just one line of code like this:
+```js
+await Nostalgist.nes('super-mario-bros.nes')
 ```
+in a browser, you can launch an emulator to play a game.
+
+Here is an simple live example.
+<iframe class="playground-iframe" src="https://stackblitz.com/edit/js-tmcmfa?file=index.js" style="aspect-ratio: 5/3;"></iframe>
+
+## Motivation
+Nostalgist.js is built on top of RetroArch Emscripten builds. Although there is an official [RetroArch's web player](https://web.libretro.com/), and some third-party ones like [webretro](https://binbashbanana.github.io/webretro/), it's still not that easy to use them programmatically.
+
+The purpose of Nostalgist.js is to simplify the process of launching an Emulator in browsers. Given a ROM and a core, the game should be launched without any additional configuration.
+
+## Getting Started
+[Getting started here](/guides/getting-started)
+
+## Under the hood
+How does Nostalgist.js work? There are several steps while launching an Emulator.
+
+### Step 1
+Load the emulator and the ROM.
+
+Nostalgist.js itself doesn't contain any emulators, but it has a resonable default options, so official emulators built with Emscripten and provided by [RetroArch's buildbot](https://buildbot.libretro.com/). It can also load some homebrew games from
+[retrobrews](https://retrobrews.github.io/) project without additional configuration.
+
+By default, cores will be loaded via [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) from [retroarch-emscripten-build](https://github.com/arianrhodsandlot/retroarch-emscripten-build) through [jsDelivr](https://www.jsdelivr.com). Fore example, the fceumm core, an NES emulator, will be loaded from these URLs:
++ https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.16.0/retroarch/fceumm_libretro.js
++ https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.16.0/retroarch/fceumm_libretro.wasm
+
+Games from [retrobrews](https://retrobrews.github.io/) are loaded in a similar way too. And of course you can also load all the nessasary contents by yourself.
+
+If you own a server and your ROM files are hosted there, you can also load them by something like:
+```js
+await Nostalgist.nes('https://your-server.com/roms/super-mario-bros.nes')
+```
+:::note
+Make sure your server have configured the CORS headers properly.
+:::
+
+### Step 3
+Prepare a virtual file system.
+
+We use [BrowserFS](https://github.com/jvilk/BrowserFS)'s `MemoryFS` to create a virtual file system.
+
+### Step 4
+Launch RetroArch with the virtual file system and the canvas element we specified in the code.

@@ -7,15 +7,21 @@ title: Related Projects
 + These are the fundamental dependencies of Nostalgist.js.
   + [RetroArch](https://www.retroarch.com/) and its friends(the emulators/cores)
   + [Emscripten](https://emscripten.org/)
-  + [BrowsersFS](https://github.com/jvilk/BrowserFS)
+  + [BrowserFS](https://github.com/jvilk/BrowserFS)
 
 + We are using ROMs here for the purpose of demonstration.
   + [retrobrews](https://retrobrews.github.io/) and the authors of the homebrew games.
 
++ By default, our ROMs and cores are all loaded from this free CDN service.
+  + [jsDelivr](https://www.jsdelivr.com/)
+
 ## Showcases
 + [Retro Assembly](https://github.com/arianrhodsandlot/retro-assembly)
 
-  A web app with which you can build a custom retro gaming library inside your browser. It's built on top of Nostalgist.js.
+  A web app with which you can build a custom retro gaming library inside your browser.
+  Game states can be synced with cloud drivers like OneDrive/Google Drive/Dropbox
+
+  It's built on top of Nostalgist.js.
 
 ## Alternatives
 + [EmulatorJS](https://emulatorjs.org/)

@@ -39,3 +39,10 @@
 :root[data-theme='light'] .sl-badge {
 	opacity: .3;
 }
+
+.playground-iframe {
+	width: 100%;
+	border: solid 2px #666;
+	border-radius: 4px;
+	background-color: #eee;
+}
