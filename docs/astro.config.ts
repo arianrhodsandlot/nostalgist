@@ -26,7 +26,7 @@ export default defineConfig({
         {
           label: 'Guides',
           items: [
-            { label: 'Introduction', link: '/' },
+            { label: 'Home', link: '/' },
             { label: 'Getting Started', link: '/guides/getting-started' },
             { label: 'Under the Hood', link: '/guides/under-the-hood' },
             { label: 'Related', link: '/guides/related' },
@@ -71,6 +71,15 @@ export default defineConfig({
       components: {
         PageTitle: './src/components/page-title.astro',
       },
+      head: [
+        {
+          tag: 'script',
+          attrs: {
+            src: 'https://unpkg.com/nostalgist@0.1.7/dist/nostalgist.umd.js',
+            defer: true,
+          },
+        },
+      ],
     }),
   ],
 })

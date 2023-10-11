@@ -1,5 +1,5 @@
 ---
-title: Related Projects
+title: Related
 ---
 
 ## Credits

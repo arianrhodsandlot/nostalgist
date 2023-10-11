@@ -1,76 +1,154 @@
 ---
 title: Nostalgist.js
+head:
+  - tag: title
+    content: Nostalgist.js
 description: Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.
-tableOfContents: true
+template: splash
+next: false
+banner:
+  content: |
+    <a href="https://github.com/arianrhodsandlot/nostalgist" style="display: inline-flex; align-items: center;" target="_blank">
+      Star Nostalgist.js on
+      <svg style="margin: 0 2px 0 4px;" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"></path></svg>
+      GitHub
+    </a>
+    if you like it!
+    Takes you a few seconds, means a lot for me.
 ---
 import { Image } from 'astro:assets'
-import { Card, CardGrid } from '@astrojs/starlight/components'
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components'
 import logo from '../../assets/logo.png'
+import { Icon } from '@astrojs/starlight/components';
 
 <p align="center">
   <Image alt="Nostalgist.js logo" src={logo} width="250" height="250"></Image>
 </p>
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/nostalgist" title="nostalgist.js.org" target="_blank" style="display: inline-block; margin: 0 2px;">
+    <img width="181" height="28" src="https://img.shields.io/badge/nostalgist.js.org-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=black" alt="nostalgist.js.org badge" />
+  </a>
+  <a href="https://github.com/arianrhodsandlot/nostalgist" title="Nostalgist.js on GitHub" target="_blank" style="display: inline-block; margin: 0 2px;">
+    <img width="95" height="28" src="https://img.shields.io/badge/GitHub-181717.svg?style=for-the-badge&logo=GitHub&logoColor=white" alt="GitHub badge" />
+  </a>
+  <a href="https://www.npmjs.com/package/nostalgist" title="Nostalgist.js on NPM" target="_blank" style="display: inline-block; margin: 0 2px;">
+    <img width="73" height="28" src="https://img.shields.io/badge/npm-CB3837.svg?style=for-the-badge&logo=npm&logoColor=white" alt="NPM badge" />
+  </a>
+</p>
+
+---
+
 Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles like NES and Sega Genesis, within web browsers.
 
-:::note
-Star Nostalgist.js on GitHub if you like it! This may take you only a few seconds but means a lot for me.
-:::
+<p align="center">
+  <a class="home-button primary" title="Getting Started" href="/guides/getting-started">Getting Started</a>
+  <a class="home-button" title="API reference" href="/apis">API reference</a>
+</p>
 
-## A Quick Glance
 
-With Nostalgist.js, you can do these things with a retro game.
+## A quick glance
+Open the DevTools of your browser and check out the Console tab, then type these code and type <kbd>Enter</kbd>, an NES emulator will be present in your browser like above (though it's not *Super Mario Bros.* 😐)!
+```js
+const { Nostalgist } = await import('https://esm.run/nostalgist')
+await Nostalgist.nes('flappybird.nes')
+```
 
-<CardGrid>
-	<Card title="Launch" icon="rocket">
-		Launch a retro game with RetroArch emulator in a browser
+## Features
+<div>
+  <Card title="Launch" icon="rocket">
+    Launch a retro game with RetroArch emulator in a browser
+
+    <div>
+    ```js
+    import { Nostalgist } from 'nostalgist'
+
+    await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+    })
+    ```
+    </div>
+
     <div style="font-size: 12px; margin-top: 4px;">
       Related API:
       [`launch`](/apis/launch)
     </div>
-	</Card>
-	<Card title="Save & Load" icon="random">
-		Save the state of the game, then load it later
+  </Card>
+  <Card title="Save & Load" icon="random">
+    Save the state of the game, then load it later
+
+    <div>
+    ```js
+    import { Nostalgist } from 'nostalgist'
+
+    const nostalgist = await Nostalgist.nes('flappybird.nes')
+    const { state } = await nostalgist.saveState()
+    nostalgist.loadState(state)
+    ```
+    </div>
+
     <div style="font-size: 12px; margin-top: 4px;">
       Related API:
       [`saveState`](/apis/saveState), [`loadState`](/apis/loadState)
     </div>
-	</Card>
-	<Card title="Customize" icon="setting">
-		Customize any RetroArch config before launching
+  </Card>
+  <Card title="Customize" icon="setting">
+    Customize any RetroArch config before launching
+
+    <div>
+    ```js
+    import { Nostalgist } from 'nostalgist'
+
+    const nostalgist = await Nostalgist.launch({
+      core: 'nestopia',
+      rom: 'flappybird.nes',
+      retroarchConfig: {
+        rewind_enable: true,
+      }
+    })
+    ```
+    </div>
+
     <div style="font-size: 12px; margin-top: 4px;">
       Related API:
       [`launch#retroarchconfig`](/apis/launch#retroarchconfig)
     </div>
-	</Card>
-	<Card title="Hack" icon="puzzle">
-		Access low level APIs of Emscripten
+  </Card>
+  <Card title="Hack" icon="puzzle">
+    Access low level APIs of Emscripten
+
+    <div>
+    ```js
+    import { Nostalgist } from 'nostalgist'
+
+    const rom = 'https://example.com/zelda.sfc'
+    const nostalgist = await Nostalgist.snes(rom)
+    const FS = nostalgist.getEmscriptenFS()
+    FS.readFile('/xx/xx/xx.srm')
+    ```
+    </div>
+
     <div style="font-size: 12px; margin-top: 4px;">
       Related API:
       [`launch`](/apis/launch)
     </div>
-	</Card>
-</CardGrid>
+  </Card>
+</div>
 
-With just one line of code like this:
-```js
-await Nostalgist.nes('super-mario-bros.nes')
-```
-in a browser, you can launch an emulator to play a game.
-
----
-
-Here is a simple live example, though it's no *Super Mario Bros*.
-<iframe class="playground-iframe" src="https://stackblitz.com/edit/js-tmcmfa?file=index.js" style="aspect-ratio: 5/3;"></iframe>
+Here is a simple live example.
+<iframe class="playground-iframe" src="https://stackblitz.com/edit/js-tmcmfa?embed=1&file=index.js&hideExplorer=1&hideNavigation=1" style="aspect-ratio: 3/1;"></iframe>
 
 ## Motivation
 Nostalgist.js is built on top of RetroArch Emscripten builds. Although there is an official [RetroArch's web player](https://web.libretro.com/), and some third-party ones like [webretro](https://binbashbanana.github.io/webretro/), it's still not that easy to launch RetroArch in a browser programmatically.
 
 The purpose of Nostalgist.js is to simplify the process of launching an emulator  to play a game, via RetroArch, in browsers. Given a ROM and a core, the game should be launched without any additional configuration.
 
-## Contact
-If you have any questions/feedbacks or encounter any bugs, please report them on [GitHub](https://github.com/arianrhodsandlot/nostalgist).
+<LinkCard
+  title="Getting Started"
+  href="/guides/getting-started"
+/>
 
 :::caution[Caveat]
-Nostalgist.js **do not** privide any pirated content, like copyrighted ROM files or BIOS files.
+Nostalgist.js **DO NOT** privide any pirated content, like copyrighted ROM files or BIOS files.
 :::

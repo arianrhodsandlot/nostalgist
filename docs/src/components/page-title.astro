@@ -1,8 +1,10 @@
 ---
 import type { Props } from '@astrojs/starlight/props'
+
+const isHomepage = Astro.props.slug === '';
 ---
 
-<h1 id="_top">{Astro.props.entry.data.title}</h1>
+<h1 id="_top" class={isHomepage ? 'home' : ''}>{Astro.props.entry.data.title}</h1>
 
 <style>
 h1 {
@@ -11,6 +13,9 @@ h1 {
   line-height: var(--sl-line-height-headings);
   font-weight: 600;
   color: var(--sl-color-white);
+}
+
+h1.home {
   text-align: center;
 }
 </style>
