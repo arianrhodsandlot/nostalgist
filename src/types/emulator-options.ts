@@ -2,7 +2,16 @@ import type { RetroArchConfig } from './retroarch-config'
 
 export interface EmulatorOptions {
   element: HTMLCanvasElement
+
+  style: Partial<CSSStyleDeclaration>
+
+  /**
+   *
+   * The size of the canvas element.
+   * If it's `'auto'`, the canvas element will keep its original size, or it's width and height will be updated as specified.
+   */
   size?: 'auto' | { width: number; height: number }
+
   core: {
     /** the name of core */
     name: string

@@ -28,7 +28,33 @@ export interface NostalgistOptions {
    */
   element: string | HTMLCanvasElement
 
-  size?: 'auto' | { width: number; height: number }
+  /**
+   * The style of the canvas element.
+   *
+   * The CSS rule name should be "camelCase" instead of "kebab-case". For example, `{ backgroundColor: 'black' }` is valid, but `{ background-color: '' }` is not.
+   *
+   * If the canvas element is created automatically, the style will be
+   * ```js
+   * {
+   *   position: 'fixed',
+   *   top: '0',
+   *   left: '0',
+   *   width: '100%',
+   *   height: '100%',
+   *   backgroundColor: 'black',
+   *   zIndex: '1',
+   * }
+   * ```
+   * otherwise it will be `undefined`.
+   */
+  style?: Partial<CSSStyleDeclaration>
+
+  /**
+   *
+   * The size of the canvas element.
+   * If it's `'auto'`, the canvas element will keep its original size, or it's width and height will be updated as specified.
+   */
+  size: 'auto' | { width: number; height: number }
 
   core: string | NostalgistCoreDict
 

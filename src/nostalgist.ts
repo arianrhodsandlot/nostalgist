@@ -331,13 +331,13 @@ export class Nostalgist {
   }
 
   private async loadEmulatorOptions() {
-    const { waitForInteraction } = this.options
+    const { size = 'auto', waitForInteraction } = this.options
     const element = this.getElementOption()
-    const size = this.getSizeOption(element)
+    const style = this.getStyleOption()
     const retroarch = this.getRetroarchOption()
     const retroarchCore = this.getRetroarchCoreOption()
     const [core, rom, bios] = await Promise.all([this.getCoreOption(), this.getRomOption(), this.getBiosOption()])
-    const emulatorOptions = { element, size, core, rom, bios, retroarch, retroarchCore, waitForInteraction }
+    const emulatorOptions = { element, style, size, core, rom, bios, retroarch, retroarchCore, waitForInteraction }
     this.emulatorOptions = emulatorOptions
   }
 
@@ -345,7 +345,6 @@ export class Nostalgist {
     if (typeof document !== 'object') {
       throw new TypeError('document must be an object')
     }
-
     let { element } = this.options
     if (typeof element === 'string' && element) {
       const canvas = document.body.querySelector(element)
@@ -362,9 +361,6 @@ export class Nostalgist {
     }
 
     if (element instanceof HTMLCanvasElement) {
-      if (!element.isConnected) {
-        document.body.append(element)
-      }
       element.id = 'canvas'
       return element
     }
@@ -372,9 +368,27 @@ export class Nostalgist {
     throw new TypeError('invalid element')
   }
 
-  private getSizeOption(element: HTMLCanvasElement) {
-    const { size } = this.options
-    return !size || size === 'auto' ? { width: element.offsetWidth, height: element.offsetHeight } : size
+  private getStyleOption() {
+    const { element, style } = this.options
+    const defaultStyle: Partial<CSSStyleDeclaration> = {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'black',
+      zIndex: '1',
+    }
+    if (!element) {
+      return {
+        ...defaultStyle,
+        ...style,
+      }
+    }
+    if (style) {
+      return style
+    }
+    return {}
   }
 
   private async getCoreOption() {

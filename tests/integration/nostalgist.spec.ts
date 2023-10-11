@@ -177,4 +177,15 @@ describe('nostalgist', () => {
     expect(emulatorOptions.bios[1].fileName).toEqual('FinalBurn Neo (hiscore).zip')
     expect(emulatorOptions.bios[1].fileContent.constructor.name).toBe('Blob')
   })
+
+  test.only('Nostalgist.launch with custom style and size', async () => {
+    const nostalgist = await Nostalgist.launch({
+      size: { width: 100, height: 100 },
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+    })
+
+    const options = nostalgist.getOptions()
+    expect(options.size).toEqual({ width: 100, height: 100 })
+  })
 })

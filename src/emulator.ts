@@ -5,7 +5,7 @@ import { coreFullNameMap } from './constants'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
-import { blobToBuffer } from './utils'
+import { blobToBuffer, updateStyle } from './utils'
 
 const encoder = new TextEncoder()
 
@@ -56,8 +56,15 @@ export class Emulator {
     this.setupRaConfigFile()
     this.setupRaCoreConfigFile()
 
-    if (this.options.waitForInteraction) {
-      this.options.waitForInteraction({
+    const { element, style, waitForInteraction } = this.options
+    updateStyle(element, style)
+    if (!element.isConnected) {
+      document.body.append(element)
+    }
+    const size = this.getElementSize()
+
+    if (waitForInteraction) {
+      waitForInteraction({
         done: () => {
           this.runMain()
         },
@@ -65,7 +72,7 @@ export class Emulator {
     } else {
       this.runMain()
     }
-    const { size } = this.options
+
     if (typeof size === 'object') {
       this.resize(size)
     }
@@ -141,6 +148,11 @@ export class Emulator {
   resize({ width, height }: { width: number; height: number }) {
     const { Module } = this.getEmscripten()
     Module.setCanvasSize(width, height)
+  }
+
+  private getElementSize() {
+    const { element, size } = this.options
+    return !size || size === 'auto' ? { width: element.offsetWidth, height: element.offsetHeight } : size
   }
 
   private async setupFileSystem() {
