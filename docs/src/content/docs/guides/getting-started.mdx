@@ -48,9 +48,32 @@ await Nostalgist.nes('flappybird')
 
 ### Use a CDN
 Simplely add a script tag with a CDN link to your HTML.
-```html
-<script src="https://unpkg.com/nostalgist"></script>
-```
+<Tabs>
+  <TabItem label="unpkg">
+  ```html
+  <script src="https://unpkg.com/nostalgist"></script>
+  ```
+  </TabItem>
+  <TabItem label="jsDelivr">
+  ```html
+  <script src="https://cdn.jsdelivr.net/npm/nostalgist"></script>
+  ```
+  </TabItem>
+  <TabItem label="esm.run">
+  ```html
+  <script type="module">
+  import { Nostalgist } from 'https://esm.run/nostalgist'
+  </script>
+  ```
+  </TabItem>
+  <TabItem label="skypack">
+  ```html
+  <script type="module">
+  import { Nostalgist } from 'https://cdn.skypack.dev/nostalgist'
+  </script>
+  ```
+  </TabItem>
+</Tabs>
 
 Then you can use the global variable `Nostalgist` in your code and start hacking.
 ```js

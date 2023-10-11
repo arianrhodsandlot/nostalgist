@@ -44,14 +44,16 @@ import consoleDemo from '../../assets/console-demo.gif'
   <a class="home-button" title="API reference" href="/apis">API reference</a>
 </p>
 
+---
+
 ## A quick glance
 Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles like NES and Sega Genesis, within web browsers.
 
 <p align="center">
-  <Image alt="console demo" src={consoleDemo} width="1324" height="532"></Image>
+  <Image class="console-demo-image" alt="console demo" src={consoleDemo} width="1324" height="532"></Image>
 </p>
 
-Open the DevTools of your browser and check out the Console tab, then type these code and type <kbd>Enter</kbd>, an NES emulator will be present in your browser like above (though it's not *Super Mario Bros.* 😐)!
+Open the DevTools of your browser and check out the Console tab, then type this code and press <kbd>Enter</kbd>, an NES emulator will appear in your browser like above (though it's not *Super Mario Bros.* 😐)!
 ```js
 const { Nostalgist } = await import('https://esm.run/nostalgist')
 await Nostalgist.nes('flappybird.nes')
@@ -128,13 +130,13 @@ await Nostalgist.nes('flappybird.nes')
     const rom = 'https://example.com/zelda.sfc'
     const nostalgist = await Nostalgist.snes(rom)
     const FS = nostalgist.getEmscriptenFS()
-    FS.readFile('/xx/xx/xx.srm')
+    FS.readdir('/home/web_user/retroarch/userdata/saves/Snes9x/zelda.srm')
     ```
     </div>
 
     <div style="font-size: 12px; margin-top: 4px;">
       Related API:
-      [`launch`](/apis/launch)
+      [`getEmscriptenFS`](/apis/getEmscriptenFS)
     </div>
   </Card>
 </div>

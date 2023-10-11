@@ -70,7 +70,7 @@ Nostalgist.js is a JavaScript library that allows you to run emulators of retro 
   const rom = 'https://example.com/zelda.sfc'
   const nostalgist = await Nostalgist.snes(rom)
   const FS = nostalgist.getEmscriptenFS()
-  FS.readFile('/xx/xx/xx.srm')
+  FS.readdir('/home/web_user/retroarch/userdata/saves/Snes9x/zelda.srm')
   ```
 
   Related APIs: [`getEmscriptenModule`](https://nostalgist.js.org/apis/get-emscripten-module), [`getEmscriptenFS`](https://nostalgist.js.org/apis/get-emscripten-fs)

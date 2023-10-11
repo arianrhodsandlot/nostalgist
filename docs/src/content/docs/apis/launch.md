@@ -99,7 +99,10 @@ const nostalgist = await Nostalgist.launch({
     + [snes9x_libretro.js](https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.16.0/retroarch/snes9x_libretro.js)
     + [snes9x_libretro.wasm](https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.16.0/retroarch/snes9x_libretro.wasm)
 
-    That's because there is a default `resolveCoreJs` option that can resolve `string`s like `snes9x` to links above. If you want to specify how to use your custom cores, a custom `resolveCoreJs` can be implemented by your self to achive this.
+    That's because there is a default `resolveCoreJs` option that can resolve `string`s like `snes9x` to links above. By default, we support these cores from [retroarch-emscripten-build](https://github.com/arianrhodsandlot/retroarch-emscripten-build):
+    > 2048, arduous, bk, bluemsx, chailove, craft, ecwolf, fbalpha2012_cps1, fbalpha2012_cps2, fbalpha2012, fbalpha2012_neogeo, fceumm, freechaf, galaksija, gambatte, gearboy, gearcoleco, gearsystem, genesis_plus_gx, genesis_plus_gx_wide, gme, gong, gw, handy, jaxe, jumpnbump, lowresnx, lutro, mame2000, mame2003, mame2003_plus, mednafen_lynx, mednafen_ngp, mednafen_pce_fast, mednafen_vb, mednafen_wswan, mgba, minivmac, mrboom, mu, neocd, nestopia, numero, nxengine, o2em, opera, pcsx_rearmed, picodrive, pocketcdg, prboom, quasi88, quicknes, retro8, snes9x2002, snes9x2005, snes9x2010, snes9x, squirreljme, tgbdual, theodore, tic80, tyrquake, uw8, uzem, vaporspec, vba_next, vecx, vice_x128, vice_x64, vice_x64sc, vice_xcbm2, vice_xcbm5x0, vice_xpet, vice_xplus4, vice_xscpu64, vice_xvic, virtualxt, vitaquake2-rogue, vitaquake2-xatrix, vitaquake2-zaero, vitaquake2, wasm4, x1, xrick
+
+    If you want to specify how to use your custom cores, a custom `resolveCoreJs` can be implemented by your self to achive this.
 
     You can also pass an `Object` instead of a `string` to use a loaded a custom url as the core. Here's an example.
     ```js

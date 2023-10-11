@@ -49,10 +49,16 @@
 	color: var(--sl-color-black)!important;
 }
 
+.console-demo-image {
+  border: solid 2px #666;
+  border-radius: 6px;
+  background-color: #eee;
+}
+
 .playground-iframe {
   width: 100%;
   border: solid 2px #666;
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: #eee;
 }
 

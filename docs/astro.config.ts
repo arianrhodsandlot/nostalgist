@@ -75,7 +75,7 @@ export default defineConfig({
         {
           tag: 'script',
           attrs: {
-            src: 'https://unpkg.com/nostalgist@0.1.7/dist/nostalgist.umd.js',
+            src: 'https://unpkg.com/nostalgist',
             defer: true,
           },
         },
