@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/nostalgist" title="nostalgist.js.org">
+  <a href="https://nostalgist.js.org/" title="nostalgist.js.org">
     <img width="181" height="28" src="https://img.shields.io/badge/nostalgist.js.org-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=black" alt="nostalgist.js.org badge" />
   </a>
   <a href="https://github.com/arianrhodsandlot/nostalgist" title="Nostalgist.js on GitHub">
