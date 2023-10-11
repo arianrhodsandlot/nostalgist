@@ -45,18 +45,20 @@ import consoleDemo from '../../assets/console-demo.gif'
 </p>
 
 ---
-
-## A quick glance
 Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles like NES and Sega Genesis, within web browsers.
 
+## A quick glance
 <p align="center">
   <Image class="console-demo-image" alt="console demo" src={consoleDemo} width="1324" height="532"></Image>
 </p>
 
-Open the DevTools of your browser and check out the Console tab, then type this code and press <kbd>Enter</kbd>, an NES emulator will appear in your browser like above (though it's not *Super Mario Bros.* 😐)!
+You can also open the DevTools of your browser and check out the Console tab, then type this code and press <kbd>Enter</kbd>. An NES emulator will appear in your browser like above (though it's not *Super Mario Bros.* 😐)!
 ```js
 const { Nostalgist } = await import('https://esm.run/nostalgist')
 await Nostalgist.nes('flappybird.nes')
+// you can also try these:
+// await Nostalgist.megadrive('30yearsofnintendont.bin')
+// await Nostalgist.gba('eliminator.gba')
 ```
 
 ## Features
