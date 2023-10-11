@@ -17,12 +17,12 @@ banner:
     Takes you a few seconds, means a lot for me.
 ---
 import { Image } from 'astro:assets'
-import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components'
+import { Icon, Card, CardGrid, LinkCard } from '@astrojs/starlight/components'
 import logo from '../../assets/logo.png'
-import { Icon } from '@astrojs/starlight/components';
+import consoleDemo from '../../assets/console-demo.gif'
 
 <p align="center">
-  <Image alt="Nostalgist.js logo" src={logo} width="250" height="250"></Image>
+  <Image alt="Nostalgist.js logo" src={logo} width="150" height="150"></Image>
 </p>
 
 <p align="center">
@@ -39,15 +39,18 @@ import { Icon } from '@astrojs/starlight/components';
 
 ---
 
-Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles like NES and Sega Genesis, within web browsers.
-
 <p align="center">
   <a class="home-button primary" title="Getting Started" href="/guides/getting-started">Getting Started</a>
   <a class="home-button" title="API reference" href="/apis">API reference</a>
 </p>
 
-
 ## A quick glance
+Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles like NES and Sega Genesis, within web browsers.
+
+<p align="center">
+  <Image alt="console demo" src={consoleDemo} width="1324" height="532"></Image>
+</p>
+
 Open the DevTools of your browser and check out the Console tab, then type these code and type <kbd>Enter</kbd>, an NES emulator will be present in your browser like above (though it's not *Super Mario Bros.* 😐)!
 ```js
 const { Nostalgist } = await import('https://esm.run/nostalgist')
