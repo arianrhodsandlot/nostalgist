@@ -20,7 +20,6 @@
 
 Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles, like NES and Sega Genesis, within web browsers.
 
-
 ## A quick glance
 <p align="center">
   <img src="docs/src/assets/console-demo.gif" alt="console demo" />
