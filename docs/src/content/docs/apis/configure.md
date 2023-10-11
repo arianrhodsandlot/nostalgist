@@ -2,7 +2,7 @@
 title: configure
 ---
 
-Update the global options for `Nostalgist`, so everytime the emulator `Nostalgist.launch` is called, the default options specified here will be used.
+Update the global options for `Nostalgist`, so everytime the `Nostalgist.launch` method or shortcuts like `Nostalgist.nes` is called, the default options specified here will be used.
 
 ## Usage
 ```js

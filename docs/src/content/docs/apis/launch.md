@@ -5,7 +5,7 @@ title: launch
 Launch an emulator and return a `Promise` of the instance of the emulator.
 
 ## Usage
-Here is an example of its basic usage.
+Here is an example of its basic usage:
 ```js
 const nostalgist = await Nostalgist.launch({
   core: 'fceumm',
@@ -13,7 +13,7 @@ const nostalgist = await Nostalgist.launch({
 })
 ```
 
-A more complex example
+A more complex example:
 
 ```js
 const nostalgist = await Nostalgist.launch({

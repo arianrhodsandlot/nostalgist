@@ -8,5 +8,7 @@ Resume the current running game, if it has been paused by [`pause`](/apis/pause)
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
-await nostalgist.resume()
+nostalgist.pause()
+await new Promise(resolve => setTimeout(resolve, 1000))
+nostalgist.resume()
 ```

@@ -43,7 +43,7 @@ export class Nostalgist {
   }
 
   /**
-   * Update the global configuation for `Nostalgist.launch` or other shortcuts, like `Nostalgist.nes`
+   * Update the global options for `Nostalgist`, so everytime the `Nostalgist.launch` method or shortcuts like `Nostalgist.nes` is called, the default options specified here will be used.
    *
    * You may want to specify how to resolve ROMs and RetroArch cores here.
    *
@@ -181,26 +181,120 @@ export class Nostalgist {
     return this.options
   }
 
+  /**
+   * Save the state of the current running game.
+   *
+   * @see {@link https://nostalgist.js.org/apis/save-state}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * // save the state
+   * const { state } = await nostalgist.saveState(state)
+   *
+   * // load the state
+   * await nostalgist.loadState(state)
+   * ```
+   * @returns
+   * The state of the current running game.
+   *
+   * Its type is like `{ state: Blob, thumbnail: Blob | undefined }`.
+   *
+   * If RetroArch is launched with the option `savestate_thumbnail_enable` set to `true`, which is the default value inside Nostalgist.js, then the `thumbnail` will be a `Blob`. Otherwise the `thumbnail` will be `undefined`.
+   */
   async saveState() {
     return await this.getEmulator().saveState()
   }
 
+  /**
+   * Load a state for the current running emulator and game.
+   *
+   * @see {@link https://nostalgist.js.org/apis/load-state}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * // save the state
+   * const { state } = await nostalgist.saveState(state)
+   *
+   * // load the state
+   * await nostalgist.loadState(state)
+   * ```
+   */
   async loadState(state: Blob) {
     await this.getEmulator().loadState(state)
   }
 
+  /**
+   * Resume the current running game, if it has been paused by `pause`.
+   *
+   * @see {@link https://nostalgist.js.org/apis/resume}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * nostalgist.pause()
+   * await new Promise(resolve => setTimeout(resolve, 1000))
+   * nostalgist.resume()
+   * ```
+   */
   resume() {
     this.getEmulator().resume()
   }
 
+  /**
+   * Pause the current running game.
+   *
+   * @see {@link https://nostalgist.js.org/apis/pause}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * await nostalgist.pause()
+   * ```
+   */
   pause() {
     this.getEmulator().pause()
   }
 
+  /**
+   * Restart the current running game.
+   *
+   * @see {@link https://nostalgist.js.org/apis/restart}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * await nostalgist.restart()
+   * ```
+   */
   restart() {
     this.getEmulator().restart()
   }
 
+  /**
+   * Exit the current running game and the emulator. Remove the canvas element used by the emulator if needed.
+   *
+   * @see {@link https://nostalgist.js.org/apis/exit}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * await nostalgist.exit()
+   * ```
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * // the canvas element will not be removed
+   * await nostalgist.exit({ removeCanvas: false })
+   * ```
+   */
   exit({ removeCanvas = true }: { removeCanvas?: boolean } = {}) {
     this.getEmulator().exit()
     if (removeCanvas) {
@@ -208,6 +302,18 @@ export class Nostalgist {
     }
   }
 
+  /**
+   * Resize the canvas element of the emulator.
+   *
+   * @see {@link https://nostalgist.js.org/apis/resize}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * await nostalgist.resize({ width: 1000, height: 800 })
+   * ```
+   */
   resize(size: { width: number; height: number }) {
     return this.getEmulator().resize(size)
   }
