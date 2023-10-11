@@ -54,7 +54,7 @@ export interface NostalgistOptions {
    * The size of the canvas element.
    * If it's `'auto'`, the canvas element will keep its original size, or it's width and height will be updated as specified.
    */
-  size: 'auto' | { width: number; height: number }
+  size?: 'auto' | { width: number; height: number }
 
   core: string | NostalgistCoreDict
 
