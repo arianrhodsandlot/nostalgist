@@ -1,7 +1,5 @@
 <h1 align="center">Nostalgist.js</h1>
 
----
-
 <p align="center">
   <img src="docs/src/assets/logo.png" width="150" height="150">
 </p>
