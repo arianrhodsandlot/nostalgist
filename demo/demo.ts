@@ -4,7 +4,7 @@ let nostalgist: Nostalgist
 let state: Awaited<ReturnType<Nostalgist['saveState']>>
 
 async function nes() {
-  nostalgist = await Nostalgist.nes('pong1k.nes')
+  nostalgist = await Nostalgist.nes('flappybird.nes')
 }
 
 async function megadrive() {
@@ -49,6 +49,11 @@ function resize() {
 function exit() {
   nostalgist.exit({ removeCanvas: false })
 }
+
+Nostalgist.configure({
+  style: { width: '800px', height: '600px', position: 'static' },
+  respondToGlobalEvents: false,
+})
 
 document.body.addEventListener('click', async function listener({ target }) {
   if (!(target instanceof HTMLButtonElement)) {

@@ -136,6 +136,8 @@ export interface NostalgistOptions {
    */
   bios?: NostalgistOptionsFiles
 
+  respondToGlobalEvents?: boolean
+
   /**
    * RetroArch config.
    * Not all options can make effects in browser.

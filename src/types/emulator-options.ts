@@ -24,6 +24,9 @@ export interface EmulatorOptions {
   }
   rom: { fileName: string; fileContent: Blob }[]
   bios: { fileName: string; fileContent: Blob }[]
+
+  respondToGlobalEvents: boolean
+
   retroarch: RetroArchConfig
   retroarchCore: any
   waitForInteraction: ((params: { done: () => void }) => void) | undefined

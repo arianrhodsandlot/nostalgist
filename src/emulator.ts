@@ -56,24 +56,31 @@ export class Emulator {
     this.setupRaConfigFile()
     this.setupRaCoreConfigFile()
 
-    const { element, style, waitForInteraction } = this.options
+    const { element, style, respondToGlobalEvents, waitForInteraction } = this.options
     updateStyle(element, style)
+
+    const size = this.getElementSize()
+
     if (!element.isConnected) {
       document.body.append(element)
     }
-    const size = this.getElementSize()
+
+    if (respondToGlobalEvents === false) {
+      if (!element.tabIndex || element.tabIndex === -1) {
+        element.tabIndex = 0
+      }
+      element.focus()
+    }
 
     if (waitForInteraction) {
       waitForInteraction({
         done: () => {
           this.runMain()
+          this.resize(size)
         },
       })
     } else {
       this.runMain()
-    }
-
-    if (typeof size === 'object') {
       this.resize(size)
     }
   }
@@ -147,7 +154,9 @@ export class Emulator {
 
   resize({ width, height }: { width: number; height: number }) {
     const { Module } = this.getEmscripten()
-    Module.setCanvasSize(width, height)
+    if (typeof width === 'number' && typeof height === 'number') {
+      Module.setCanvasSize(width, height)
+    }
   }
 
   private getElementSize() {
@@ -305,7 +314,7 @@ export class Emulator {
       }
     }
 
-    if (this.options) {
+    if (this.options.respondToGlobalEvents) {
       return
     }
 
