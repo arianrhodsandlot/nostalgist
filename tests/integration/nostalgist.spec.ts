@@ -178,7 +178,7 @@ describe('nostalgist', () => {
     expect(emulatorOptions.bios[1].fileContent.constructor.name).toBe('Blob')
   })
 
-  test.only('Nostalgist.launch with custom style and size', async () => {
+  test('Nostalgist.launch with custom style and size', async () => {
     const nostalgist = await Nostalgist.launch({
       size: { width: 100, height: 100 },
       core: 'fceumm',

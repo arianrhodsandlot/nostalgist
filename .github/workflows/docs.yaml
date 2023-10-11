@@ -2,7 +2,7 @@ name: docs
 
 on:
   push:
-    branches: [$default-branch, docs]
+    branches: [docs]
 
 permissions:
   contents: read
