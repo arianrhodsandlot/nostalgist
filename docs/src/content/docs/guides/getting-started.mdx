@@ -1,13 +1,17 @@
 ---
 title: Getting Started
 ---
-
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 
-## Try it online
+## Try it in Devtools in this site
+You can open the Devtools here and try Nostalgist.js with global variable `Nostalgist`. No extra setup is required.
+```js
+await Nostalgist.nes('flappybird.nes')
+```
+
+## Try it in online editors
 If you want to take a quick look at Nostalgist.js, it's recommended to use some online editor to give it a try.
 
-### Stackblitz
 You can try Nostalgist.js in [Stackblitz](https://stackblitz.com/edit/js-phxocr) by hacking this example, a homebrew retro game list.
 <iframe class="playground-iframe" src="https://stackblitz.com/edit/js-phxocr?embed=1&file=index.js&hideNavigation=1&view=preview" style="aspect-ratio: 4/3;"></iframe>
 
@@ -59,6 +63,15 @@ Simplely add a script tag with a CDN link to your HTML.
   <script src="https://cdn.jsdelivr.net/npm/nostalgist"></script>
   ```
   </TabItem>
+</Tabs>
+
+Then you can use the global variable `Nostalgist` in your code and start hacking.
+```js
+await Nostalgist.nes('flappybird')
+```
+
+You can also use the ESM version of Nostalgist.js with CDN.
+<Tabs>
   <TabItem label="esm.run">
   ```html
   <script type="module">
@@ -74,11 +87,6 @@ Simplely add a script tag with a CDN link to your HTML.
   ```
   </TabItem>
 </Tabs>
-
-Then you can use the global variable `Nostalgist` in your code and start hacking.
-```js
-await Nostalgist.nes('flappybird')
-```
 
 ### Next steps
 You may want to read the [API reference](/apis/launch).

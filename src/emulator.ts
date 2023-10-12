@@ -59,11 +59,11 @@ export class Emulator {
     const { element, style, respondToGlobalEvents, waitForInteraction } = this.options
     updateStyle(element, style)
 
-    const size = this.getElementSize()
-
     if (!element.isConnected) {
       document.body.append(element)
     }
+
+    const size = this.getElementSize()
 
     if (respondToGlobalEvents === false) {
       if (!element.tabIndex || element.tabIndex === -1) {
