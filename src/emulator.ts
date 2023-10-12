@@ -1,7 +1,7 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import type { Buffer } from 'buffer/index'
 import ini from 'ini'
-import { coreFullNameMap } from './constants'
+import { coreInfoMap } from './constants'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
@@ -15,7 +15,7 @@ function delay(time: number) {
   })
 }
 const raUserdataDir = '/home/web_user/retroarch/userdata/'
-// const raCoreConfigDir = `${raUserdataDir}config/`
+const raCoreConfigDir = `${raUserdataDir}config/`
 const raConfigPath = `${raUserdataDir}retroarch.cfg`
 
 type GameStatus = 'initial' | 'paused' | 'running'
@@ -36,7 +36,7 @@ export class Emulator {
       core,
     } = this.options
     const baseName = fileName.slice(0, fileName.lastIndexOf('.'))
-    const coreFullName = coreFullNameMap[core.name]
+    const coreFullName = coreInfoMap[core.name].corename
     if (!coreFullName) {
       throw new Error(`invalid core name: ${core.name}`)
     }
@@ -59,11 +59,11 @@ export class Emulator {
     const { element, style, respondToGlobalEvents, waitForInteraction } = this.options
     updateStyle(element, style)
 
-    const size = this.getElementSize()
-
     if (!element.isConnected) {
       document.body.append(element)
     }
+
+    const size = this.getElementSize()
 
     if (respondToGlobalEvents === false) {
       if (!element.tabIndex || element.tabIndex === -1) {
@@ -114,7 +114,7 @@ export class Emulator {
   async saveState() {
     this.clearStateFile()
     this.sendCommand('SAVE_STATE')
-    const savestateThumbnailEnable = this.options.retroarch.savestate_thumbnail_enable
+    const savestateThumbnailEnable = this.options.retroarchConfig.savestate_thumbnail_enable
     let stateBuffer: Buffer
     let stateThumbnailBuffer: Buffer | undefined
     if (savestateThumbnailEnable) {
@@ -281,19 +281,17 @@ export class Emulator {
   }
 
   private setupRaConfigFile() {
-    this.writeConfigFile({ path: raConfigPath, config: this.options.retroarch })
+    this.writeConfigFile({ path: raConfigPath, config: this.options.retroarchConfig })
   }
 
   private setupRaCoreConfigFile() {
-    // const raCoreConfig = {
-    // ...defaultRetroarchCoresConfig[this.core],
-    // ...this.coreConfig?.[this.core],
-    // }
-    // if (Object.keys(raCoreConfig)) {
-    //   const coreFullName = coreFullNameMap[this.core]
-    //   const raCoreConfigPath = join(raCoreConfigDir, coreFullName, `${coreFullName}.opt`)
-    //   this.writeConfigFile({ path: raCoreConfigPath, config: raCoreConfig })
-    // }
+    const coreName = this.options.core.name
+    const coreConfig = this.options.retroarchCoreConfig
+    const coreInfo = coreInfoMap[coreName]
+    if (coreInfo && coreInfo.corename) {
+      const raCoreConfigPath = `${raCoreConfigDir}${coreInfo.corename}/${coreInfo.corename}.opt`
+      this.writeConfigFile({ path: raCoreConfigPath, config: coreConfig })
+    }
   }
 
   private runMain() {

@@ -17,7 +17,7 @@ await Nostalgist.launch({ rom: 'anotherworld.gba', core: 'mgba' })
 
 ## Arguments
 + ### `options`
-  If the `options` is a `string`, it will be treated as `{ rom: options }` in fact.
+  If the `options` is a `string | File | { fileName: string; fileContent: Blob }`, it will be treated as `{ rom: options }` in fact.
 
   If the `options` is an `Object`, then it is the same as the `options` argument for `Nostalgist.launch`.
 

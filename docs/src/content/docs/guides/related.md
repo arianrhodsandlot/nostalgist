@@ -19,7 +19,7 @@ title: Related
 + [Retro Assembly](https://github.com/arianrhodsandlot/retro-assembly)
 
   A web app with which you can build a custom retro gaming library inside your browser.
-  Game states can be synced with cloud drivers like OneDrive/Google Drive/Dropbox
+  Game states can be synced with cloud storage services like OneDrive/Google Drive/Dropbox
 
   It's built on top of Nostalgist.js.
 

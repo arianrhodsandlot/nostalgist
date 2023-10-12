@@ -1,6 +1,5 @@
 import { systemCoreMap } from './constants'
 import { Emulator } from './emulator'
-import { http } from './http'
 import { getDefaultOptions } from './options'
 import type { EmulatorOptions } from './types/emulator-options'
 import type {
@@ -110,27 +109,27 @@ export class Nostalgist {
     return nostalgist
   }
 
-  static async gb(options: string | NostalgistLaunchRomOptions) {
+  static async gb(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gb', options)
   }
 
-  static async gba(options: string | NostalgistLaunchRomOptions) {
+  static async gba(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gba', options)
   }
 
-  static async gbc(options: string | NostalgistLaunchRomOptions) {
+  static async gbc(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gbc', options)
   }
 
-  static async megadrive(options: string | NostalgistLaunchRomOptions) {
+  static async megadrive(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('megadrive', options)
   }
 
-  static async nes(options: string | NostalgistLaunchRomOptions) {
+  static async nes(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('nes', options)
   }
 
-  static async snes(options: string | NostalgistLaunchRomOptions) {
+  static async snes(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('snes', options)
   }
 
@@ -138,8 +137,11 @@ export class Nostalgist {
     return systemCoreMap[system]
   }
 
-  private static async launchSystem(system: string, options: string | NostalgistLaunchRomOptions) {
-    const launchOptions = typeof options === 'string' ? { rom: options } : options
+  private static async launchSystem(system: string, options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
+    const launchOptions =
+      typeof options === 'string' || options instanceof File || ('fileName' in options && 'fileContent' in options)
+        ? { rom: options }
+        : options
     const core = Nostalgist.getCoreForSystem(system)
     return await Nostalgist.launch({ ...launchOptions, core })
   }
@@ -334,8 +336,8 @@ export class Nostalgist {
     const { size = 'auto', respondToGlobalEvents = true, waitForInteraction } = this.options
     const element = this.getElementOption()
     const style = this.getStyleOption()
-    const retroarch = this.getRetroarchOption()
-    const retroarchCore = this.getRetroarchCoreOption()
+    const retroarchConfig = this.getRetroarchOption()
+    const retroarchCoreConfig = this.getRetroarchCoreOption()
     const [core, rom, bios] = await Promise.all([this.getCoreOption(), this.getRomOption(), this.getBiosOption()])
     const emulatorOptions = {
       element,
@@ -345,8 +347,8 @@ export class Nostalgist {
       rom,
       bios,
       respondToGlobalEvents,
-      retroarch,
-      retroarchCore,
+      retroarchConfig,
+      retroarchCoreConfig,
       waitForInteraction,
     }
     this.emulatorOptions = emulatorOptions
@@ -411,10 +413,12 @@ export class Nostalgist {
 
     let { name, js, wasm } = coreDict
     if (typeof js === 'string') {
-      js = await http(js).text()
+      const response = await fetch(js)
+      js = await response.text()
     }
     if (typeof wasm === 'string') {
-      wasm = await http(wasm).arrayBuffer()
+      const response = await fetch(wasm)
+      wasm = await response.arrayBuffer()
     }
     return { name, js, wasm }
   }
@@ -435,7 +439,8 @@ export class Nostalgist {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {
         fileName = baseName(resolvedRom)
-        fileContent = await http(resolvedRom).blob()
+        const response = await fetch(resolvedRom)
+        fileContent = await response.blob()
       }
     } else {
       if (typeof file.fileName === 'string') {

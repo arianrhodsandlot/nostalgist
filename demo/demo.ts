@@ -22,6 +22,16 @@ async function launchNestopia() {
   })
 }
 
+async function launchFceummWithCoreConfig() {
+  nostalgist = await Nostalgist.launch({
+    core: 'fceumm',
+    rom: 'flappybird.nes',
+    retroarchCoreConfig: {
+      fceumm_turbo_enable: 'Both',
+    },
+  })
+}
+
 async function saveState() {
   state = await nostalgist.saveState()
 }
@@ -64,6 +74,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     megadrive,
     gbc,
     launchNestopia,
+    launchFceummWithCoreConfig,
     saveState,
     loadState,
     pause,

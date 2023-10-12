@@ -18,7 +18,7 @@
 
 Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles, like NES and Sega Genesis, within web browsers.
 
-## A quick glance
+## A Quick Glance
 <p align="center">
   <img src="docs/src/assets/console-demo.gif" alt="console demo" />
 </p>
@@ -56,11 +56,12 @@ Nostalgist.js is a JavaScript library that allows you to run emulators of retro 
     rom: 'flappybird.nes',
     retroarchConfig: {
       rewind_enable: true,
-    }
+    },
+    retroarchCore
   })
   ```
 
-  Related API: [`launch#retroarchConfig`](https://nostalgist.js.org/apis/launch#retroarchConfig)
+  Related API: [`launch#retroarchConfig`](https://nostalgist.js.org/apis/launch#retroarchconfig)
 + Access low level APIs of Emscripten
 
   ```js
@@ -101,7 +102,7 @@ Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
 + [Retro Assembly](https://github.com/arianrhodsandlot/retro-assembly)
 
   A web app with which you can build a custom retro gaming library inside your browser.
-  Game states can be synced with cloud drivers like OneDrive/Google Drive/Dropbox
+  Game states can be synced with cloud storage services like OneDrive/Google Drive/Dropbox
 
   It's built on top of Nostalgist.js.
 

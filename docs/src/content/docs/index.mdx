@@ -48,12 +48,15 @@ Nostalgist.js is a JavaScript library that allows you to run emulators of retro 
 
 ---
 
-## A quick glance
+## A Quick Glance
+Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles like NES and Sega Genesis, within web browsers.
+
 <p align="center">
   <Image class="console-demo-image" alt="console demo" src={consoleDemo} width="1324" height="532"></Image>
 </p>
 
-You can also open the DevTools of your browser and check out the Console tab, then type this code and press <kbd>Enter</kbd>. An NES emulator will appear in your browser like above (though it's not *Super Mario Bros.* 😐)!
+Open the DevTools of your browser and check out the Console tab, then type this code and press <kbd>Enter</kbd>, an NES emulator will appear in your browser like above (though it's not *Super Mario Bros.* 😐)!
+
 ```js
 const { Nostalgist } = await import('https://esm.run/nostalgist')
 await Nostalgist.nes('flappybird.nes')
@@ -61,6 +64,15 @@ await Nostalgist.nes('flappybird.nes')
 // await Nostalgist.megadrive('30yearsofnintendont.bin')
 // await Nostalgist.gba('eliminator.gba')
 ```
+
+<small>
+  Controls:
+  <span style="margin-right: 10px">D-Pad: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></span>
+  <span style="margin-right: 10px"><kbd>Start</kbd>: <kbd>Enter</kbd></span>
+  <span style="margin-right: 10px"><kbd>Select</kbd>: <kbd>Shift</kbd></span>
+  <span style="margin-right: 10px"><kbd>B</kbd>: <kbd>Z</kbd></span>
+  <span style="margin-right: 10px"><kbd>A</kbd>: <kbd>X</kbd></span>
+</small>
 
 ## Features
 <div>
