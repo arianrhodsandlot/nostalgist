@@ -72,6 +72,33 @@ export default defineConfig({
         PageTitle: './src/components/page-title.astro',
       },
       head: [
+        { tag: 'meta', attrs: { property: 'og:type', content: 'website' } },
+        { tag: 'meta', attrs: { property: 'og:url', content: 'https://nostalgist.js.org/' } },
+        { tag: 'meta', attrs: { property: 'og:title', content: 'Nostalgist.js' } },
+        {
+          tag: 'meta',
+          attrs: {
+            property: 'og:description',
+            content:
+              'Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.',
+          },
+        },
+        { tag: 'meta', attrs: { property: 'og:image', content: 'https://nostalgist.js.org/thumbnail.jpg' } },
+
+        { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
+        { tag: 'meta', attrs: { name: 'twitter:url', content: 'https://nostalgist.js.org/' } },
+        { tag: 'meta', attrs: { name: 'twitter:title', content: 'Nostalgist.js' } },
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'twitter:description',
+            content:
+              'Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.',
+          },
+        },
+        { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://nostalgist.js.org/thumbnail.jpg' } },
+        { tag: 'meta', attrs: { name: 'twitter:site', content: '@arianrhodsand' } },
+        { tag: 'meta', attrs: { name: 'twitter:creator', content: '@arianrhodsand' } },
         {
           tag: 'script',
           attrs: {
