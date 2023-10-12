@@ -83,7 +83,7 @@ export default defineConfig({
               'Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.',
           },
         },
-        { tag: 'meta', attrs: { property: 'og:image', content: 'https://nostalgist.js.org/thumbnail.jpg' } },
+        { tag: 'meta', attrs: { property: 'og:image', content: 'https://nostalgist.js.org/thumbnail.png' } },
 
         { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
         { tag: 'meta', attrs: { name: 'twitter:url', content: 'https://nostalgist.js.org/' } },
@@ -96,7 +96,7 @@ export default defineConfig({
               'Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.',
           },
         },
-        { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://nostalgist.js.org/thumbnail.jpg' } },
+        { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://nostalgist.js.org/thumbnail.png' } },
         { tag: 'meta', attrs: { name: 'twitter:site', content: '@arianrhodsand' } },
         { tag: 'meta', attrs: { name: 'twitter:creator', content: '@arianrhodsand' } },
         {
