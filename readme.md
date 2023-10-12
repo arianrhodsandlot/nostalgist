@@ -81,7 +81,7 @@ Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online example
 ## Motivation
 Nostalgist.js is built on top of RetroArch Emscripten builds. We love RetroArch to run in browsers because that's portable and convenient. Although there is already an official instance, [RetroArch web player](https://web.libretro.com/), and some third-party ones like [webretro](https://binbashbanana.github.io/webretro/), it's still not that easy to launch RetroArch in a browser programmatically.
 
-The purpose of Nostalgist.js is to simplify the process of launching an emulator  to play a game, via RetroArch, in browsers. Given a ROM and a core, the game should be launched without any additional configuration.
+The purpose of Nostalgist.js is to simplify the process of launching an emulator to play a game, via RetroArch, in browsers. Given a ROM and a core, the game should be launched without any additional configuration.
 
 ## APIs
 Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
@@ -120,7 +120,7 @@ Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
 
 
 ## Caveat
-Nostalgist.js **DO NOT** privide any pirated content, like copyrighted ROM files or BIOS files.
+Nostalgist.js **DOES NOT** provide any pirated content, like copyrighted ROM files or BIOS files.
 
 ## License
 [MIT](license)
