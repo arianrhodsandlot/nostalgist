@@ -6,9 +6,3 @@
 .container {
   padding-bottom: 10px 0;
 }
-
-canvas {
-  width: 800px!important;
-  height: 600px!important;
-  position: static!important;
-}

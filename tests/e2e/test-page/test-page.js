@@ -49,6 +49,14 @@ async function resize() {
   await nostalgist.resize(400, 400)
 }
 
+Nostalgist.configure({
+  style: {
+    width: '800px',
+    height: '600px',
+    position: 'static',
+  },
+})
+
 document.body.addEventListener('click', async function listener({ target }) {
   if (!(target instanceof HTMLButtonElement)) {
     return
