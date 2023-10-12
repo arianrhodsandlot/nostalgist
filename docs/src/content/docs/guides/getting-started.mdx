@@ -5,9 +5,30 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 
 ## Try it in Devtools in this site
 You can open the Devtools here and try Nostalgist.js with global variable `Nostalgist`. No extra setup is required.
+
 ```js
+// launch an NES game
 await Nostalgist.nes('flappybird.nes')
+
+// launch a Sega Genesis game
+await Nostalgist.megadrive('30yearsofnintendont.bin')
+
+// launch a GBA game
+await Nostalgist.gba('eliminator.gba')
 ```
+
+:::tip
+<small>
+  Controls:
+  <span style="margin-right: 10px">D-Pad: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></span>
+  <span style="margin-right: 10px"><kbd>Start</kbd>: <kbd>Enter</kbd></span>
+  <span style="margin-right: 10px"><kbd>Select</kbd>: <kbd>Shift</kbd></span>
+  <span style="margin-right: 10px"><kbd>B</kbd>: <kbd>Z</kbd></span>
+  <span style="margin-right: 10px"><kbd>A</kbd>: <kbd>X</kbd></span>
+  <span style="margin-right: 10px"><kbd>Y</kbd>: <kbd>A</kbd></span>
+  <span style="margin-right: 10px"><kbd>X</kbd>: <kbd>S</kbd></span>
+</small>
+:::
 
 ## Try it in online editors
 If you want to take a quick look at Nostalgist.js, it's recommended to use some online editor to give it a try.
