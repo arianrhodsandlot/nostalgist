@@ -334,8 +334,8 @@ export class Nostalgist {
     const { size = 'auto', respondToGlobalEvents = true, waitForInteraction } = this.options
     const element = this.getElementOption()
     const style = this.getStyleOption()
-    const retroarch = this.getRetroarchOption()
-    const retroarchCore = this.getRetroarchCoreOption()
+    const retroarchConfig = this.getRetroarchOption()
+    const retroarchCoreConfig = this.getRetroarchCoreOption()
     const [core, rom, bios] = await Promise.all([this.getCoreOption(), this.getRomOption(), this.getBiosOption()])
     const emulatorOptions = {
       element,
@@ -345,8 +345,8 @@ export class Nostalgist {
       rom,
       bios,
       respondToGlobalEvents,
-      retroarch,
-      retroarchCore,
+      retroarchConfig,
+      retroarchCoreConfig,
       waitForInteraction,
     }
     this.emulatorOptions = emulatorOptions

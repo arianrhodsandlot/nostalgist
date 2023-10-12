@@ -56,11 +56,12 @@ Nostalgist.js is a JavaScript library that allows you to run emulators of retro 
     rom: 'flappybird.nes',
     retroarchConfig: {
       rewind_enable: true,
-    }
+    },
+    retroarchCore
   })
   ```
 
-  Related API: [`launch#retroarchConfig`](https://nostalgist.js.org/apis/launch#retroarchConfig)
+  Related API: [`launch#retroarchConfig`](https://nostalgist.js.org/apis/launch#retroarchconfig)
 + Access low level APIs of Emscripten
 
   ```js

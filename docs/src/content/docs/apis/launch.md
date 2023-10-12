@@ -191,6 +191,22 @@ const nostalgist = await Nostalgist.launch({
 
     Keep in mind that not all options can take effects since we are launching RetroArch in a browser, not a native environment. And setting `stdin_cmd_enable` to `false` can cause Nostalgist.js saving or loading broken.
 
+  + #### `retroarchCoreConfig`
+    **type:** `Object`
+
+    The content you want to specify in the core option file.
+
+    For example,
+    ```js
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+      retroarchCoreConfig: {
+        fceumm_turbo_enable: 'Both',
+      },
+    })
+    ```
+
   + #### `runEmulatorManually`
     **type:** `boolean` **default:** `false`
 

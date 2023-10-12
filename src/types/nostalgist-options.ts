@@ -145,9 +145,10 @@ export interface NostalgistOptions {
   retroarchConfig: RetroArchConfig
 
   /**
-   * WIP, do not use this property
+   * RetroArch core config.
+   * Not all options can make effects in browser.
    */
-  retroarchCoreConfig: any
+  retroarchCoreConfig: Record<string, string>
 
   /**
    * If this is set to true, emulator will not run automatically.

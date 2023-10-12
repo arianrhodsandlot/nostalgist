@@ -27,7 +27,17 @@ export interface EmulatorOptions {
 
   respondToGlobalEvents: boolean
 
-  retroarch: RetroArchConfig
-  retroarchCore: any
+  /**
+   * RetroArch config.
+   * Not all options can make effects in browser.
+   */
+  retroarchConfig: RetroArchConfig
+
+  /**
+   * RetroArch core config.
+   * Not all options can make effects in browser.
+   */
+  retroarchCoreConfig: Record<string, string>
+
   waitForInteraction: ((params: { done: () => void }) => void) | undefined
 }
