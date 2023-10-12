@@ -1,6 +1,5 @@
 import { systemCoreMap } from './constants'
 import { Emulator } from './emulator'
-import { http } from './http'
 import { getDefaultOptions } from './options'
 import type { EmulatorOptions } from './types/emulator-options'
 import type {
@@ -411,10 +410,12 @@ export class Nostalgist {
 
     let { name, js, wasm } = coreDict
     if (typeof js === 'string') {
-      js = await http(js).text()
+      const response = await fetch(js)
+      js = await response.text()
     }
     if (typeof wasm === 'string') {
-      wasm = await http(wasm).arrayBuffer()
+      const response = await fetch(wasm)
+      wasm = await response.arrayBuffer()
     }
     return { name, js, wasm }
   }
@@ -435,7 +436,8 @@ export class Nostalgist {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {
         fileName = baseName(resolvedRom)
-        fileContent = await http(resolvedRom).blob()
+        const response = await fetch(resolvedRom)
+        fileContent = await response.blob()
       }
     } else {
       if (typeof file.fileName === 'string') {
