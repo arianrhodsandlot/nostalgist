@@ -118,11 +118,14 @@ await Nostalgist.nes('flappybird.nes')
     import { Nostalgist } from 'nostalgist'
 
     const nostalgist = await Nostalgist.launch({
-      core: 'nestopia',
+      core: 'fceumm',
       rom: 'flappybird.nes',
       retroarchConfig: {
         rewind_enable: true,
-      }
+      },
+      retroarchCoreConfig: {
+        fceumm_turbo_enable: 'Both',
+      },
     })
     ```
     </div>
