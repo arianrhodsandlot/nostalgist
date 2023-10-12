@@ -2,6 +2,16 @@ name: test
 on:
   push:
     branches-ignore: docs
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.mdx'
+      - 'docs/**/*'
+  pull_request:
+    branches: main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.mdx'
+      - 'docs/**/*'
 jobs:
   test:
     uses: ./.github/workflows/test-jobs.yaml
