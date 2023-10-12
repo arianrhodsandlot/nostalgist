@@ -6,21 +6,17 @@ const currentDir = fileURLToPath(import.meta.url)
 
 const esBuildOptions = defineConfig({
   build: {
+    minify: false,
     lib: {
       entry: path.resolve(currentDir, '../../src/index.ts'),
       formats: ['es'],
-    },
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      minify: true,
-      minifyWhitespace: true,
     },
   },
 })
 
 const umdBuildOptions = defineConfig({
   build: {
+    minify: false,
     lib: {
       entry: path.resolve(currentDir, '../../src/index-umd.ts'),
       formats: ['umd'],
