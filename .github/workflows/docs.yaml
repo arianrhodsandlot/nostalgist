@@ -2,7 +2,9 @@ name: docs
 
 on:
   push:
-    branches: [docs]
+    branches: [main]
+    paths:
+      - 'docs/**/*'
 
 permissions:
   contents: read
