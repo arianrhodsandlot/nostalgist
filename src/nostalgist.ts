@@ -383,25 +383,31 @@ export class Nostalgist {
 
   private getStyleOption() {
     const { element, style } = this.options
-    const defaultStyle: Partial<CSSStyleDeclaration> = {
+    const defaultAppearanceStyle: Partial<CSSStyleDeclaration> = {
+      backgroundColor: 'black',
+      imageRendering: 'pixelated',
+    }
+
+    if (element) {
+      return {
+        ...defaultAppearanceStyle,
+        ...style,
+      }
+    }
+
+    const defaultLayoutStyle: Partial<CSSStyleDeclaration> = {
       position: 'fixed',
       top: '0',
       left: '0',
       width: '100%',
       height: '100%',
-      backgroundColor: 'black',
       zIndex: '1',
     }
-    if (!element) {
-      return {
-        ...defaultStyle,
-        ...style,
-      }
+    return {
+      ...defaultLayoutStyle,
+      ...defaultAppearanceStyle,
+      ...style,
     }
-    if (style) {
-      return style
-    }
-    return {}
   }
 
   private async getCoreOption() {

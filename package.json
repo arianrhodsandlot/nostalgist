@@ -41,6 +41,7 @@
     "docs:dev": "astro dev --root docs",
     "docs:build": "astro build --root docs",
     "lint": "eslint src",
+    "test": "vitest run -c tests/integration/vitest.config && pnpm build && pnpm test:e2e",
     "test:e2e": "playwright test -c tests/e2e",
     "test:integration": "vitest -c tests/integration/vitest.config"
   },
