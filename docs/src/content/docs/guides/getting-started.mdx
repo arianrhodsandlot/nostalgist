@@ -3,8 +3,8 @@ title: Getting Started
 ---
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 
-## Try it in Devtools in this site
-You can open the Devtools here and try Nostalgist.js with global variable `Nostalgist`. No extra setup is required.
+## Try it in Devtools of your browser in this website
+You can open the Devtools here(Ctrl/⌘ + Shift + J) and try Nostalgist.js with global variable `Nostalgist`. No extra setup is required.
 
 ```js
 // launch an NES game
@@ -15,6 +15,9 @@ await Nostalgist.megadrive('30yearsofnintendont.bin')
 
 // launch a GBA game
 await Nostalgist.gba('eliminator.gba')
+
+// or choose a ROM file from your disk
+await Nostalgist.nes(await showOpenFilePicker().then(([fileHandle]) => fileHandle.getFile()))
 ```
 
 :::tip
