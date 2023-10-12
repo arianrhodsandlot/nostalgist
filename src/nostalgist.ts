@@ -109,27 +109,27 @@ export class Nostalgist {
     return nostalgist
   }
 
-  static async gb(options: string | NostalgistLaunchRomOptions) {
+  static async gb(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gb', options)
   }
 
-  static async gba(options: string | NostalgistLaunchRomOptions) {
+  static async gba(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gba', options)
   }
 
-  static async gbc(options: string | NostalgistLaunchRomOptions) {
+  static async gbc(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gbc', options)
   }
 
-  static async megadrive(options: string | NostalgistLaunchRomOptions) {
+  static async megadrive(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('megadrive', options)
   }
 
-  static async nes(options: string | NostalgistLaunchRomOptions) {
+  static async nes(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('nes', options)
   }
 
-  static async snes(options: string | NostalgistLaunchRomOptions) {
+  static async snes(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('snes', options)
   }
 
@@ -137,8 +137,11 @@ export class Nostalgist {
     return systemCoreMap[system]
   }
 
-  private static async launchSystem(system: string, options: string | NostalgistLaunchRomOptions) {
-    const launchOptions = typeof options === 'string' ? { rom: options } : options
+  private static async launchSystem(system: string, options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
+    const launchOptions =
+      typeof options === 'string' || options instanceof File || ('fileName' in options && 'fileContent' in options)
+        ? { rom: options }
+        : options
     const core = Nostalgist.getCoreForSystem(system)
     return await Nostalgist.launch({ ...launchOptions, core })
   }
