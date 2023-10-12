@@ -23,6 +23,9 @@ Nostalgist.js is a JavaScript library that allows you to run emulators of retro 
   <img src="docs/src/assets/console-demo.gif" alt="console demo" />
 </p>
 
+## Website
+Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online examples and documentation.
+
 ## Features
 + Launch a retro game with RetroArch emulator in a browser
 
@@ -120,4 +123,4 @@ Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
 Nostalgist.js **DO NOT** privide any pirated content, like copyrighted ROM files or BIOS files.
 
 ## License
-MIT
+[MIT](license)
