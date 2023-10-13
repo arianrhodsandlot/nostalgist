@@ -103,8 +103,24 @@ export default defineConfig({
           tag: 'script',
           attrs: {
             src: 'https://unpkg.com/nostalgist@0.3.1/dist/nostalgist.umd.js',
-            defer: true,
+            async: true,
           },
+        },
+        {
+          tag: 'script',
+          attrs: {
+            src: 'https://www.googletagmanager.com/gtag/js?id=G-E6387HS8V0',
+            async: true,
+          },
+        },
+        {
+          tag: 'script',
+          content: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-E6387HS8V0');
+          `.trim()
         },
       ],
     }),
