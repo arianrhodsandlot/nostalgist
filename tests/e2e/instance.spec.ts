@@ -81,4 +81,30 @@ test.describe('instance methods', () => {
     await page.waitForTimeout(1000)
     await expect(canvas).not.toHaveScreenshot('pause-and-resume.png')
   })
+
+  test.only('press', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('megadrive', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(500)
+
+    await expect(canvas).toHaveScreenshot('press-pristine.png')
+
+    // show the game info
+    await page.getByText('pressA', { exact: true }).click()
+    await page.waitForTimeout(100)
+    await expect(canvas).toHaveScreenshot('press-a.png')
+
+    // hide the game info
+    await page.getByText('pressA', { exact: true }).click()
+    await page.waitForTimeout(100)
+    await expect(canvas).toHaveScreenshot('press-pristine.png')
+
+    // enter the game
+    await page.getByText('pressStart', { exact: true }).click()
+    await page.waitForTimeout(100)
+    await expect(canvas).toHaveScreenshot('press-start.png')
+  })
 })
