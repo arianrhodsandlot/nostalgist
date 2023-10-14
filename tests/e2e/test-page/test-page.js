@@ -62,6 +62,7 @@ Nostalgist.configure({
     width: '800px',
     height: '600px',
     position: 'static',
+    backgroundColor: 'transparent',
   },
 })
 
