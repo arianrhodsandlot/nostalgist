@@ -1,4 +1,4 @@
-import { systemCoreMap } from './constants'
+import { systemCoreMap } from './constants/system'
 import { Emulator } from './emulator'
 import { getDefaultOptions } from './options'
 import type { EmulatorOptions } from './types/emulator-options'
@@ -318,6 +318,27 @@ export class Nostalgist {
    */
   resize(size: { width: number; height: number }) {
     return this.getEmulator().resize(size)
+  }
+
+  pressDown(options: string | { button: string; player?: number }) {
+    if (typeof options === 'string') {
+      return this.getEmulator().pressDown(options, 1)
+    }
+    return this.getEmulator().pressDown(options.button, options.player)
+  }
+
+  pressUp(options: string | { button: string; player?: number }) {
+    if (typeof options === 'string') {
+      return this.getEmulator().pressUp(options, 1)
+    }
+    return this.getEmulator().pressUp(options.button, options.player)
+  }
+
+  press(options: string | { button: string; player?: number; time?: number }) {
+    if (typeof options === 'string') {
+      return this.getEmulator().press(options, 1, 100)
+    }
+    return this.getEmulator().press(options.button, options.player, options.time)
   }
 
   /**

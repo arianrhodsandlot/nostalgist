@@ -16,6 +16,7 @@ export async function blobToBuffer(blob: Blob) {
   const arrayBuffer = await blob.arrayBuffer()
   return Buffer.from(arrayBuffer)
 }
+
 export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclaration>) {
   if (!element) {
     return
@@ -27,4 +28,10 @@ export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclara
       element.style.removeProperty(rule)
     }
   }
+}
+
+export function delay(time: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, time)
+  })
 }

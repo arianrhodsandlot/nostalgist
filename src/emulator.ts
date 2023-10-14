@@ -1,19 +1,15 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import type { Buffer } from 'buffer/index'
 import ini from 'ini'
-import { coreInfoMap } from './constants'
+import { coreInfoMap } from './constants/core-info'
+import { keyboardCodeMap } from './constants/keyboard-code-map'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
-import { blobToBuffer, updateStyle } from './utils'
+import { blobToBuffer, delay, updateStyle } from './utils'
 
 const encoder = new TextEncoder()
 
-function delay(time: number) {
-  return new Promise<void>((resolve) => {
-    setTimeout(resolve, time)
-  })
-}
 const raUserdataDir = '/home/web_user/retroarch/userdata/'
 const raCoreConfigDir = `${raUserdataDir}config/`
 const raConfigPath = `${raUserdataDir}retroarch.cfg`
@@ -159,6 +155,27 @@ export class Emulator {
     }
   }
 
+  pressDown(button: string, player = 1) {
+    const code = this.getKeyboardCode(button, player)
+    if (code) {
+      this.keyboardDown(code)
+    }
+  }
+
+  pressUp(button: string, player = 1) {
+    const code = this.getKeyboardCode(button, player)
+    if (code) {
+      this.keyboardUp(code)
+    }
+  }
+
+  async press(button: string, player = 1, time = 100) {
+    const code = this.getKeyboardCode(button, player)
+    if (code) {
+      await this.keyboardPress(code, time)
+    }
+  }
+
   private getElementSize() {
     const { element, size } = this.options
     return !size || size === 'auto' ? { width: element.offsetWidth, height: element.offsetHeight } : size
@@ -220,7 +237,10 @@ export class Emulator {
     }
 
     const jsContent = js.startsWith('var Module')
-      ? `export function getEmscripten({ Module }) {${js};return { PATH, FS, ERRNO_CODES, JSEvents, ENV, Module, exit: _emscripten_force_exit }}`
+      ? `export function getEmscripten({ Module }) {
+          ${js};
+          return { PATH, FS, ERRNO_CODES, JSEvents, ENV, Module, exit: _emscripten_force_exit
+        }}`
       : js
     const jsBlob = new Blob([jsContent], { type: 'application/javascript' })
     const jsBlobUrl = URL.createObjectURL(jsBlob)
@@ -244,6 +264,7 @@ export class Emulator {
     const { Module } = this.getEmscripten()
     await Promise.all([await this.setupFileSystem(), await Module.monitorRunDependencies()])
   }
+
   private sendCommand(msg: RetroArchCommand) {
     const bytes = encoder.encode(`${msg}\n`)
     this.messageQueue.push([bytes, 0])
@@ -368,5 +389,62 @@ export class Emulator {
       FS.unlink(this.stateFileName)
       FS.unlink(this.stateThumbnailFileName)
     } catch {}
+  }
+
+  private getCurrentRetroarchConfig() {
+    const { FS } = this.getEmscripten()
+    const configContent = FS.readFile(raConfigPath, { encoding: 'utf8' })
+    return ini.parse(configContent)
+  }
+
+  private fireKeyboardEvent(type: 'keydown' | 'keyup', code: string) {
+    const { JSEvents } = this.emscripten
+    for (const { eventTypeString, eventListenerFunc } of JSEvents.eventHandlers) {
+      if (eventTypeString === type) {
+        try {
+          eventListenerFunc({ code, target: this.options.element })
+        } catch {}
+      }
+    }
+  }
+
+  private getKeyboardCode(button: string, player = 1) {
+    const config = this.getCurrentRetroarchConfig()
+    const configName = `input_player${player}_${button}`
+    const key: string = config[configName]
+    if (!key || key === 'nul') {
+      return
+    }
+    const { length } = key
+    // single letters
+    if (length === 1) {
+      return `Key${key.toUpperCase()}`
+    }
+    // f1, f2, f3...
+    if (key[0] === 'f' && (length === 2 || length === 3)) {
+      return key.toUpperCase()
+    }
+    // num1, num2, num3...
+    if (length === 4 && key.startsWith('num')) {
+      return `Numpad${key.at(-1)}`
+    }
+    if (length === 7 && key.startsWith('keypad')) {
+      return `Digit${key.at(-1)}`
+    }
+    return keyboardCodeMap[key] || ''
+  }
+
+  private keyboardUp(code: string) {
+    this.fireKeyboardEvent('keyup', code)
+  }
+
+  private keyboardDown(code: string) {
+    this.fireKeyboardEvent('keydown', code)
+  }
+
+  private async keyboardPress(code: string, time = 100) {
+    this.keyboardDown(code)
+    await delay(time)
+    this.keyboardUp(code)
   }
 }
