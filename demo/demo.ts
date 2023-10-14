@@ -32,6 +32,13 @@ async function launchFceummWithCoreConfig() {
   })
 }
 
+async function launchCustomRom() {
+  nostalgist = await Nostalgist.launch({
+    core: 'fceumm',
+    rom: await showOpenFilePicker().then(([fileHandle]) => fileHandle.getFile()),
+  })
+}
+
 async function saveState() {
   state = await nostalgist.saveState()
 }
@@ -60,9 +67,12 @@ function exit() {
   nostalgist.exit({ removeCanvas: false })
 }
 
+function getCurrentNostalgist() {
+  return nostalgist
+}
+
 Nostalgist.configure({
   style: { width: '800px', height: '600px', position: 'static' },
-  respondToGlobalEvents: false,
 })
 
 document.body.addEventListener('click', async function listener({ target }) {
@@ -75,6 +85,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     gbc,
     launchNestopia,
     launchFceummWithCoreConfig,
+    launchCustomRom,
     saveState,
     loadState,
     pause,
@@ -90,3 +101,8 @@ document.body.addEventListener('click', async function listener({ target }) {
     target.blur()
   }
 })
+
+// @ts-expect-error debug code
+window.Nostalgist = Nostalgist
+// @ts-expect-error debug code
+window.getCurrentNostalgist = getCurrentNostalgist
