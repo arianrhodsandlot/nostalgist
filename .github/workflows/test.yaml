@@ -1,7 +1,7 @@
 name: test
 on:
   push:
-    branches-ignore: docs
+    branches: main
     paths-ignore:
       - '**/*.md'
       - '**/*.mdx'
