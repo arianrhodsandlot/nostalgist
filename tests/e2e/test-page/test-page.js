@@ -49,6 +49,14 @@ async function resize() {
   await nostalgist.resize(400, 400)
 }
 
+async function pressA() {
+  await nostalgist.press('a')
+}
+
+async function pressStart() {
+  await nostalgist.press('start')
+}
+
 Nostalgist.configure({
   style: {
     width: '800px',
@@ -73,6 +81,8 @@ document.body.addEventListener('click', async function listener({ target }) {
     resume,
     restart,
     resize,
+    pressA,
+    pressStart,
   }
   const textContent = target.textContent || ''
   if (textContent in handlers) {
