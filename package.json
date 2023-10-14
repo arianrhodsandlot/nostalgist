@@ -38,7 +38,7 @@
   "scripts": {
     "build": "tsx scripts/build && tsc",
     "dev": "vite demo",
-    "dev-e2e": "playwright test -c tests/e2e --ui",
+    "dev:e2e": "playwright test -c tests/e2e --ui",
     "docs:dev": "astro dev --root docs",
     "docs:build": "astro build --root docs",
     "lint": "eslint src",
