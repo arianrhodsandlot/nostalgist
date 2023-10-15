@@ -164,22 +164,38 @@ export class Emulator {
     return !size || size === 'auto' ? { width: element.offsetWidth, height: element.offsetHeight } : size
   }
 
+  private async writeFileToDirectory({
+    fileName,
+    fileContent,
+    directory,
+  }: {
+    fileName: string
+    fileContent: Blob
+    directory: string
+  }) {
+    const { FS } = this.getEmscripten()
+    const buffer = await blobToBuffer(fileContent)
+    FS.createDataFile('/', fileName, buffer, true, false)
+    const encoding = 'binary'
+    const data = FS.readFile(fileName, { encoding })
+    FS.writeFile(`${directory}${fileName}`, data, { encoding })
+    FS.unlink(fileName)
+  }
+
   private async setupFileSystem() {
     const { Module, FS, PATH, ERRNO_CODES } = this.getEmscripten()
+    const { rom, bios } = this.options
 
-    Module.canvas = this.options.element
-    Module.preRun = [
-      () =>
-        FS.init(() => {
-          return this.stdin()
-        }),
-    ]
-
-    const emscriptenFS = await createEmscriptenFS({ FS, PATH, ERRNO_CODES })
+    const emscriptenFS = createEmscriptenFS({ FS, PATH, ERRNO_CODES })
     FS.mount(emscriptenFS, { root: '/home' }, '/home')
 
-    if (this.options.rom.length > 0) {
-      FS.mkdirTree(`${raUserdataDir}content/`)
+    const romDirectory = `${raUserdataDir}content/`
+    if (rom.length > 0) {
+      FS.mkdirTree(romDirectory)
+    }
+    const biosDirectory = `${raUserdataDir}system/`
+    if (bios.length > 0) {
+      FS.mkdirTree(biosDirectory)
     }
 
     // a hack used for waiting for wasm's instantiation.
@@ -191,29 +207,15 @@ export class Emulator {
       waitTime += 5
     }
 
-    await Promise.all(
-      this.options.rom.map(async ({ fileName, fileContent }) => {
-        const buffer = await blobToBuffer(fileContent)
-        FS.createDataFile('/', fileName, buffer, true, false)
-        const data = FS.readFile(fileName, { encoding: 'binary' })
-        FS.writeFile(`${raUserdataDir}content/${fileName}`, data, { encoding: 'binary' })
-        FS.unlink(fileName)
-      }),
-    )
-
-    await Promise.all(
-      this.options.bios.map(async ({ fileName, fileContent }) => {
-        const buffer = await blobToBuffer(fileContent)
-        FS.createDataFile('/', fileName, buffer, true, false)
-        const data = FS.readFile(fileName, { encoding: 'binary' })
-        FS.writeFile(`${raUserdataDir}system/${fileName}`, data, { encoding: 'binary' })
-        FS.unlink(fileName)
-      }),
-    )
+    await Promise.all([
+      ...rom.map((file) => this.writeFileToDirectory({ ...file, directory: romDirectory })),
+      ...bios.map((file) => this.writeFileToDirectory({ ...file, directory: biosDirectory })),
+    ])
   }
 
   private async setupEmscripten() {
-    const { js, wasm } = this.options.core
+    const { element, core } = this.options
+    const { js, wasm } = core
     if (typeof window === 'object') {
       // @ts-expect-error for retroarch fast forward
       window.setImmediate ??= window.setTimeout
@@ -238,12 +240,18 @@ export class Emulator {
     })()
     URL.revokeObjectURL(jsBlobUrl)
 
-    const initialModule = getEmscriptenModuleOverrides({ wasmBinary: wasm })
+    const initialModule = getEmscriptenModuleOverrides({
+      wasmBinary: wasm,
+      canvas: element,
+      preRun: [],
+    })
     this.emscripten = getEmscripten({ Module: initialModule })
 
-    const { Module } = this.getEmscripten()
+    const { Module, FS } = this.getEmscripten()
+    initialModule.preRun.push(() => FS.init(() => this.stdin()))
     await Promise.all([await this.setupFileSystem(), await Module.monitorRunDependencies()])
   }
+
   private sendCommand(msg: RetroArchCommand) {
     const bytes = encoder.encode(`${msg}\n`)
     this.messageQueue.push([bytes, 0])
