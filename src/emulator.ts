@@ -1,11 +1,10 @@
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import type { Buffer } from 'buffer/index'
 import ini from 'ini'
 import { coreInfoMap } from './constants/core-info'
 import { keyboardCodeMap } from './constants/keyboard-code-map'
 import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
+import type { RetroArchEmscriptenModule } from './types/retroarch-emscripten'
 import { blobToBuffer, delay, updateStyle } from './utils'
 
 const encoder = new TextEncoder()
@@ -16,8 +15,17 @@ const raConfigPath = `${raUserdataDir}retroarch.cfg`
 
 type GameStatus = 'initial' | 'paused' | 'running'
 
+interface EmulatorEmscripten {
+  Module: RetroArchEmscriptenModule
+  FS: any
+  exit: (code: number) => void
+  JSEvents: any
+  PATH: any
+  ERRNO_CODES: any
+}
+
 export class Emulator {
-  emscripten: any
+  emscripten: EmulatorEmscripten | undefined
   private options: EmulatorOptions
   private messageQueue: [Uint8Array, number][] = []
   private gameStatus: GameStatus = 'initial'
@@ -268,7 +276,7 @@ export class Emulator {
     this.emscripten = getEmscripten({ Module: initialModule })
 
     const { Module, FS } = this.getEmscripten()
-    initialModule.preRun.push(() => FS.init(() => this.stdin()))
+    initialModule.preRun?.push(() => FS.init(() => this.stdin()))
     await Promise.all([await this.setupFileSystem(), await Module.monitorRunDependencies()])
   }
 
@@ -405,7 +413,7 @@ export class Emulator {
   }
 
   private fireKeyboardEvent(type: 'keydown' | 'keyup', code: string) {
-    const { JSEvents } = this.emscripten
+    const { JSEvents } = this.getEmscripten()
     for (const { eventTypeString, eventListenerFunc } of JSEvents.eventHandlers) {
       if (eventTypeString === type) {
         try {

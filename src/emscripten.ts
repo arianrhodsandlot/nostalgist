@@ -1,27 +1,28 @@
 import { EmscriptenFS, FileSystem, initialize } from 'browserfs'
+import type { RetroArchEmscriptenModuleOptions } from './types/retroarch-emscripten'
 
-const userdataDir = '/home/web_user/retroarch/userdata'
+const raUserdataDir = '/home/web_user/retroarch/userdata'
 
 export function createEmscriptenFS({ FS, PATH, ERRNO_CODES }: any) {
   const inMemoryFS = new FileSystem.InMemory()
   const mountableFS = new FileSystem.MountableFileSystem()
   try {
-    mountableFS.umount(userdataDir)
+    mountableFS.umount(raUserdataDir)
   } catch {}
-  mountableFS.mount(userdataDir, inMemoryFS)
+  mountableFS.mount(raUserdataDir, inMemoryFS)
 
   initialize(mountableFS)
 
   return new EmscriptenFS(FS, PATH, ERRNO_CODES)
 }
 
-export function getEmscriptenModuleOverrides(overrides: any) {
+export function getEmscriptenModuleOverrides(overrides: RetroArchEmscriptenModuleOptions) {
   let resolveRunDependenciesPromise: () => void
   const runDependenciesPromise = new Promise<void>((resolve) => {
     resolveRunDependenciesPromise = resolve
   })
 
-  return {
+  const emscriptenModuleOverrides: RetroArchEmscriptenModuleOptions = {
     noInitialRun: true,
     noExitRuntime: false,
 
@@ -33,12 +34,6 @@ export function getEmscriptenModuleOverrides(overrides: any) {
       console.error(...args)
     },
 
-    quit(status: unknown, toThrow: unknown) {
-      if (status) {
-        console.info(status, toThrow)
-      }
-    },
-
     async monitorRunDependencies(left: number) {
       if (left === 0) {
         resolveRunDependenciesPromise()
@@ -47,4 +42,5 @@ export function getEmscriptenModuleOverrides(overrides: any) {
     },
     ...overrides,
   }
+  return emscriptenModuleOverrides
 }

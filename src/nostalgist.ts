@@ -10,6 +10,7 @@ import type {
   NostalgistOptionsPartial,
   NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
+import { vendors } from './vendors'
 
 function baseName(url: string) {
   let name = url.split('/').pop() || ''
@@ -19,6 +20,7 @@ function baseName(url: string) {
 
 export class Nostalgist {
   static Nostalgist = Nostalgist
+  static vendors = vendors
 
   private static globalOptions = getDefaultOptions()
 
@@ -171,12 +173,14 @@ export class Nostalgist {
 
   getEmscriptenModule() {
     const emulator = this.getEmulator()
-    return emulator.emscripten.Module
+    const emscripten = emulator.getEmscripten()
+    return emscripten.Module
   }
 
   getEmscriptenFS() {
     const emulator = this.getEmulator()
-    return emulator.emscripten.FS
+    const emscripten = emulator.getEmscripten()
+    return emscripten.FS
   }
 
   getOptions() {
