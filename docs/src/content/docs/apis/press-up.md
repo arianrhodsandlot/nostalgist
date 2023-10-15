@@ -1,5 +1,5 @@
 ---
-title: press up
+title: pressUp
 ---
 
 Release a button programmatically.
@@ -54,3 +54,4 @@ await nostalgist.pressUp({ button: 'a', player: 2 }) // press the button "a" on 
       /* ...other options */
     })
     ```
+    Because we are using these key bindings to simulate the control.

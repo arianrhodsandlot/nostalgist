@@ -82,7 +82,7 @@ test.describe('instance methods', () => {
     await expect(canvas).not.toHaveScreenshot('pause-and-resume.png')
   })
 
-  test.only('press', async ({ page }) => {
+  test('press', async ({ page }) => {
     const canvas = page.locator('#canvas')
     await expect(canvas).not.toBeAttached()
 
