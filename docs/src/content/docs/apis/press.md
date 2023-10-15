@@ -4,7 +4,7 @@ title: press
 
 Press a button and then release it programmatically. This is a shortcut for a combination of [`pressDown`](/apis/press-down) and [`pressUp`](/apis/press-up).
 
-Analog Joysticks is not supported by now.
+Analog Joysticks are not supported by now.
 
 ## Usage
 ```js
@@ -31,7 +31,7 @@ await nostalgist.press({ button: 'a', player: 2, time: 200 }) // press the butto
 
   + #### `button`
     **type:** `string`
-    The button you want to press. Can be: `up`,`down`,`left`,`right`,`select`,`start`,`a`,`b`,`x`,`y`.
+    The button you want to press. Can be: `up`,`down`,`left`,`right`,`select`,`start`,`a`,`b`,`x`,`y`,`l`,`l2`,`l3`,`r`,`r2`,`r3`.
 
     The 'a', 'b', 'x', 'y' buttons here are using the SNES layout:
     > <pre><code> x<br>y a<br> b</code></pre>

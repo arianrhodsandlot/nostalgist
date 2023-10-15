@@ -4,7 +4,7 @@ title: pressDown
 
 Press a button programmatically.
 
-Analog Joysticks is not supported by now.
+Analog Joysticks are not supported by now.
 
 ## Usage
 ```js
@@ -29,7 +29,7 @@ await nostalgist.pressDown({ button: 'a', player: 2 }) // press the button "a" o
 
   + #### `button`
     **type:** `string`
-    The button you want to press. Can be: `up`,`down`,`left`,`right`,`select`,`start`,`a`,`b`,`x`,`y`.
+    The button you want to press. Can be: `up`,`down`,`left`,`right`,`select`,`start`,`a`,`b`,`x`,`y`,`l`,`l2`,`l3`,`r`,`r2`,`r3`.
 
     The 'a', 'b', 'x', 'y' buttons here are using the SNES layout:
     > <pre><code> x<br>y a<br> b</code></pre>
