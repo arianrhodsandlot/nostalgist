@@ -34,6 +34,13 @@ export function getEmscriptenModuleOverrides(overrides: RetroArchEmscriptenModul
       console.error(...args)
     },
 
+    // @ts-expect-error do not throw error when exit
+    quit(status: unknown, toThrow: unknown) {
+      if (status) {
+        console.info(status, toThrow)
+      }
+    },
+
     async monitorRunDependencies(left: number) {
       if (left === 0) {
         resolveRunDependenciesPromise()

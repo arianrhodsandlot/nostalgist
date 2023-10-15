@@ -22,11 +22,9 @@ export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclara
     return
   }
   for (const rule in style) {
-    if (style[rule]) {
-      element.style.setProperty(rule, style[rule] as string)
-    } else {
-      element.style.removeProperty(rule)
-    }
+    const value = style[rule]
+    // @ts-expect-error null means to delete the rule
+    element.style[rule] = value || null
   }
 }
 
