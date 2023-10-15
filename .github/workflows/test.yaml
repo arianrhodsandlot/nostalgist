@@ -6,6 +6,8 @@ on:
       - '**/*.md'
       - '**/*.mdx'
       - 'docs/**/*'
+    tags-ignore:
+      - '*'
   pull_request:
     branches: main
     paths-ignore:
