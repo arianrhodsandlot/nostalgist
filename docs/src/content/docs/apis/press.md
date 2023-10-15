@@ -4,7 +4,7 @@ title: press
 
 Press a button and then release it programmatically. This is a shortcut for a combination of [`pressDown`](/apis/press-down) and [`pressUp`](/apis/press-up).
 
-Analog Joysticks is not supported by now.
+Analog Joysticks are not supported by now.
 
 ## Usage
 ```js

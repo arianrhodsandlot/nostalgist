@@ -4,7 +4,7 @@ title: pressDown
 
 Press a button programmatically.
 
-Analog Joysticks is not supported by now.
+Analog Joysticks are not supported by now.
 
 ## Usage
 ```js
