@@ -1,5 +1,5 @@
 ---
-title: press
+title: pressDown
 ---
 
 Press a button programmatically.
@@ -54,3 +54,4 @@ await nostalgist.pressDown({ button: 'a', player: 2 }) // press the button "a" o
       /* ...other options */
     })
     ```
+    Because we are using these key bindings to simulate the control.

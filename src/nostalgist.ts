@@ -321,24 +321,27 @@ export class Nostalgist {
   }
 
   pressDown(options: string | { button: string; player?: number }) {
+    const emulator = this.getEmulator()
     if (typeof options === 'string') {
-      return this.getEmulator().pressDown(options, 1)
+      return emulator.pressDown(options)
     }
-    return this.getEmulator().pressDown(options.button, options.player)
+    return emulator.pressDown(options.button, options.player)
   }
 
   pressUp(options: string | { button: string; player?: number }) {
+    const emulator = this.getEmulator()
     if (typeof options === 'string') {
-      return this.getEmulator().pressUp(options, 1)
+      return emulator.pressUp(options)
     }
-    return this.getEmulator().pressUp(options.button, options.player)
+    return emulator.pressUp(options.button, options.player)
   }
 
   press(options: string | { button: string; player?: number; time?: number }) {
+    const emulator = this.getEmulator()
     if (typeof options === 'string') {
-      return this.getEmulator().press(options, 1, 100)
+      return emulator.press(options)
     }
-    return this.getEmulator().press(options.button, options.player, options.time)
+    return emulator.press(options.button, options.player, options.time)
   }
 
   /**
