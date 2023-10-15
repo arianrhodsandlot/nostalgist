@@ -1,6 +1,6 @@
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { Buffer } from 'buffer/index'
-import { kebabCase } from 'lodash-es'
+import { BFSRequire } from 'browserfs'
+
+const { Buffer } = BFSRequire('buffer')
 
 export function isAbsoluteUrl(string: string) {
   if (!string) {
@@ -23,7 +23,7 @@ export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclara
   }
   for (const rule in style) {
     if (style[rule]) {
-      element.style.setProperty(kebabCase(rule), style[rule] as string)
+      element.style.setProperty(rule, style[rule] as string)
     } else {
       element.style.removeProperty(rule)
     }
