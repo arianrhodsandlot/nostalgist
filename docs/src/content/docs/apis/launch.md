@@ -220,6 +220,25 @@ const nostalgist = await Nostalgist.launch({
     await nostalgist.launchEmulator() // the emulator will be started
     ```
 
+  + #### `emscriptenModule`
+    **type:** `boolean` **default:** `{}`
+
+    An option to override the `Module` object for Emscripten. See [Module object](https://emscripten.org/docs/api_reference/module.html).
+
+    This is a low level option and not well tested, so use it at your own risk.
+
+    ```js
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+      emscriptenModule: {
+        printErr(str) {
+          yourLogger.error(str)
+        }
+      }
+    })
+    ```
+
   + #### `resolveCoreJs`
     **type:** `Function`
 
