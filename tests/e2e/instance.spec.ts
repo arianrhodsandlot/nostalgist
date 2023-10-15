@@ -94,17 +94,17 @@ test.describe('instance methods', () => {
 
     // show the game info
     await page.getByText('pressA', { exact: true }).click()
-    await page.waitForTimeout(100)
+    await page.waitForTimeout(300)
     await expect(canvas).toHaveScreenshot('press-a.png')
 
     // hide the game info
     await page.getByText('pressA', { exact: true }).click()
-    await page.waitForTimeout(100)
+    await page.waitForTimeout(300)
     await expect(canvas).toHaveScreenshot('press-pristine.png')
 
     // enter the game
     await page.getByText('pressStart', { exact: true }).click()
-    await page.waitForTimeout(100)
+    await page.waitForTimeout(300)
     await expect(canvas).toHaveScreenshot('press-start.png')
   })
 })
