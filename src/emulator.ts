@@ -239,7 +239,7 @@ export class Emulator {
   }
 
   private async setupEmscripten() {
-    const { element, core } = this.options
+    const { element, core, emscriptenModule } = this.options
     const { js, wasm } = core
     if (typeof window === 'object') {
       // @ts-expect-error for retroarch fast forward
@@ -272,6 +272,7 @@ export class Emulator {
       wasmBinary: wasm,
       canvas: element,
       preRun: [],
+      ...emscriptenModule,
     })
     this.emscripten = getEmscripten({ Module: initialModule })
 

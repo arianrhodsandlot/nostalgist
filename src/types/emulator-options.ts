@@ -1,4 +1,5 @@
 import type { RetroArchConfig } from './retroarch-config'
+import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
 export interface EmulatorOptions {
   element: HTMLCanvasElement
@@ -38,6 +39,13 @@ export interface EmulatorOptions {
    * Not all options can make effects in browser.
    */
   retroarchCoreConfig: Record<string, string>
+
+  /**
+   * An option to override the `Module` object for Emscripten. See [Module object](https://emscripten.org/docs/api_reference/module.html).
+   *
+   * This is a low level option and not well tested, so use it at your own risk.
+   */
+  emscriptenModule: RetroArchEmscriptenModuleOptions
 
   waitForInteraction: ((params: { done: () => void }) => void) | undefined
 }

@@ -361,7 +361,7 @@ export class Nostalgist {
   }
 
   private async loadEmulatorOptions() {
-    const { size = 'auto', respondToGlobalEvents = true, waitForInteraction } = this.options
+    const { size = 'auto', respondToGlobalEvents = true, waitForInteraction, emscriptenModule = {} } = this.options
     const element = this.getElementOption()
     const style = this.getStyleOption()
     const retroarchConfig = this.getRetroarchOption()
@@ -378,6 +378,7 @@ export class Nostalgist {
       retroarchConfig,
       retroarchCoreConfig,
       waitForInteraction,
+      emscriptenModule,
     }
     this.emulatorOptions = emulatorOptions
   }

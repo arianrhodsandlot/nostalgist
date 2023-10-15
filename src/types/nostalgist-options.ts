@@ -1,4 +1,5 @@
 import type { RetroArchConfig } from './retroarch-config'
+import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -156,6 +157,14 @@ export interface NostalgistOptions {
    * Default value is `false`.
    */
   runEmulatorManually: boolean
+
+  /**
+   * An option to override the `Module` object for Emscripten. See [Module object](https://emscripten.org/docs/api_reference/module.html).
+   *
+   * This is a low level option and not well tested, so use it at your own risk.
+   */
+  emscriptenModule?: RetroArchEmscriptenModuleOptions
+
   resolveCoreJs: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string>
   resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string | ArrayBuffer>
   resolveRom: NostalgistResolveFileFunction
