@@ -5,7 +5,7 @@ import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
 import type { RetroArchEmscriptenModule } from './types/retroarch-emscripten'
-import { blobToBuffer, delay, updateStyle } from './utils'
+import { blobToBuffer, delay, importCoreJsAsESM, updateStyle } from './utils'
 
 const encoder = new TextEncoder()
 
@@ -239,46 +239,23 @@ export class Emulator {
   }
 
   private async setupEmscripten() {
-    const { element, core, emscriptenModule } = this.options
-    const { js, wasm } = core
     if (typeof window === 'object') {
       // @ts-expect-error for retroarch fast forward
       window.setImmediate ??= window.setTimeout
     }
 
-    const jsContent = js.startsWith('var Module')
-      ? `export function getEmscripten({ Module }) {
-          ${js};
-          return { PATH, FS, ERRNO_CODES, JSEvents, ENV, Module, exit: _emscripten_force_exit
-        }}`
-      : js
-    const jsBlob = new Blob([jsContent], { type: 'application/javascript' })
-    const jsBlobUrl = URL.createObjectURL(jsBlob)
-    if (!jsBlobUrl) {
-      return
-    }
-    const { getEmscripten } = await (async () => {
-      try {
-        return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsBlobUrl)
-      } catch {
-        // a dirty hack for using with SystemJS, for example, in StackBlitz
-        // eslint-disable-next-line no-eval
-        return await eval('import(jsBlobUrl)')
-      }
-    })()
-    URL.revokeObjectURL(jsBlobUrl)
+    const { element, core, emscriptenModule } = this.options
+    const { js, wasm } = core
+    const moduleOptions = { wasmBinary: wasm, canvas: element, preRun: [], ...emscriptenModule }
+    const initialModule = getEmscriptenModuleOverrides(moduleOptions)
+    const { getEmscripten } = await importCoreJsAsESM(js)
+    const emscripten: EmulatorEmscripten = getEmscripten({ Module: initialModule })
+    this.emscripten = emscripten
 
-    const initialModule = getEmscriptenModuleOverrides({
-      wasmBinary: wasm,
-      canvas: element,
-      preRun: [],
-      ...emscriptenModule,
-    })
-    this.emscripten = getEmscripten({ Module: initialModule })
-
-    const { Module, FS } = this.getEmscripten()
+    const { Module, FS } = emscripten
     initialModule.preRun?.push(() => FS.init(() => this.stdin()))
-    await Promise.all([await this.setupFileSystem(), await Module.monitorRunDependencies()])
+    await Module.monitorRunDependencies()
+    await this.setupFileSystem()
   }
 
   private sendCommand(msg: RetroArchCommand) {

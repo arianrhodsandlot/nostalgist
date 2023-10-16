@@ -33,3 +33,28 @@ export function delay(time: number) {
     setTimeout(resolve, time)
   })
 }
+
+export async function importCoreJsAsESM(js: string) {
+  const jsContent = js.startsWith('var Module')
+    ? `export function getEmscripten({ Module }) {
+        ${js};
+        return { PATH, FS, ERRNO_CODES, JSEvents, ENV, Module, exit: _emscripten_force_exit }
+      }`
+    : js
+
+  const jsBlob = new Blob([jsContent], { type: 'application/javascript' })
+  const jsBlobUrl = URL.createObjectURL(jsBlob)
+  if (!jsBlobUrl) {
+    throw new Error('invalid jsBlob')
+  }
+
+  try {
+    return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsBlobUrl)
+  } catch {
+    // a dirty hack for using with SystemJS, for example, in StackBlitz
+    // eslint-disable-next-line no-eval
+    return await eval('import(jsBlobUrl)')
+  } finally {
+    URL.revokeObjectURL(jsBlobUrl)
+  }
+}

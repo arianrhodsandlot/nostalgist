@@ -41,7 +41,8 @@ export function getEmscriptenModuleOverrides(overrides: RetroArchEmscriptenModul
       }
     },
 
-    async monitorRunDependencies(left: number) {
+    // the return value of `monitorRunDependencies` seems to be misused here, but it works for now
+    async monitorRunDependencies(left?: number) {
       if (left === 0) {
         resolveRunDependenciesPromise()
       }

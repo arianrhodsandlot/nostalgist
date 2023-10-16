@@ -3,7 +3,7 @@ export interface RetroArchEmscriptenModule extends EmscriptenModule {
   canvas: HTMLCanvasElement
   setCanvasSize: (width: number, height: number) => void
   preRun: ((...args: any) => void)[]
-  monitorRunDependencies: any
+  monitorRunDependencies: (left?: number) => void | Promise<void>
   callMain: (args: string[]) => void
 }
 
