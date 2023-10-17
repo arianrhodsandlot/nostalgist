@@ -38,10 +38,10 @@ const nostalgist = await Nostalgist.launch({
   }
 
   // Specify where to load the core files
-  resolveCoreJs({ core }) {
+  resolveCoreJs(core) {
     return `https://example.com/core/${core}_libretro.js`
   },
-  resolveCoreWasm({ core }) {
+  resolveCoreWasm(core) {
     return `https://example.com/core/${core}_libretro.wasm`
   },
 

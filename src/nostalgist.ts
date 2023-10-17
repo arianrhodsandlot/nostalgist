@@ -90,10 +90,10 @@ export class Nostalgist {
    *     savestate_thumbnail_enable: true,
    *   }
    *   runEmulatorManually: false,
-   *   resolveCoreJs({ core }) {
+   *   resolveCoreJs(core) {
    *     return `https://example.com/core/${core}_libretro.js`
    *   },
-   *   resolveCoreWasm({ core }) {
+   *   resolveCoreWasm(core) {
    *     return `https://example.com/core/${core}_libretro.wasm`
    *   },
    *   resolveRom({ file }) {
