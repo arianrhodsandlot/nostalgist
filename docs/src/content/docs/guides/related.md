@@ -16,7 +16,7 @@ title: Related
   + [jsDelivr](https://www.jsdelivr.com/)
 
 ## Showcases
-+ [Retro Assembly](https://github.com/arianrhodsandlot/retro-assembly)
++ [RetroAssembly](https://github.com/arianrhodsandlot/retro-assembly)
 
   A web app with which you can build a custom retro gaming library inside your browser.
   Game states can be synced with cloud storage services like OneDrive/Google Drive/Dropbox

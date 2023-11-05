@@ -14,7 +14,6 @@ export default defineConfig({
       },
       social: {
         github: 'https://github.com/arianrhodsandlot/nostalgist',
-        twitter: 'https://twitter.com/arianrhodsand',
       },
       customCss: ['./src/styles/custom.css'],
       editLink: {
