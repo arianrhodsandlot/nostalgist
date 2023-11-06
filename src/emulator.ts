@@ -5,7 +5,7 @@ import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
 import type { RetroArchEmscriptenModule } from './types/retroarch-emscripten'
-import { blobToBuffer, delay, importCoreJsAsESM, updateStyle } from './utils'
+import { basename, blobToBuffer, delay, dirname, importCoreJsAsESM, join, updateStyle } from './utils'
 
 const encoder = new TextEncoder()
 
@@ -17,11 +17,8 @@ type GameStatus = 'initial' | 'paused' | 'running'
 
 interface EmulatorEmscripten {
   Module: RetroArchEmscriptenModule
-  FS: any
   exit: (code: number) => void
   JSEvents: any
-  PATH: any
-  ERRNO_CODES: any
 }
 
 export class Emulator {
@@ -67,8 +64,6 @@ export class Emulator {
       document.body.append(element)
     }
 
-    const size = this.getElementSize()
-
     if (respondToGlobalEvents === false) {
       if (!element.tabIndex || element.tabIndex === -1) {
         element.tabIndex = 0
@@ -77,15 +72,9 @@ export class Emulator {
     }
 
     if (waitForInteraction) {
-      waitForInteraction({
-        done: () => {
-          this.runMain()
-          this.resize(size)
-        },
-      })
+      waitForInteraction({ done: () => this.runMain() })
     } else {
       this.runMain()
-      this.resize(size)
     }
   }
 
@@ -139,7 +128,8 @@ export class Emulator {
 
   async loadState(blob: Blob) {
     this.clearStateFile()
-    const { FS } = this.getEmscripten()
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
     const buffer = await blobToBuffer(blob)
     FS.writeFile(this.stateFileName, buffer)
     await this.waitForEmscriptenFile(this.stateFileName)
@@ -149,7 +139,8 @@ export class Emulator {
   exit(statusCode = 0) {
     const { emscripten } = this
     if (emscripten) {
-      const { FS, exit, JSEvents } = this.getEmscripten()
+      const { Module, exit, JSEvents } = this.getEmscripten()
+      const { FS } = Module
       exit(statusCode)
       FS.unmount('/home')
       JSEvents.removeAllEventListeners()
@@ -189,7 +180,7 @@ export class Emulator {
     return !size || size === 'auto' ? { width: element.offsetWidth, height: element.offsetHeight } : size
   }
 
-  private async writeFileToDirectory({
+  private async writeBlobToDirectory({
     fileName,
     fileContent,
     directory,
@@ -198,27 +189,44 @@ export class Emulator {
     fileContent: Blob
     directory: string
   }) {
-    const { FS } = this.getEmscripten()
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
     const buffer = await blobToBuffer(fileContent)
     FS.createDataFile('/', fileName, buffer, true, false)
     const encoding = 'binary'
     const data = FS.readFile(fileName, { encoding })
-    FS.writeFile(`${directory}${fileName}`, data, { encoding })
+    FS.writeFile(join(directory, fileName), data, { encoding })
     FS.unlink(fileName)
   }
 
+  private writeTextToDirectory({
+    fileName,
+    fileContent,
+    directory,
+  }: {
+    fileName: string
+    fileContent: string
+    directory: string
+  }) {
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
+    const encoding = 'utf8'
+    FS.writeFile(join(directory, fileName), fileContent, { encoding })
+  }
+
   private async setupFileSystem() {
-    const { Module, FS, PATH, ERRNO_CODES } = this.getEmscripten()
+    const { Module } = this.getEmscripten()
+    const { FS, PATH, ERRNO_CODES } = Module
     const { rom, bios } = this.options
 
     const emscriptenFS = createEmscriptenFS({ FS, PATH, ERRNO_CODES })
     FS.mount(emscriptenFS, { root: '/home' }, '/home')
 
-    const romDirectory = `${raUserdataDir}content/`
+    const romDirectory = join(raUserdataDir, 'content')
     if (rom.length > 0) {
       FS.mkdirTree(romDirectory)
     }
-    const biosDirectory = `${raUserdataDir}system/`
+    const biosDirectory = join(raUserdataDir, 'content')
     if (bios.length > 0) {
       FS.mkdirTree(biosDirectory)
     }
@@ -227,14 +235,15 @@ export class Emulator {
     // it's dirty but it works
     const maxWaitTime = 100
     let waitTime = 0
+    // eslint-disable-next-line unicorn/consistent-destructuring
     while (!Module.asm && waitTime < maxWaitTime) {
       await delay(10)
       waitTime += 5
     }
 
     await Promise.all([
-      ...rom.map((file) => this.writeFileToDirectory({ ...file, directory: romDirectory })),
-      ...bios.map((file) => this.writeFileToDirectory({ ...file, directory: biosDirectory })),
+      ...rom.map((file) => this.writeBlobToDirectory({ ...file, directory: romDirectory })),
+      ...bios.map((file) => this.writeBlobToDirectory({ ...file, directory: biosDirectory })),
     ])
   }
 
@@ -245,15 +254,15 @@ export class Emulator {
     }
 
     const { element, core, emscriptenModule } = this.options
-    const { js, wasm } = core
+    const { wasm } = core
     const moduleOptions = { wasmBinary: wasm, canvas: element, preRun: [], ...emscriptenModule }
     const initialModule = getEmscriptenModuleOverrides(moduleOptions)
-    const { getEmscripten } = await importCoreJsAsESM(js)
-    const emscripten: EmulatorEmscripten = getEmscripten({ Module: initialModule })
-    this.emscripten = emscripten
+    initialModule.preRun?.push(() => initialModule.FS.init(() => this.stdin()))
 
-    const { Module, FS } = emscripten
-    initialModule.preRun?.push(() => FS.init(() => this.stdin()))
+    const { getEmscripten } = await importCoreJsAsESM(core)
+    const emscripten: EmulatorEmscripten = await getEmscripten({ Module: initialModule })
+    this.emscripten = emscripten
+    const { Module } = emscripten
     await Module.monitorRunDependencies()
     await this.setupFileSystem()
   }
@@ -282,16 +291,19 @@ export class Emulator {
   }
 
   private writeConfigFile({ path, config }: { path: string; config: Record<string, any> }) {
-    const { FS } = this.getEmscripten()
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
     const dir = path.slice(0, path.lastIndexOf('/'))
     FS.mkdirTree(dir)
     for (const key in config) {
       config[key] = `__${config[key]}__`
     }
     // @ts-expect-error `platform` option is not listed in @types/ini for now
-    let configContent = ini.stringify(config, { whitespace: true, platform: 'linux' })
-    configContent = configContent.replaceAll('__', '"')
-    FS.writeFile(path, configContent)
+    let fileContent = ini.stringify(config, { whitespace: true, platform: 'linux' })
+    fileContent = fileContent.replaceAll('__', '"')
+    const fileName = basename(path)
+    const directory = dirname(path)
+    this.writeTextToDirectory({ fileContent, fileName, directory })
   }
 
   private setupRaConfigFile() {
@@ -309,42 +321,64 @@ export class Emulator {
   }
 
   private runMain() {
-    const { Module, JSEvents } = this.getEmscripten()
+    const { Module } = this.getEmscripten()
     const raArgs: string[] = []
-    if (this.options.rom.length > 0) {
-      const [{ fileName }] = this.options.rom
+    const { rom } = this.options
+    if (rom.length > 0) {
+      const [{ fileName }] = rom
       raArgs.push(`/home/web_user/retroarch/userdata/content/${fileName}`)
     }
     Module.callMain(raArgs)
-
     this.gameStatus = 'running'
+    this.postRun()
+  }
 
+  private postRun() {
+    const size = this.getElementSize()
+    this.resize(size)
+    this.fireGamepadEvents()
+    this.updateKeyboardEventHandlers()
+  }
+
+  private fireGamepadEvents() {
     // tell retroarch that controllers are connected
     for (const gamepad of navigator.getGamepads?.() ?? []) {
       if (gamepad) {
         window.dispatchEvent(new GamepadEvent('gamepadconnected', { gamepad }))
       }
     }
+  }
 
-    if (this.options.respondToGlobalEvents) {
-      return
+  private updateKeyboardEventHandlers() {
+    const { JSEvents } = this.getEmscripten()
+    const { respondToGlobalEvents, element } = this.options
+    if (!respondToGlobalEvents) {
+      if (!element.getAttribute('tabindex')) {
+        element.tabIndex = -1
+      }
+      element.focus()
+      element.addEventListener('click', () => {
+        element.focus()
+      })
     }
 
-    // Emscripten module register keyboard events to document, which make custome interactions unavilable.
-    // Let's modify the default event liseners
+    // Emscripten module may register keyboard events to document or canvas.
+    // Versions before 1.16.0 will use document while newer versions will use canvas.
+    // Let's modify the default event liseners as needed
     const keyboardEvents = new Set(['keyup', 'keydown', 'keypress'])
     const globalKeyboardEventHandlers = JSEvents.eventHandlers.filter(
       ({ eventTypeString, target }: { eventTypeString: string; target: Element | Document }) =>
-        keyboardEvents.has(eventTypeString) && target === document,
+        keyboardEvents.has(eventTypeString) && (target === document || target === element),
     )
     for (const globalKeyboardEventHandler of globalKeyboardEventHandlers) {
       const { eventTypeString, target, handlerFunc } = globalKeyboardEventHandler
       JSEvents.registerOrRemoveHandler({ eventTypeString, target })
       JSEvents.registerOrRemoveHandler({
         ...globalKeyboardEventHandler,
+        target: respondToGlobalEvents ? document : element,
         handlerFunc: (...args: [Event]) => {
           const [event] = args
-          if (event?.target === this.options.element) {
+          if (respondToGlobalEvents || event?.target === element) {
             handlerFunc(...args)
           }
         },
@@ -353,7 +387,8 @@ export class Emulator {
   }
 
   private async waitForEmscriptenFile(fileName: string) {
-    const { FS } = this.getEmscripten()
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
     const maxRetries = 30
     let buffer
     let isFinished = false
@@ -377,7 +412,8 @@ export class Emulator {
   }
 
   private clearStateFile() {
-    const { FS } = this.getEmscripten()
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
     try {
       FS.unlink(this.stateFileName)
       FS.unlink(this.stateThumbnailFileName)
@@ -385,7 +421,8 @@ export class Emulator {
   }
 
   private getCurrentRetroarchConfig() {
-    const { FS } = this.getEmscripten()
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
     const configContent = FS.readFile(raConfigPath, { encoding: 'utf8' })
     return ini.parse(configContent)
   }

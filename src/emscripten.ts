@@ -26,6 +26,10 @@ export function getEmscriptenModuleOverrides(overrides: RetroArchEmscriptenModul
     noInitialRun: true,
     noExitRuntime: false,
 
+    locateFile(file) {
+      return file
+    },
+
     print(...args: unknown[]) {
       console.info(...args)
     },

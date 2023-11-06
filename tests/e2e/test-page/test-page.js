@@ -64,6 +64,7 @@ Nostalgist.configure({
     position: 'static',
     backgroundColor: 'transparent',
   },
+  ...window.nostalgistConfig,
 })
 
 document.body.addEventListener('click', async function listener({ target }) {
