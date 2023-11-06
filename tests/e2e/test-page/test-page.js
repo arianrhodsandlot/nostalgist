@@ -21,7 +21,7 @@ async function launchNestopia() {
 }
 
 async function launchSize() {
-  nostalgist = await Nostalgist.nes({ core: 'nestopia', rom: 'pong1k.nes', size: { width: 100, height: 100 } })
+  nostalgist = await Nostalgist.nes({ rom: 'pong1k.nes', size: { width: 100, height: 100 } })
 }
 
 async function saveState() {
