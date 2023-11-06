@@ -180,7 +180,7 @@ export class Nostalgist {
   getEmscriptenFS() {
     const emulator = this.getEmulator()
     const emscripten = emulator.getEmscripten()
-    return emscripten.FS
+    return emscripten.Module.FS
   }
 
   getOptions() {

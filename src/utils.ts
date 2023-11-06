@@ -1,6 +1,8 @@
 import { BFSRequire } from 'browserfs'
 
 const { Buffer } = BFSRequire('buffer')
+export const path = BFSRequire('path')
+export const { basename, extname, dirname, join } = path
 
 export function isAbsoluteUrl(string: string) {
   if (!string) {
@@ -34,14 +36,40 @@ export function delay(time: number) {
   })
 }
 
-export async function importCoreJsAsESM(js: string) {
-  const jsContent = js.startsWith('var Module')
-    ? `export function getEmscripten({ Module }) {
-        ${js};
-        return { PATH, FS, ERRNO_CODES, JSEvents, ENV, Module, exit: _emscripten_force_exit }
-      }`
-    : js
+function isGlobalScript(js: string) {
+  return js.startsWith('var Module')
+}
 
+function isEsmScript(js: string) {
+  return js.includes('_scriptDir = import.meta.url')
+}
+
+function patchCoreJs({ name, js }: { name: string; js: string }) {
+  let jsContent = js
+
+  if (isGlobalScript(js)) {
+    jsContent = `export function getEmscripten({ Module }) {
+        ${js};
+        Module.FS = FS;
+        Module.PATH = PATH;
+        Module.ERRNO_CODES = ERRNO_CODES;
+        return { JSEvents, Module, exit: _emscripten_force_exit }
+      }`
+  } else if (isEsmScript(js)) {
+    jsContent = `${js.replace(
+      'readyPromiseResolve(Module)',
+      'readyPromiseResolve({ JSEvents, Module, exit: _emscripten_force_exit })',
+    )};
+      export function getEmscripten({ Module }) {
+        return ${name}(Module)
+      }
+    `
+  }
+  return jsContent
+}
+
+export async function importCoreJsAsESM({ name, js }: { name: string; js: string }) {
+  const jsContent = patchCoreJs({ name, js })
   const jsBlob = new Blob([jsContent], { type: 'application/javascript' })
   const jsBlobUrl = URL.createObjectURL(jsBlob)
   if (!jsBlobUrl) {

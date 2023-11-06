@@ -23,6 +23,9 @@ devDependencies:
   '@types/is-ci':
     specifier: 3.0.3
     version: 3.0.3
+  '@types/wicg-file-system-access':
+    specifier: 2023.10.2
+    version: 2023.10.2
   astro:
     specifier: 3.3.2
     version: 3.3.2(typescript@5.2.2)
@@ -1244,6 +1247,10 @@ packages:
 
   /@types/unist@3.0.1:
     resolution: {integrity: sha512-ue/hDUpPjC85m+PM9OQDMZr3LywT+CT6mPsQq8OJtCLiERkGRcQUFvu9XASF5XWqyZFXbf15lvb3JFJ4dRLWPg==}
+    dev: true
+
+  /@types/wicg-file-system-access@2023.10.2:
+    resolution: {integrity: sha512-nSiK8qt0O7sQmDcW3HYfvya7GDoD6ipgdcUFzk3QN+UBIqXeNg38Nh6VnKv7EIPfkVETRiquyMskCbpxUzgX1Q==}
     dev: true
 
   /@typescript-eslint/eslint-plugin@6.7.4(@typescript-eslint/parser@6.7.4)(eslint@8.51.0)(typescript@5.2.2):

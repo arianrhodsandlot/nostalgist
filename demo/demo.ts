@@ -32,6 +32,19 @@ async function launchFceummWithCoreConfig() {
   })
 }
 
+async function launchFceummWithRaEsm() {
+  nostalgist = await Nostalgist.launch({
+    core: 'fceumm',
+    rom: 'flappybird.nes',
+    resolveCoreJs(core) {
+      return `https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@nightly-2023-11-06/retroarch/${core}_libretro.js`
+    },
+    resolveCoreWasm(core) {
+      return `https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@nightly-2023-11-06/retroarch/${core}_libretro.wasm`
+    },
+  })
+}
+
 async function launchCustomRom() {
   nostalgist = await Nostalgist.launch({
     core: 'fceumm',
@@ -85,6 +98,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     gbc,
     launchNestopia,
     launchFceummWithCoreConfig,
+    launchFceummWithRaEsm,
     launchCustomRom,
     saveState,
     loadState,
