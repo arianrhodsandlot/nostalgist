@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-test.describe('static methods', () => {
+test.describe('static methods with nightly retroarch', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/e2e/test-page/index.html')
+    await page.goto('/tests/e2e/test-page/nightly.html')
   })
 
   test('launch nes', async ({ page }) => {
@@ -51,7 +51,7 @@ test.describe('static methods', () => {
 
     await page.getByText('launchSize', { exact: true }).click()
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(2000)
     await expect(canvas).toHaveScreenshot('launch-size.png')
   })
 })
