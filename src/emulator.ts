@@ -26,6 +26,7 @@ export class Emulator {
   private options: EmulatorOptions
   private messageQueue: [Uint8Array, number][] = []
   private gameStatus: GameStatus = 'initial'
+  private canvasInitialSize = { width: 0, height: 0 }
 
   constructor(options: EmulatorOptions) {
     this.options = options
@@ -63,6 +64,7 @@ export class Emulator {
     if (!element.isConnected) {
       document.body.append(element)
     }
+    this.canvasInitialSize = this.getElementSize()
 
     if (respondToGlobalEvents === false) {
       if (!element.tabIndex || element.tabIndex === -1) {
@@ -334,8 +336,7 @@ export class Emulator {
   }
 
   private postRun() {
-    const size = this.getElementSize()
-    this.resize(size)
+    this.resize(this.canvasInitialSize)
     this.fireGamepadEvents()
     this.updateKeyboardEventHandlers()
   }
