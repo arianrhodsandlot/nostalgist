@@ -300,7 +300,6 @@ export class Emulator {
     for (const key in config) {
       config[key] = `__${config[key]}__`
     }
-    // @ts-expect-error `platform` option is not listed in @types/ini for now
     let fileContent = ini.stringify(config, { whitespace: true, platform: 'linux' })
     fileContent = fileContent.replaceAll('__', '"')
     const fileName = basename(path)
