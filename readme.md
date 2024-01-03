@@ -77,7 +77,7 @@ Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online example
   const rom = 'https://example.com/zelda.sfc'
   const nostalgist = await Nostalgist.snes(rom)
   const FS = nostalgist.getEmscriptenFS()
-  FS.readFile('/home/web_user/retroarch/userdata/saves/Snes9x/zelda.srm')
+  FS.readdir('/')
   ```
 
   Related APIs: [`getEmscriptenModule`](https://nostalgist.js.org/apis/get-emscripten-module), [`getEmscriptenFS`](https://nostalgist.js.org/apis/get-emscripten-fs)

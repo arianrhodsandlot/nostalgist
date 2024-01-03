@@ -31,3 +31,8 @@ We use [BrowserFS](https://github.com/jvilk/BrowserFS)'s `MemoryFS` to create a 
 
 ### Step three
 Launch RetroArch with the virtual file system and the canvas element we specified in the code.
+
+After launching, Nostalgist.js can comunicate with RetroArch in these ways:
++ Read or write files to the virtual file system.
++ Call functions exported by Emscripten. If the official builds are being used, the functions are listed in [the `Makefile` for theses builds](https://github.com/libretro/RetroArch/blob/1e572aaa7a32807159d809e29f04a9aa52ed8917/Makefile.emscripten#L83).
++ Send commands to the process of RetroArch. All available commands are listed in [the document of RetroArch](https://docs.libretro.com/development/retroarch/network-control-interface/#commands).

@@ -67,14 +67,13 @@ const nostalgist = await Nostalgist.launch({
 
     **type:** `string | HTMLCanvasElement` **default:** an empty string `''`
 
-    Use this option to specify the canvas element you want to launch the emulator with. If it's an `string`, we will look up the element by `documen.querySelector`
+    Use this option to specify the canvas element you want to launch the emulator with. If it's an `string`, we will look up the element by `document.querySelector`
 
-    If it's an empty string, a canvas element will be created automaticlly and this canvas element will be append to `document.body`.
+    If it's an empty string, a canvas element will be created automatically and this canvas element will be append to `document.body`.
 
     For example,
     ```js
     await Nostalgist.launch({
-      e
       rom: 'flappybird.nes',
       core: 'fceumm'
     })
@@ -108,6 +107,8 @@ const nostalgist = await Nostalgist.launch({
 
     The size of the canvas element.
     If it's `'auto'`, the canvas element will keep its original size, or it's width and height will be updated as specified.
+
+    In most cases, it is recommended to specify the size of the element through CSS or the `style` parameter first.
 
   + #### `core`
 
