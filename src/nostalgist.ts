@@ -96,11 +96,11 @@ export class Nostalgist {
    *   resolveCoreWasm(core) {
    *     return `https://example.com/core/${core}_libretro.wasm`
    *   },
-   *   resolveRom({ file }) {
+   *   resolveRom(file) {
    *     return `https://example.com/roms/${file}`
    *   },
-   *   resolveBios({ file }) {
-   *     return `https://example.com/system/${file}`
+   *   resolveBios(bios) {
+   *     return `https://example.com/system/${bios}`
    *   },
    * })
    * ```

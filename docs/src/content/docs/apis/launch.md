@@ -46,13 +46,13 @@ const nostalgist = await Nostalgist.launch({
   },
 
   // Specify where to load the ROM files
-  resolveRom({ file }) {
+  resolveRom(file) {
     return `https://example.com/roms/${file}`
   },
 
   // Specify where to load the BIOS files
-  resolveBios({ file }) {
-    return `https://example.com/system/${file}`
+  resolveBios(bios) {
+    return `https://example.com/system/${bios}`
   },
 })
 ```
