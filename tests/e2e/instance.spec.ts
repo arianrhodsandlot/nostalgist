@@ -107,4 +107,17 @@ test.describe('instance methods', () => {
     await page.waitForTimeout(300)
     await expect(canvas).toHaveScreenshot('press-start.png')
   })
+
+  test('screenshot', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    const screenshot = page.locator('#screenshot')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('nes', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(1000)
+
+    await page.getByText('screenshot', { exact: true }).click()
+    await expect(screenshot).toHaveScreenshot('screenshot.png')
+  })
 })
