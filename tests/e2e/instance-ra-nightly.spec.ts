@@ -113,9 +113,9 @@ test.describe('instance methods with nightly retroarch', () => {
     const screenshot = page.locator('#screenshot')
     await expect(canvas).not.toBeAttached()
 
-    await page.getByText('nes', { exact: true }).click()
+    await page.getByText('megadrive', { exact: true }).click()
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(500)
 
     await page.getByText('screenshot', { exact: true }).click()
     await expect(screenshot).toHaveScreenshot('screenshot.png')
