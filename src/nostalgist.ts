@@ -324,6 +324,18 @@ export class Nostalgist {
     return this.getEmulator().resize(size)
   }
 
+  /**
+   * Press a button programmatically. Analog Joysticks are not supported by now.
+   *
+   * @see {@link https://nostalgist.js.org/apis/press-down}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * const blob = await nostalgist.pressDown('start')
+   * ```
+   */
   pressDown(options: string | { button: string; player?: number }) {
     const emulator = this.getEmulator()
     if (typeof options === 'string') {
@@ -332,6 +344,18 @@ export class Nostalgist {
     return emulator.pressDown(options.button, options.player)
   }
 
+  /**
+   * Release it programmatically. Analog Joysticks are not supported by now.
+   *
+   * @see {@link https://nostalgist.js.org/apis/press-up}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * const blob = await nostalgist.pressUp('start')
+   * ```
+   */
   pressUp(options: string | { button: string; player?: number }) {
     const emulator = this.getEmulator()
     if (typeof options === 'string') {
@@ -340,6 +364,18 @@ export class Nostalgist {
     return emulator.pressUp(options.button, options.player)
   }
 
+  /**
+   * Press a button and then release it programmatically. Analog Joysticks are not supported by now.
+   *
+   * @see {@link https://nostalgist.js.org/apis/press}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * const blob = await nostalgist.press('start')
+   * ```
+   */
   press(options: string | { button: string; player?: number; time?: number }) {
     const emulator = this.getEmulator()
     if (typeof options === 'string') {
@@ -348,6 +384,18 @@ export class Nostalgist {
     return emulator.press(options.button, options.player, options.time)
   }
 
+  /**
+   * Take a screenshot for the current running game.
+   *
+   * @see {@link https://nostalgist.js.org/apis/screenshot}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * const blob = await nostalgist.screenshot()
+   * ```
+   */
   screenshot() {
     const emulator = this.getEmulator()
     return emulator.screenshot()
