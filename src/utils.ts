@@ -11,7 +11,8 @@ export function isAbsoluteUrl(string: string) {
   if (typeof string !== 'string') {
     return false
   }
-  return string.startsWith('http://') || string.startsWith('https://') || string.startsWith('//')
+  const absolutePrefixes = ['http://', 'https://', '//', 'data:', 'blob:']
+  return absolutePrefixes.some((absolutePrefix) => string.startsWith(absolutePrefix))
 }
 
 export async function blobToBuffer(blob: Blob) {
