@@ -57,6 +57,15 @@ async function pressStart() {
   await nostalgist.press('start')
 }
 
+async function screenshot() {
+  const blob = await nostalgist.screenshot()
+  const image = new Image()
+  image.id = 'screenshot'
+  image.src = URL.createObjectURL(blob)
+  await new Promise((resolve) => image.addEventListener('load', resolve))
+  document.body.append(image)
+}
+
 Nostalgist.configure({
   style: {
     width: '800px',
@@ -85,6 +94,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     resize,
     pressA,
     pressStart,
+    screenshot,
   }
   const textContent = target.textContent || ''
   if (textContent in handlers) {
