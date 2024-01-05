@@ -32,17 +32,20 @@ export class Emulator {
     this.options = options
   }
 
-  private get stateFileName() {
+  private get romBaseName() {
     const {
       rom: [{ fileName }],
-      core,
     } = this.options
-    const baseName = fileName.slice(0, fileName.lastIndexOf('.'))
+    return fileName.slice(0, fileName.lastIndexOf('.'))
+  }
+
+  private get stateFileName() {
+    const { core } = this.options
     const coreFullName = coreInfoMap[core.name].corename
     if (!coreFullName) {
       throw new Error(`invalid core name: ${core.name}`)
     }
-    return `${raUserdataDir}states/${coreFullName}/${baseName}.state`
+    return join(raUserdataDir, 'states', coreFullName, `${this.romBaseName}.state`)
   }
 
   private get stateThumbnailFileName() {
@@ -122,9 +125,8 @@ export class Emulator {
     }
     this.clearStateFile()
 
-    const blobProperty = { type: 'application/octet-stream' }
-    const state = new Blob([stateBuffer], blobProperty)
-    const thumbnail = stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], blobProperty) : undefined
+    const state = new Blob([stateBuffer], { type: 'application/octet-stream' })
+    const thumbnail = stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], { type: 'image/png' }) : undefined
     return { state, thumbnail }
   }
 
@@ -175,6 +177,19 @@ export class Emulator {
     if (code) {
       await this.keyboardPress(code, time)
     }
+  }
+
+  async screenshot() {
+    this.sendCommand('SCREENSHOT')
+    const screenshotDirectory = join(raUserdataDir, 'screenshots')
+    const screenshotFileName = this.guessScreenshotFileName()
+    const screenshotPath = join(screenshotDirectory, screenshotFileName)
+    const buffer = await this.waitForEmscriptenFile(screenshotPath)
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
+    FS.unlink(screenshotPath)
+    const blobProperty = { type: 'image/png' }
+    return new Blob([buffer], blobProperty)
   }
 
   private getElementSize() {
@@ -477,4 +492,21 @@ export class Emulator {
     await delay(time)
     this.keyboardUp(code)
   }
+
+  private guessScreenshotFileName() {
+    const date = new Date()
+    const year = date.getFullYear() % 1000
+    const month = padZero(date.getMonth() + 1)
+    const day = padZero(date.getDate())
+    const hour = padZero(date.getHours())
+    const minute = padZero(date.getMinutes())
+    const second = padZero(date.getSeconds())
+    const dateString = `${year}${month}${day}-${hour}${minute}${second}`
+    const baseName = this.romBaseName
+    return `${baseName}-${dateString}.png`
+  }
+}
+
+function padZero(number: number) {
+  return (number < 10 ? '0' : '') + number
 }

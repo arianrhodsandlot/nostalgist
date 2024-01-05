@@ -348,6 +348,11 @@ export class Nostalgist {
     return emulator.press(options.button, options.player, options.time)
   }
 
+  screenshot() {
+    const emulator = this.getEmulator()
+    return emulator.screenshot()
+  }
+
   /**
    * Load options and then launch corresponding emulator if should
    */
