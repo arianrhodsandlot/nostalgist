@@ -76,6 +76,14 @@ function resize() {
   nostalgist.resize({ width: 400, height: 400 })
 }
 
+async function screenshot() {
+  const blob = await nostalgist.screenshot()
+  const img = new Image()
+  img.src = URL.createObjectURL(blob)
+  document.body.append(img)
+  console.info(blob)
+}
+
 function exit() {
   nostalgist.exit({ removeCanvas: false })
 }
@@ -106,6 +114,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     resume,
     restart,
     resize,
+    screenshot,
     exit,
   }
   const textContent = target.textContent || ''
