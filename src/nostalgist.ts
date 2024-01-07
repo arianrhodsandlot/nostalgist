@@ -494,21 +494,37 @@ export class Nostalgist {
 
   private async getCoreOption() {
     const { core, resolveCoreJs, resolveCoreWasm } = this.options
-    const coreDict =
-      typeof core === 'string'
-        ? { name: core, js: await resolveCoreJs(core, this.options), wasm: await resolveCoreWasm(core, this.options) }
-        : core
-
+    let coreDict
+    if (typeof core === 'string') {
+      const [js, wasm] = await Promise.all([resolveCoreJs(core, this.options), resolveCoreWasm(core, this.options)])
+      coreDict = { name: core, js, wasm }
+    } else {
+      coreDict = core
+    }
     let { name, js, wasm } = coreDict
+
+    const promises = []
     if (typeof js === 'string') {
-      const response = await fetch(js)
-      js = await response.text()
+      promises.push(
+        (async () => {
+          const response = await fetch(js)
+          js = await response.text()
+        })(),
+      )
     }
     if (typeof wasm === 'string') {
-      const response = await fetch(wasm)
-      wasm = await response.arrayBuffer()
+      promises.push(
+        (async () => {
+          const response = await fetch(wasm as string)
+          wasm = await response.arrayBuffer()
+        })(),
+      )
     }
-    return { name, js, wasm }
+    if (promises.length > 0) {
+      await Promise.all(promises)
+    }
+
+    return { name, js, wasm: wasm as ArrayBuffer }
   }
 
   private async resolveFile(file: NostalgistOptionsFile, resolveFunction: NostalgistResolveFileFunction) {
