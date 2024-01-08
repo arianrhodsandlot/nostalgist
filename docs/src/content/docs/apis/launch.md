@@ -35,7 +35,7 @@ const nostalgist = await Nostalgist.launch({
   retroarchConfig: {
     rewind_enable: true,
     savestate_thumbnail_enable: true,
-  }
+  },
 
   // Specify where to load the core files
   resolveCoreJs(core) {
@@ -71,19 +71,13 @@ const nostalgist = await Nostalgist.launch({
 
     If it's an empty string, a canvas element will be created automatically and this canvas element will be append to `document.body`.
 
-    For example,
-    ```js
-    await Nostalgist.launch({
-      rom: 'flappybird.nes',
-      core: 'fceumm'
-    })
-    ```
-
   + #### `style`
 
     **type:** `Object`
 
-    If the canvas element is created automatically, the style will be
+    The CSS style for the canvas element we are using for running the emulator.
+
+    If the canvas element is created automatically, which means the `element` is not specified or is an empty string `''`, the style will be
 
     ```js
     {
@@ -99,7 +93,9 @@ const nostalgist = await Nostalgist.launch({
 
     otherwise it will be `undefined`.
 
-    The CSS rule name should be "camelCase" instead of "kebab-case". For example, `{ backgroundColor: 'black' }` is valid, but `{ background-color: '' }` is not.
+    The CSS rule name should be "camelCase" instead of "kebab-case". For example, `{ backgroundColor: 'black' }` is valid, but `{ 'background-color': '' }` is not.
+
+    The values of the CSS rules should be strings, not numbers. For example, `{ width: '800px' }` is valid, but `{ width: 800 }` is not.
 
   + #### `size`
 
