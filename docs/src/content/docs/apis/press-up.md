@@ -6,6 +6,9 @@ Release a button programmatically.
 
 Analog Joysticks are not supported by now.
 
+## Since
+`0.4.0`
+
 ## Usage
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
