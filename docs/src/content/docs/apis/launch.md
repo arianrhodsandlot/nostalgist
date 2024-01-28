@@ -71,41 +71,6 @@ const nostalgist = await Nostalgist.launch({
 
     If it's an empty string, a canvas element will be created automatically and this canvas element will be append to `document.body`.
 
-  + #### `style`
-
-    **type:** `Object`
-
-    The CSS style for the canvas element we are using for running the emulator.
-
-    If the canvas element is created automatically, which means the `element` is not specified or is an empty string `''`, the style will be
-
-    ```js
-    {
-      position: 'fixed',
-      top: '0',
-      left: '0',
-      width: '100%',
-      height: '100%',
-      backgroundColor: 'black',
-      zIndex: '1',
-    }
-    ```
-
-    otherwise it will be `undefined`.
-
-    The CSS rule name should be "camelCase" instead of "kebab-case". For example, `{ backgroundColor: 'black' }` is valid, but `{ 'background-color': '' }` is not.
-
-    The values of the CSS rules should be strings, not numbers. For example, `{ width: '800px' }` is valid, but `{ width: 800 }` is not.
-
-  + #### `size`
-
-    **type:** `'auto' | { width: number, height: number }` **default:** `'auto'`
-
-    The size of the canvas element.
-    If it's `'auto'`, the canvas element will keep its original size, or it's width and height will be updated as specified.
-
-    In most cases, it is recommended to specify the size of the element through CSS or the `style` parameter first.
-
   + #### `core`
 
     **type:** `string | { name: string, js: string, wasm: string | ArrayBuffer }`
@@ -181,6 +146,21 @@ const nostalgist = await Nostalgist.launch({
 
     Basicly it's the same as the `rom` option. Files passed here will be write to RetroArch's `system` directory.
 
+  + #### `shader`
+
+    **type:** `string`
+
+    **since:** `0.7.0`
+
+    The name of a shader. By default, shader files will be loaded from [libretro/glsl-shaders](https://github.com/libretro/glsl-shaders) via jsDelivr with a loose matching logic.
+
+    For example, if `shader` is `'crt/crt-easymode'`, then these two files will be loaded:
+
+    + [crt/crt-easymode.glslp](https://github.com/libretro/glsl-shaders/blob/master/crt/crt-easymode.glslp)
+    + [crt/shaders/crt-easymode.glsl](https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-easymode.glsl)
+
+    If you want to load a shader which does not match this simple pattern, you might need to customize it by implementing the `resolveShader` function.
+
   + #### `retroarchConfig`
     **type:** `Object`
 
@@ -203,6 +183,41 @@ const nostalgist = await Nostalgist.launch({
       },
     })
     ```
+
+  + #### `style`
+
+    **type:** `Object`
+
+    The CSS style for the canvas element we are using for running the emulator.
+
+    If the canvas element is created automatically, which means the `element` is not specified or is an empty string `''`, the style will be
+
+    ```js
+    {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'black',
+      zIndex: '1',
+    }
+    ```
+
+    otherwise it will be `undefined`.
+
+    The CSS rule name should be "camelCase" instead of "kebab-case". For example, `{ backgroundColor: 'black' }` is valid, but `{ 'background-color': '' }` is not.
+
+    The values of the CSS rules should be strings, not numbers. For example, `{ width: '800px' }` is valid, but `{ width: 800 }` is not.
+
+  + #### `size`
+
+    **type:** `'auto' | { width: number, height: number }` **default:** `'auto'`
+
+    The size of the canvas element.
+    If it's `'auto'`, the canvas element will keep its original size, or it's width and height will be updated as specified.
+
+    In most cases, it is recommended to specify the size of the element through CSS or the `style` parameter first.
 
   + #### `runEmulatorManually`
     **type:** `boolean` **default:** `false`
@@ -297,6 +312,11 @@ const nostalgist = await Nostalgist.launch({
     **type:** `Function`
 
     A custom function used for resolving a BIOS. The return value of this function can be a `string | File | { fileName: string; fileContent: Blob } | Array` or a `Promise` of above.
+
+  + #### `resolveShader`
+    **type:** `Function`
+
+    A custom function used for resolving shader files. The return value of this function can be a `string | File | { fileName: string; fileContent: Blob } | Array` or a `Promise` of above. The files should be some `glslp` and `glsl` files. At least one `glslp` file should be returned to make the shader to be applied.
 
 ## Returns
 A `Promise` of the instance of the emulator.

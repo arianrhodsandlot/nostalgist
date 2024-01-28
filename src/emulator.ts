@@ -12,6 +12,7 @@ const encoder = new TextEncoder()
 const raUserdataDir = '/home/web_user/retroarch/userdata'
 const raBundleDir = '/home/web_user/retroarch/bundle'
 
+const raContentDir = join(raUserdataDir, 'content')
 const raConfigDir = join(raUserdataDir, 'config')
 const raShaderDir = join(raBundleDir, 'shaders', 'shaders_glsl')
 
@@ -291,7 +292,6 @@ export class Emulator {
     const emscripten: EmulatorEmscripten = await getEmscripten({ Module: initialModule })
     this.emscripten = emscripten
     const { Module } = emscripten
-    window.FS = Module.FS
     await Module.monitorRunDependencies()
     await this.setupFileSystem()
   }
@@ -345,11 +345,11 @@ export class Emulator {
     if (shader.length === 0) {
       return
     }
-
-    const glslpContent = shader
-      .filter((file) => file.fileName.endsWith('.glslp'))
-      .map((file) => `#reference "${join(raShaderDir, file.fileName)}"`)
-      .join('\n')
+    const glslFiles = shader.filter((file) => file.fileName.endsWith('.glslp'))
+    if (glslFiles.length === 0) {
+      return
+    }
+    const glslpContent = glslFiles.map((file) => `#reference "${join(raShaderDir, file.fileName)}"`).join('\n')
 
     this.writeTextToDirectory({ fileName: 'global.glslp', fileContent: glslpContent, directory: raConfigDir })
 
@@ -367,7 +367,7 @@ export class Emulator {
     const { rom } = this.options
     if (rom.length > 0) {
       const [{ fileName }] = rom
-      raArgs.push(join('/home/web_user/retroarch/userdata/content', fileName))
+      raArgs.push(join(raContentDir, fileName))
     }
     Module.callMain(raArgs)
     this.gameStatus = 'running'
