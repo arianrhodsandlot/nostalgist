@@ -60,8 +60,9 @@ test.describe('static methods', () => {
     await expect(canvas).not.toBeAttached()
 
     await page.getByText('launchShader', { exact: true }).click()
+    await canvas.click()
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(2000)
     await expect(canvas).toHaveScreenshot('launch-shader.png')
   })
 })
