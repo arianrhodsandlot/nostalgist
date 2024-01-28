@@ -18,9 +18,9 @@ export interface NostalgistCoreDict {
 }
 
 export type NostalgistResolveFileFunction = (
-  file: NostalgistOptionsFiles,
+  file: string,
   options: NostalgistOptions,
-) => MaybePromise<NostalgistOptionsFiles | undefined>
+) => MaybePromise<NostalgistOptionsFiles | void>
 
 export interface NostalgistOptions {
   /**
@@ -127,6 +127,12 @@ export interface NostalgistOptions {
   rom?: NostalgistOptionsFiles
 
   /**
+   * The name of the shader to be used.
+   * By default, shaders will be loaded from https://github.com/libretro/glsl-shaders in a loose way, while this can be changed by customizing the `resolveShader` option.
+   */
+  shader?: string
+
+  /**
    * The BIOS files needed to be launched with roms.
    *
    * This property can be:
@@ -169,6 +175,10 @@ export interface NostalgistOptions {
   resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string | ArrayBuffer>
   resolveRom: NostalgistResolveFileFunction
   resolveBios: NostalgistResolveFileFunction
+  resolveShader: (
+    shader: NostalgistOptions['shader'],
+    options: NostalgistOptions,
+  ) => MaybePromise<NostalgistOptionsFiles | void>
   waitForInteraction?: (params: { done: () => void }) => void
 }
 

@@ -2,7 +2,7 @@ import { BFSRequire } from 'browserfs'
 
 const { Buffer } = BFSRequire('buffer')
 export const path = BFSRequire('path')
-export const { basename, extname, dirname, join } = path
+export const { basename, extname, dirname, join, relative } = path
 
 export function isAbsoluteUrl(string: string) {
   if (!string) {
@@ -18,6 +18,17 @@ export function isAbsoluteUrl(string: string) {
 export async function blobToBuffer(blob: Blob) {
   const arrayBuffer = await blob.arrayBuffer()
   return Buffer.from(arrayBuffer)
+}
+
+export function stringToBuffer(string: string) {
+  return Buffer.from(string, 'utf8')
+}
+
+export async function toBuffer(file: string | Blob) {
+  if (typeof file === 'string') {
+    return stringToBuffer(file)
+  }
+  return await blobToBuffer(file)
 }
 
 export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclaration>) {

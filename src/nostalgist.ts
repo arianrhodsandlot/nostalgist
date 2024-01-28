@@ -419,7 +419,12 @@ export class Nostalgist {
     const style = this.getStyleOption()
     const retroarchConfig = this.getRetroarchOption()
     const retroarchCoreConfig = this.getRetroarchCoreOption()
-    const [core, rom, bios] = await Promise.all([this.getCoreOption(), this.getRomOption(), this.getBiosOption()])
+    const [core, rom, bios, shader] = await Promise.all([
+      this.getCoreOption(),
+      this.getRomOption(),
+      this.getBiosOption(),
+      this.getShaderOption(),
+    ])
     const emulatorOptions = {
       element,
       style,
@@ -427,6 +432,7 @@ export class Nostalgist {
       core,
       rom,
       bios,
+      shader,
       respondToGlobalEvents,
       retroarchConfig,
       retroarchCoreConfig,
@@ -527,7 +533,7 @@ export class Nostalgist {
     return { name, js, wasm: wasm as ArrayBuffer }
   }
 
-  private async resolveFile(file: NostalgistOptionsFile, resolveFunction: NostalgistResolveFileFunction) {
+  private async resolveFile(file: NostalgistOptionsFile, resolveFunction?: NostalgistResolveFileFunction) {
     let fileName = ''
     let fileContent: Blob | false = false
 
@@ -538,8 +544,10 @@ export class Nostalgist {
       fileContent = file
     } else if (typeof file === 'string') {
       fileName = baseName(file)
-      const resolvedRom = await resolveFunction(file, this.options)
-      if (resolvedRom instanceof Blob) {
+      const resolvedRom = resolveFunction ? await resolveFunction(file, this.options) : file
+      if (!resolvedRom) {
+        throw new Error('file is invalid')
+      } else if (resolvedRom instanceof Blob) {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {
         fileName = baseName(resolvedRom)
@@ -581,6 +589,24 @@ export class Nostalgist {
     }
     const biosFiles = Array.isArray(bios) ? bios : [bios]
     return await Promise.all(biosFiles.map((biosFile) => this.resolveFile(biosFile, resolveBios)))
+  }
+
+  private async getShaderOption() {
+    const { shader, resolveShader } = this.options
+    if (!shader) {
+      return []
+    }
+    const shaderFile = await resolveShader(shader, this.options)
+    if (Array.isArray(shaderFile)) {
+      if (shaderFile.length > 0) {
+        return await Promise.all(shaderFile.map((file) => this.resolveFile(file)))
+      }
+      return []
+    }
+    if (shaderFile) {
+      return [await this.resolveFile(shaderFile)]
+    }
+    return []
   }
 
   private getRetroarchOption() {

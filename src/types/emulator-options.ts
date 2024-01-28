@@ -25,6 +25,7 @@ export interface EmulatorOptions {
   }
   rom: { fileName: string; fileContent: Blob }[]
   bios: { fileName: string; fileContent: Blob }[]
+  shader: { fileName: string; fileContent: Blob }[]
 
   respondToGlobalEvents: boolean
 

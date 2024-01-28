@@ -5,13 +5,18 @@ import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
 import type { RetroArchEmscriptenModule } from './types/retroarch-emscripten'
-import { basename, blobToBuffer, delay, dirname, importCoreJsAsESM, join, updateStyle } from './utils'
+import { basename, blobToBuffer, delay, dirname, importCoreJsAsESM, join, stringToBuffer, updateStyle } from './utils'
 
 const encoder = new TextEncoder()
 
-const raUserdataDir = '/home/web_user/retroarch/userdata/'
-const raCoreConfigDir = `${raUserdataDir}config/`
-const raConfigPath = `${raUserdataDir}retroarch.cfg`
+const raUserdataDir = '/home/web_user/retroarch/userdata'
+const raBundleDir = '/home/web_user/retroarch/bundle'
+
+const raConfigDir = join(raUserdataDir, 'config')
+const raShaderDir = join(raBundleDir, 'shaders', 'shaders_glsl')
+
+const raConfigPath = join(raUserdataDir, 'retroarch.cfg')
+const raCoreConfigPath = join(raUserdataDir, 'retroarch-core-options.cfg')
 
 type GameStatus = 'initial' | 'paused' | 'running'
 
@@ -58,8 +63,8 @@ export class Emulator {
 
   async launch() {
     await this.setupEmscripten()
-    this.setupRaConfigFile()
-    this.setupRaCoreConfigFile()
+
+    await this.setupRaConfigFile()
 
     const { element, style, respondToGlobalEvents, waitForInteraction } = this.options
     updateStyle(element, style)
@@ -212,6 +217,7 @@ export class Emulator {
     FS.createDataFile('/', fileName, buffer, true, false)
     const encoding = 'binary'
     const data = FS.readFile(fileName, { encoding })
+    FS.mkdirTree(directory)
     FS.writeFile(join(directory, fileName), data, { encoding })
     FS.unlink(fileName)
   }
@@ -227,8 +233,13 @@ export class Emulator {
   }) {
     const { Module } = this.getEmscripten()
     const { FS } = Module
-    const encoding = 'utf8'
-    FS.writeFile(join(directory, fileName), fileContent, { encoding })
+    const buffer = stringToBuffer(fileContent)
+    FS.createDataFile('/', fileName, buffer, true, false)
+    const encoding = 'binary'
+    const data = FS.readFile(fileName, { encoding })
+    FS.mkdirTree(directory)
+    FS.writeFile(join(directory, fileName), data, { encoding })
+    FS.unlink(fileName)
   }
 
   private async setupFileSystem() {
@@ -280,6 +291,7 @@ export class Emulator {
     const emscripten: EmulatorEmscripten = await getEmscripten({ Module: initialModule })
     this.emscripten = emscripten
     const { Module } = emscripten
+    window.FS = Module.FS
     await Module.monitorRunDependencies()
     await this.setupFileSystem()
   }
@@ -322,18 +334,31 @@ export class Emulator {
     this.writeTextToDirectory({ fileContent, fileName, directory })
   }
 
-  private setupRaConfigFile() {
+  private async setupRaConfigFile() {
     this.writeConfigFile({ path: raConfigPath, config: this.options.retroarchConfig })
+    this.writeConfigFile({ path: raCoreConfigPath, config: this.options.retroarchCoreConfig })
+    await this.setupRaShaderFile()
   }
 
-  private setupRaCoreConfigFile() {
-    const coreName = this.options.core.name
-    const coreConfig = this.options.retroarchCoreConfig
-    const coreInfo = coreInfoMap[coreName]
-    if (coreInfo && coreInfo.corename) {
-      const raCoreConfigPath = `${raCoreConfigDir}${coreInfo.corename}/${coreInfo.corename}.opt`
-      this.writeConfigFile({ path: raCoreConfigPath, config: coreConfig })
+  private async setupRaShaderFile() {
+    const { shader } = this.options
+    if (shader.length === 0) {
+      return
     }
+
+    const glslpContent = shader
+      .filter((file) => file.fileName.endsWith('.glslp'))
+      .map((file) => `#reference "${join(raShaderDir, file.fileName)}"`)
+      .join('\n')
+
+    this.writeTextToDirectory({ fileName: 'global.glslp', fileContent: glslpContent, directory: raConfigDir })
+
+    await Promise.all(
+      shader.map(async ({ fileName, fileContent }) => {
+        const directory = fileName.endsWith('.glslp') ? raShaderDir : join(raShaderDir, 'shaders')
+        await this.writeBlobToDirectory({ fileName, fileContent, directory })
+      }),
+    )
   }
 
   private runMain() {
@@ -342,7 +367,7 @@ export class Emulator {
     const { rom } = this.options
     if (rom.length > 0) {
       const [{ fileName }] = rom
-      raArgs.push(`/home/web_user/retroarch/userdata/content/${fileName}`)
+      raArgs.push(join('/home/web_user/retroarch/userdata/content', fileName))
     }
     Module.callMain(raArgs)
     this.gameStatus = 'running'
