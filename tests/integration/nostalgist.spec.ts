@@ -188,4 +188,19 @@ describe('nostalgist', () => {
     const options = nostalgist.getOptions()
     expect(options.size).toEqual({ width: 100, height: 100 })
   })
+
+  test.only('Nostalgist.launch with shaders', async () => {
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+      shader: 'crt/crt-easymode',
+    })
+
+    const { shader } = nostalgist.getEmulatorOptions()
+    for (const file of shader) {
+      expect(file.fileName).toContain('.glsl')
+      expect(file.fileContent.type).toBe('application/octet-stream')
+      expect(file.fileContent.size).toBeGreaterThan(0)
+    }
+  })
 })

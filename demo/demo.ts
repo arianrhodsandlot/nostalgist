@@ -26,6 +26,7 @@ async function launchFceummWithCoreConfig() {
   nostalgist = await Nostalgist.launch({
     core: 'fceumm',
     rom: 'flappybird.nes',
+    shader: 'crt/crt-easymode',
     retroarchCoreConfig: {
       fceumm_turbo_enable: 'Both',
     },

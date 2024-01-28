@@ -1,12 +1,13 @@
 import type { NostalgistOptions } from './types/nostalgist-options'
 import type { RetroArchConfig } from './types/retroarch-config'
-import { isAbsoluteUrl } from './utils'
+import { isAbsoluteUrl, path } from './utils'
 
 const defaultRetroarchConfig: RetroArchConfig = {
   menu_driver: 'rgui',
   stdin_cmd_enable: true,
   savestate_thumbnail_enable: true,
   notification_show_when_menu_is_alive: true,
+  video_shader_enable: true,
 
   input_exit_emulator: 'nul', // override default 'esc',
   input_cheat_index_minus: 'nul', // override default 't',
@@ -34,6 +35,9 @@ const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
 const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
 const coreVersion = 'v1.16.0'
 const coreDirectory = 'retroarch'
+
+const shaderRepo = 'libretro/glsl-shaders'
+const shaderVersion = 'bc8df9'
 
 export function getDefaultOptions() {
   const defaultOptions: Omit<NostalgistOptions, 'core'> = {
@@ -84,6 +88,18 @@ export function getDefaultOptions() {
 
     resolveBios(file) {
       return file || []
+    },
+
+    resolveShader(name) {
+      if (!name) {
+        return []
+      }
+
+      const preset = `${cdnBaseUrl}/${shaderRepo}@${shaderVersion}/${name}.glslp`
+      const segments = name.split(path.sep)
+      segments.splice(-1, 0, 'shaders')
+      const shader = `${cdnBaseUrl}/${shaderRepo}@${shaderVersion}/${segments.join(path.sep)}.glsl`
+      return [preset, shader]
     },
   }
   return defaultOptions
