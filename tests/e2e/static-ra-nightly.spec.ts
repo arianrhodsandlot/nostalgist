@@ -61,7 +61,8 @@ test.describe('static methods with nightly retroarch', () => {
 
     await page.getByText('launchShader', { exact: true }).click()
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await canvas.click()
+    await page.waitForTimeout(2000)
     await expect(canvas).toHaveScreenshot('launch-shader.png')
   })
 })
