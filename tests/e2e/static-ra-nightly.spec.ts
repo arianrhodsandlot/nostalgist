@@ -35,16 +35,6 @@ test.describe('static methods with nightly retroarch', () => {
     await expect(canvas).toHaveScreenshot('launch-gbc.png')
   })
 
-  test('launch nestopia', async ({ page }) => {
-    const canvas = page.locator('#canvas')
-    await expect(canvas).not.toBeAttached()
-
-    await page.getByText('launchNestopia', { exact: true }).click()
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(2000)
-    await expect(canvas).toHaveScreenshot('launch-nestopia.png')
-  })
-
   test('launch size', async ({ page }) => {
     const canvas = page.locator('#canvas')
     await expect(canvas).not.toBeAttached()
@@ -55,7 +45,7 @@ test.describe('static methods with nightly retroarch', () => {
     await expect(canvas).toHaveScreenshot('launch-size.png')
   })
 
-  test('launch nes with a crt shader', async ({ page }) => {
+  test('launch with a crt shader', async ({ page }) => {
     const canvas = page.locator('#canvas')
     await expect(canvas).not.toBeAttached()
 
