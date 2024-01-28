@@ -11,7 +11,7 @@ export default defineConfig({
   snapshotPathTemplate: '{testDir}/snapshots/{testFilePath}/{testName}/{arg}{ext}',
   reporter: 'html',
   expect: {
-    toHaveScreenshot: { maxDiffPixelRatio: 0.1, threshold: 0.3 },
+    toHaveScreenshot: { maxDiffPixels: 100 },
   },
   webServer: {
     command: 'pnpm serve -n',

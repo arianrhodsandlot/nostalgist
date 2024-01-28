@@ -16,16 +16,12 @@ async function gbc() {
   nostalgist = await Nostalgist.gbc('combatsoccer.gbc')
 }
 
-async function launchNestopia() {
-  nostalgist = await Nostalgist.nes({ core: 'nestopia', rom: 'pong1k.nes' })
-}
-
 async function launchSize() {
-  nostalgist = await Nostalgist.nes({ rom: 'pong1k.nes', size: { width: 100, height: 100 } })
+  nostalgist = await Nostalgist.gbc({ rom: 'combatsoccer.gbc', size: { width: 100, height: 100 } })
 }
 
 async function launchShader() {
-  nostalgist = await Nostalgist.launch({ core: 'fceumm', rom: 'pong1k.nes', shader: 'crt/crt-geom' })
+  nostalgist = await Nostalgist.launch({ core: 'genesis_plus_gx', rom: 'asciiwar.bin', shader: 'crt/crt-geom' })
 }
 
 async function saveState() {
@@ -88,7 +84,6 @@ document.body.addEventListener('click', async function listener({ target }) {
     nes,
     megadrive,
     gbc,
-    launchNestopia,
     launchSize,
     launchShader,
     saveState,
