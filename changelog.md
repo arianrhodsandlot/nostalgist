@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - add support for shaders
 
+### Fixed
+- fix BIOS files not written to the system directory
+
 ## [0.6.0](https://github.com/arianrhodsandlot/nostalgist/compare/v0.5.1...v0.6.0) - 2024-01-13
 
 ### Added

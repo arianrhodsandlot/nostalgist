@@ -144,7 +144,7 @@ const nostalgist = await Nostalgist.launch({
 
     **type:** `string | File | { fileName: string; fileContent: Blob } | Array`
 
-    Basicly it's the same as the `rom` option. Files passed here will be write to RetroArch's `system` directory.
+    Basically it's the same as the `rom` option. Files passed here will be written to RetroArch's `system` directory.
 
   + #### `shader`
 

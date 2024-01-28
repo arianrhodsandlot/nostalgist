@@ -13,6 +13,7 @@ const raUserdataDir = '/home/web_user/retroarch/userdata'
 const raBundleDir = '/home/web_user/retroarch/bundle'
 
 const raContentDir = join(raUserdataDir, 'content')
+const raSystemDir = join(raUserdataDir, 'system')
 const raConfigDir = join(raUserdataDir, 'config')
 const raShaderDir = join(raBundleDir, 'shaders', 'shaders_glsl')
 
@@ -251,13 +252,11 @@ export class Emulator {
     const emscriptenFS = createEmscriptenFS({ FS, PATH, ERRNO_CODES })
     FS.mount(emscriptenFS, { root: '/home' }, '/home')
 
-    const romDirectory = join(raUserdataDir, 'content')
     if (rom.length > 0) {
-      FS.mkdirTree(romDirectory)
+      FS.mkdirTree(raContentDir)
     }
-    const biosDirectory = join(raUserdataDir, 'content')
     if (bios.length > 0) {
-      FS.mkdirTree(biosDirectory)
+      FS.mkdirTree(raSystemDir)
     }
 
     // a hack used for waiting for wasm's instantiation.
@@ -271,8 +270,8 @@ export class Emulator {
     }
 
     await Promise.all([
-      ...rom.map((file) => this.writeBlobToDirectory({ ...file, directory: romDirectory })),
-      ...bios.map((file) => this.writeBlobToDirectory({ ...file, directory: biosDirectory })),
+      ...rom.map((file) => this.writeBlobToDirectory({ ...file, directory: raContentDir })),
+      ...bios.map((file) => this.writeBlobToDirectory({ ...file, directory: raSystemDir })),
     ])
   }
 
