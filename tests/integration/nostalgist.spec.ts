@@ -189,7 +189,7 @@ describe('nostalgist', () => {
     expect(options.size).toEqual({ width: 100, height: 100 })
   })
 
-  test.only('Nostalgist.launch with shaders', async () => {
+  test('Nostalgist.launch with shaders', async () => {
     const nostalgist = await Nostalgist.launch({
       core: 'fceumm',
       rom: 'flappybird.nes',
