@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-test.describe('instance methods with nightly retroarch', () => {
+test.describe('instance methods with retroarch legacy', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/e2e/test-page/nightly.html')
+    await page.goto('/tests/e2e/test-page/legacy.html')
   })
 
   test('save state', async ({ page }) => {

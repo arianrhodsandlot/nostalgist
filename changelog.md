@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- update default retroarch-emscripten-build version to v1.17.0
+
+### Fixed
+- fix export name when using ESM build of retroarch
 
 ## [0.7.0](https://github.com/arianrhodsandlot/nostalgist/compare/v0.6.0...v0.7.0) - 2024-01-28
 

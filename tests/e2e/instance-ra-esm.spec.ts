@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-test.describe('instance methods', () => {
+test.describe('instance methods with retroarch esm', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/e2e/test-page/index.html')
+    await page.goto('/tests/e2e/test-page/esm.html')
   })
 
   test('save state', async ({ page }) => {

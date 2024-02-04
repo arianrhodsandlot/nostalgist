@@ -73,7 +73,7 @@ function patchCoreJs({ name, js }: { name: string; js: string }) {
       'readyPromiseResolve({ JSEvents, Module, exit: _emscripten_force_exit })',
     )};
       export function getEmscripten({ Module }) {
-        return ${name}(Module)
+        return (libretro_${name} || ${name})(Module)
       }
     `
   }

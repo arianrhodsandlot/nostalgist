@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-test.describe('static methods', () => {
+test.describe('static methods with retroarch legacy', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/e2e/test-page/index.html')
+    await page.goto('/tests/e2e/test-page/legacy.html')
   })
 
   test('launch nes', async ({ page }) => {
