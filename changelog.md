@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - update default retroarch-emscripten-build version to v1.17.0
 - disable some default inputs in RetroArch
+- when some of the passed config items are objects, like `retroarchConfig`, they will be merged with the default items instead of overwriting the default items entirely
 
 ### Fixed
 - fix export name when using ESM build of retroarch

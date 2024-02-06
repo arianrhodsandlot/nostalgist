@@ -98,3 +98,39 @@ export async function importCoreJsAsESM({ name, js }: { name: string; js: string
     URL.revokeObjectURL(jsBlobUrl)
   }
 }
+
+function isNil(obj: unknown) {
+  return obj === undefined || obj === null
+}
+
+function isPrimitive(obj: unknown) {
+  if (isNil(obj)) {
+    return true
+  }
+  const type = typeof obj
+  const primitevTypes = ['string', 'number', 'boolean', 'bigint', 'symbol', 'function']
+  return primitevTypes.includes(type)
+}
+
+function mergeSourceToTarget(target: any, source: any) {
+  for (const key in source) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      const targetValue = target[key]
+      const sourceValue = source[key]
+      if (isPrimitive(sourceValue)) {
+        target[key] = sourceValue
+      } else if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+        target[key] = [...targetValue, ...sourceValue]
+      } else {
+        target[key] = isPrimitive(targetValue) ? {} : target[key]
+        merge(target[key], sourceValue)
+      }
+    }
+  }
+}
+
+export function merge(target: any, ...sources: any[]) {
+  for (const source of sources) {
+    mergeSourceToTarget(target, source)
+  }
+}

@@ -10,6 +10,7 @@ import type {
   NostalgistOptionsPartial,
   NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
+import { merge } from './utils'
 import { vendors } from './vendors'
 
 function baseName(url: string) {
@@ -29,10 +30,9 @@ export class Nostalgist {
   private emulator: Emulator | undefined
 
   private constructor(options: NostalgistLaunchOptions) {
-    const mergedOptions = {
-      ...Nostalgist.globalOptions,
-      ...options,
-    }
+    const mergedOptions = {}
+    merge(mergedOptions, Nostalgist.globalOptions, options)
+    // @ts-expect-error we cannot infer the final type here
     this.options = mergedOptions
   }
 
@@ -59,10 +59,7 @@ export class Nostalgist {
    * ```
    */
   static configure(options: NostalgistOptionsPartial) {
-    Nostalgist.globalOptions = {
-      ...Nostalgist.globalOptions,
-      ...options,
-    }
+    merge(Nostalgist.globalOptions, options)
   }
 
   /**
@@ -477,10 +474,8 @@ export class Nostalgist {
     }
 
     if (element) {
-      return {
-        ...defaultAppearanceStyle,
-        ...style,
-      }
+      merge(defaultAppearanceStyle, style)
+      return defaultAppearanceStyle
     }
 
     const defaultLayoutStyle: Partial<CSSStyleDeclaration> = {
@@ -491,11 +486,8 @@ export class Nostalgist {
       height: '100%',
       zIndex: '1',
     }
-    return {
-      ...defaultLayoutStyle,
-      ...defaultAppearanceStyle,
-      ...style,
-    }
+    merge(defaultLayoutStyle, defaultAppearanceStyle, style)
+    return defaultLayoutStyle
   }
 
   private async getCoreOption() {
@@ -610,17 +602,15 @@ export class Nostalgist {
   }
 
   private getRetroarchOption() {
-    return {
-      ...Nostalgist.globalOptions.retroarchConfig,
-      ...this.options.retroarchConfig,
-    }
+    const options = {}
+    merge(options, Nostalgist.globalOptions.retroarchConfig, this.options.retroarchConfig)
+    return options as typeof this.options.retroarchConfig
   }
 
   private getRetroarchCoreOption() {
-    return {
-      ...Nostalgist.globalOptions.retroarchCoreConfig,
-      ...this.options.retroarchCoreConfig,
-    }
+    const options = {}
+    merge(options, Nostalgist.globalOptions.retroarchCoreConfig, this.options.retroarchCoreConfig)
+    return options
   }
 
   private loadEmulator() {

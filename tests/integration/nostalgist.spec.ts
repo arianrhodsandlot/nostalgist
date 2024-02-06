@@ -203,4 +203,29 @@ describe('nostalgist', () => {
       expect(file.fileContent.size).toBeGreaterThan(0)
     }
   })
+
+  test.only('Nostalgist.launch with nested options', async () => {
+    Nostalgist.configure({
+      retroarchConfig: {
+        input_audio_mute: 'a',
+        input_menu_toggle: 'nul',
+      },
+    })
+
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+      retroarchConfig: {
+        input_max_users: 4,
+        input_audio_mute: 'b',
+      },
+    })
+
+    const options = nostalgist.getOptions()
+    expect(options.retroarchConfig).toMatchObject({
+      menu_driver: 'rgui',
+      input_menu_toggle: 'nul',
+      input_audio_mute: 'b',
+    })
+  })
 })
