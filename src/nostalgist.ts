@@ -30,9 +30,8 @@ export class Nostalgist {
   private emulator: Emulator | undefined
 
   private constructor(options: NostalgistLaunchOptions) {
-    const mergedOptions = {}
+    const mergedOptions = { ...Nostalgist.globalOptions, ...options }
     merge(mergedOptions, Nostalgist.globalOptions, options)
-    // @ts-expect-error we cannot infer the final type here
     this.options = mergedOptions
   }
 
@@ -602,13 +601,13 @@ export class Nostalgist {
   }
 
   private getRetroarchOption() {
-    const options = {}
+    const options = { ...Nostalgist.globalOptions.retroarchConfig, ...this.options.retroarchConfig }
     merge(options, Nostalgist.globalOptions.retroarchConfig, this.options.retroarchConfig)
     return options as typeof this.options.retroarchConfig
   }
 
   private getRetroarchCoreOption() {
-    const options = {}
+    const options = { ...Nostalgist.globalOptions.retroarchCoreConfig, ...this.options.retroarchCoreConfig }
     merge(options, Nostalgist.globalOptions.retroarchCoreConfig, this.options.retroarchCoreConfig)
     return options
   }

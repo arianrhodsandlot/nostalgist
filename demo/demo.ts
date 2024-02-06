@@ -50,7 +50,6 @@ async function launchCustomRom() {
   nostalgist = await Nostalgist.launch({
     core: 'fceumm',
     rom: await showOpenFilePicker().then(([fileHandle]) => fileHandle.getFile()),
-    shader: 'crt/crt-easymode',
   })
 }
 
