@@ -1,9 +1,29 @@
 type RetroArchInputButton = number | string
 
 export interface RetroArchInputConfig {
+  input_close_content_axis: RetroArchInputButton
+  input_close_content_btn: RetroArchInputButton
+  input_close_content_mbtn: RetroArchInputButton
+  input_close_content: RetroArchInputButton
+  input_desktop_menu_toggle_axis: RetroArchInputButton
+  input_desktop_menu_toggle_btn: RetroArchInputButton
+  input_desktop_menu_toggle_mbtn: RetroArchInputButton
+  input_desktop_menu_toggle: RetroArchInputButton
+  input_fps_toggle_axis: RetroArchInputButton
+  input_fps_toggle_btn: RetroArchInputButton
+  input_fps_toggle_mbtn: RetroArchInputButton
+  input_fps_toggle: RetroArchInputButton
+  input_game_focus_toggle_axis: RetroArchInputButton
+  input_game_focus_toggle_btn: RetroArchInputButton
+  input_game_focus_toggle_mbtn: RetroArchInputButton
+  input_game_focus_toggle: RetroArchInputButton
   input_hold_fast_forward_btn: RetroArchInputButton
   input_hold_slowmotion: RetroArchInputButton
   input_netplay_game_watch: RetroArchInputButton
+  input_netplay_player_chat_axis: RetroArchInputButton
+  input_netplay_player_chat_btn: RetroArchInputButton
+  input_netplay_player_chat_mbtn: RetroArchInputButton
+  input_netplay_player_chat: RetroArchInputButton
   input_preempt_toggle_axis: RetroArchInputButton
   input_preempt_toggle_btn: RetroArchInputButton
   input_preempt_toggle_mbtn: RetroArchInputButton

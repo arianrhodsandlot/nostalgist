@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - update default retroarch-emscripten-build version to v1.17.0
+- disable some default inputs in RetroArch
 
 ### Fixed
 - fix export name when using ESM build of retroarch
