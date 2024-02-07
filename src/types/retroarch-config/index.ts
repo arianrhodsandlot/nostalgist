@@ -17,7 +17,6 @@ interface RetroArchFullConfig
     RetroArchRewindConfig,
     RetroArchRunAheadConfig,
     RetroArchSaveConfig,
-    RetroArchSkeletonConfig,
     RetroArchThemeConfig,
     RetroArchVideoConfig,
     RetroArchSkeletonConfig {
