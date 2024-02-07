@@ -204,7 +204,7 @@ describe('nostalgist', () => {
     }
   })
 
-  test.only('Nostalgist.launch with nested options', async () => {
+  test('Nostalgist.launch with nested options', async () => {
     Nostalgist.configure({
       retroarchConfig: {
         input_audio_mute: 'a',
