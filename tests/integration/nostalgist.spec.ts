@@ -113,7 +113,7 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.launch({ rom: testNesRomUrl, core })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toBe(core)
+    expect(options.core).toStrictEqual(core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     expect(emulatorOptions.core.name).toBe('fceumm')
@@ -136,7 +136,7 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.launch({ rom, core, resolveRom })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toBe(core)
+    expect(options.core).toStrictEqual(core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     expect(emulatorOptions.core.name).toBe('fceumm')
@@ -160,7 +160,7 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.launch({ core, rom, bios, resolveRom, resolveBios })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toBe(core)
+    expect(options.core).toStrictEqual(core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     expect(emulatorOptions.core.name).toBe('fceumm')
@@ -227,5 +227,31 @@ describe('nostalgist', () => {
       input_menu_toggle: 'nul',
       input_audio_mute: 'b',
     })
+  })
+
+  test('Nostalgist.launch overwrites the configured core', async () => {
+    Nostalgist.configure({ core: 'nestopia' })
+    const core = {
+      name: 'fceumm',
+      js: 'https://web.libretro.com/fceumm_libretro.js',
+      wasm: 'https://web.libretro.com/fceumm_libretro.wasm',
+    }
+    const nostalgist = await Nostalgist.launch({ core, rom: testNesRomUrl })
+
+    const options = nostalgist.getOptions()
+    expect(options.core).toStrictEqual(core)
+  })
+
+  test('Nostalgist.launch overwrites the configured custom emscripten core', async () => {
+    const core = {
+      name: 'fceumm',
+      js: 'https://web.libretro.com/fceumm_libretro.js',
+      wasm: 'https://web.libretro.com/fceumm_libretro.wasm',
+    }
+    Nostalgist.configure({ core })
+    const nostalgist = await Nostalgist.launch({ core: 'nestopia', rom: testNesRomUrl })
+
+    const options = nostalgist.getOptions()
+    expect(options.core).toStrictEqual('nestopia')
   })
 })

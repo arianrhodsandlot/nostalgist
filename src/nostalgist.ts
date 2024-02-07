@@ -30,9 +30,17 @@ export class Nostalgist {
   private emulator: Emulator | undefined
 
   private constructor(options: NostalgistLaunchOptions) {
-    const mergedOptions = { ...Nostalgist.globalOptions, ...options }
-    merge(mergedOptions, Nostalgist.globalOptions, options)
-    this.options = mergedOptions
+    const globalOptions = { ...Nostalgist.globalOptions }
+    const localOptions = { ...options }
+    const rom = globalOptions.rom || localOptions.rom
+    const bios = globalOptions.bios || localOptions.bios
+    const mergedOptions = { rom, bios }
+    delete globalOptions.rom
+    delete globalOptions.bios
+    delete localOptions.rom
+    delete localOptions.bios
+    merge(mergedOptions, globalOptions, localOptions)
+    this.options = mergedOptions as NostalgistOptions
   }
 
   /**
@@ -601,15 +609,15 @@ export class Nostalgist {
   }
 
   private getRetroarchOption() {
-    const options = { ...Nostalgist.globalOptions.retroarchConfig, ...this.options.retroarchConfig }
+    const options = {}
     merge(options, Nostalgist.globalOptions.retroarchConfig, this.options.retroarchConfig)
     return options as typeof this.options.retroarchConfig
   }
 
   private getRetroarchCoreOption() {
-    const options = { ...Nostalgist.globalOptions.retroarchCoreConfig, ...this.options.retroarchCoreConfig }
+    const options = {}
     merge(options, Nostalgist.globalOptions.retroarchCoreConfig, this.options.retroarchCoreConfig)
-    return options
+    return options as typeof this.options.retroarchCoreConfig
   }
 
   private loadEmulator() {
