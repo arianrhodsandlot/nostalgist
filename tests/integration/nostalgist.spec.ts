@@ -254,4 +254,12 @@ describe('nostalgist', () => {
     const options = nostalgist.getOptions()
     expect(options.core).toStrictEqual('nestopia')
   })
+
+  test('Nostalgist.launch with a custom element', async () => {
+    const element = document.createElement('canvas')
+    const nostalgist = await Nostalgist.launch({ element, core: 'nestopia', rom: 'flappybird.nes' })
+
+    const options = nostalgist.getOptions()
+    expect(options.core).toStrictEqual('nestopia')
+  })
 })
