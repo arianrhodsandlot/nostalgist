@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1](https://github.com/arianrhodsandlot/nostalgist/compare/v0.8.0...v0.8.1) - 2024-02-24
+
+### Fixed
+
+- fix passing a custom canvas element not working properly
+
 ## [0.8.0](https://github.com/arianrhodsandlot/nostalgist/compare/v0.7.0...v0.8.0) - 2024-02-07
 ### Changed
 - update default retroarch-emscripten-build version to v1.17.0

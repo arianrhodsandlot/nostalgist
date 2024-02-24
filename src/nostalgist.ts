@@ -30,15 +30,23 @@ export class Nostalgist {
   private emulator: Emulator | undefined
 
   private constructor(options: NostalgistLaunchOptions) {
-    const globalOptions = { ...Nostalgist.globalOptions }
+    const globalOptions: Partial<NostalgistLaunchOptions> = { ...Nostalgist.globalOptions }
     const localOptions = { ...options }
+
+    const element = globalOptions.element || localOptions.element
     const rom = globalOptions.rom || localOptions.rom
     const bios = globalOptions.bios || localOptions.bios
-    const mergedOptions = { rom, bios }
+
+    const mergedOptions = { rom, bios, element }
+
     delete globalOptions.rom
     delete globalOptions.bios
+    delete globalOptions.element
+
     delete localOptions.rom
     delete localOptions.bios
+    delete localOptions.element
+
     merge(mergedOptions, globalOptions, localOptions)
     this.options = mergedOptions as NostalgistOptions
   }
