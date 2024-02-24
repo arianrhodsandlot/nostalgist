@@ -20,7 +20,7 @@ export interface NostalgistCoreDict {
 export type NostalgistResolveFileFunction = (
   file: string,
   options: NostalgistOptions,
-) => MaybePromise<NostalgistOptionsFiles | void>
+) => MaybePromise<NostalgistOptionsFiles | undefined>
 
 export interface NostalgistOptions {
   /**
@@ -178,7 +178,7 @@ export interface NostalgistOptions {
   resolveShader: (
     shader: NostalgistOptions['shader'],
     options: NostalgistOptions,
-  ) => MaybePromise<NostalgistOptionsFiles | void>
+  ) => MaybePromise<NostalgistOptionsFiles | undefined>
   waitForInteraction?: (params: { done: () => void }) => void
 }
 
