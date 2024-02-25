@@ -36,16 +36,19 @@ export class Nostalgist {
     const element = globalOptions.element || localOptions.element
     const rom = globalOptions.rom || localOptions.rom
     const bios = globalOptions.bios || localOptions.bios
+    const signal = globalOptions.signal || localOptions.signal
 
-    const mergedOptions = { rom, bios, element }
+    const mergedOptions = { rom, bios, element, signal }
 
     delete globalOptions.rom
     delete globalOptions.bios
     delete globalOptions.element
+    delete globalOptions.signal
 
     delete localOptions.rom
     delete localOptions.bios
     delete localOptions.element
+    delete localOptions.signal
 
     merge(mergedOptions, globalOptions, localOptions)
     this.options = mergedOptions as NostalgistOptions
@@ -418,6 +421,7 @@ export class Nostalgist {
    */
   private async launch(): Promise<void> {
     await this.loadEmulatorOptions()
+    this.checkIsAborted()
     this.loadEmulator()
 
     if (!this.options.runEmulatorManually) {
@@ -426,7 +430,13 @@ export class Nostalgist {
   }
 
   private async loadEmulatorOptions() {
-    const { size = 'auto', respondToGlobalEvents = true, waitForInteraction, emscriptenModule = {} } = this.options
+    const {
+      size = 'auto',
+      respondToGlobalEvents = true,
+      waitForInteraction,
+      signal,
+      emscriptenModule = {},
+    } = this.options
     const element = this.getElementOption()
     const style = this.getStyleOption()
     const retroarchConfig = this.getRetroarchOption()
@@ -437,6 +447,9 @@ export class Nostalgist {
       this.getBiosOption(),
       this.getShaderOption(),
     ])
+
+    this.checkIsAborted()
+
     const emulatorOptions = {
       element,
       style,
@@ -450,6 +463,7 @@ export class Nostalgist {
       retroarchCoreConfig,
       waitForInteraction,
       emscriptenModule,
+      signal,
     }
     this.emulatorOptions = emulatorOptions
   }
@@ -520,7 +534,7 @@ export class Nostalgist {
     if (typeof js === 'string') {
       promises.push(
         (async () => {
-          const response = await fetch(js)
+          const response = await this.fetch(js)
           js = await response.text()
         })(),
       )
@@ -528,7 +542,7 @@ export class Nostalgist {
     if (typeof wasm === 'string') {
       promises.push(
         (async () => {
-          const response = await fetch(wasm as string)
+          const response = await this.fetch(wasm as string)
           wasm = await response.arrayBuffer()
         })(),
       )
@@ -558,7 +572,7 @@ export class Nostalgist {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {
         fileName = baseName(resolvedRom)
-        const response = await fetch(resolvedRom)
+        const response = await this.fetch(resolvedRom)
         fileContent = await response.blob()
       }
     } else {
@@ -632,5 +646,16 @@ export class Nostalgist {
     const emulatorOptions = this.getEmulatorOptions()
     const emulator = new Emulator(emulatorOptions)
     this.emulator = emulator
+  }
+
+  private async fetch(input: string) {
+    const { signal = null } = this.options
+    return await fetch(input, { signal })
+  }
+
+  private checkIsAborted() {
+    if (this.options.signal?.aborted) {
+      throw new Error('Launch aborted')
+    }
   }
 }

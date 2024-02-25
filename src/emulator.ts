@@ -65,14 +65,20 @@ export class Emulator {
 
   async launch() {
     await this.setupEmscripten()
+    this.checkIsAborted()
 
     await this.setupRaConfigFile()
+    this.checkIsAborted()
 
-    const { element, style, respondToGlobalEvents, waitForInteraction } = this.options
+    const { element, style, respondToGlobalEvents, waitForInteraction, signal } = this.options
     updateStyle(element, style)
 
     if (!element.isConnected) {
       document.body.append(element)
+      signal?.addEventListener('abort', () => {
+        element?.remove()
+        this.exit()
+      })
     }
     this.canvasInitialSize = this.getElementSize()
 
@@ -80,7 +86,13 @@ export class Emulator {
       if (!element.tabIndex || element.tabIndex === -1) {
         element.tabIndex = 0
       }
+      const { activeElement } = document
       element.focus()
+      signal?.addEventListener('abort', () => {
+        if (activeElement instanceof HTMLElement) {
+          activeElement.focus()
+        }
+      })
     }
 
     if (waitForInteraction) {
@@ -266,6 +278,7 @@ export class Emulator {
     // eslint-disable-next-line unicorn/consistent-destructuring
     while (!Module.asm && waitTime < maxWaitTime) {
       await delay(10)
+      this.checkIsAborted()
       waitTime += 5
     }
 
@@ -273,6 +286,7 @@ export class Emulator {
       ...rom.map((file) => this.writeBlobToDirectory({ ...file, directory: raContentDir })),
       ...bios.map((file) => this.writeBlobToDirectory({ ...file, directory: raSystemDir })),
     ])
+    this.checkIsAborted()
   }
 
   private async setupEmscripten() {
@@ -292,6 +306,7 @@ export class Emulator {
     this.emscripten = emscripten
     const { Module } = emscripten
     await Module.monitorRunDependencies()
+    this.checkIsAborted()
     await this.setupFileSystem()
   }
 
@@ -361,6 +376,7 @@ export class Emulator {
   }
 
   private runMain() {
+    this.checkIsAborted()
     const { Module } = this.getEmscripten()
     const raArgs: string[] = []
     const { rom } = this.options
@@ -528,6 +544,12 @@ export class Emulator {
     const dateString = `${year}${month}${day}-${hour}${minute}${second}`
     const baseName = this.romBaseName
     return `${baseName}-${dateString}.png`
+  }
+
+  private checkIsAborted() {
+    if (this.options.signal?.aborted) {
+      throw new Error('Launch aborted')
+    }
   }
 }
 

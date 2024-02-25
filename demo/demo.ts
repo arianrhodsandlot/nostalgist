@@ -16,9 +16,15 @@ async function gbc() {
 }
 
 async function launchNestopia() {
+  const abortController = new AbortController()
+  setTimeout(() => {
+    abortController.abort()
+    console.log(abortController.signal)
+  }, 500)
   nostalgist = await Nostalgist.launch({
     core: 'nestopia',
     rom: 'pong1k.nes',
+    signal: abortController.signal,
   })
 }
 

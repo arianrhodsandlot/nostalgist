@@ -49,4 +49,6 @@ export interface EmulatorOptions {
   emscriptenModule: RetroArchEmscriptenModuleOptions
 
   waitForInteraction: ((params: { done: () => void }) => void) | undefined
+
+  signal?: AbortSignal | undefined
 }

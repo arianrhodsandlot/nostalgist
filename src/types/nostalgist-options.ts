@@ -171,6 +171,11 @@ export interface NostalgistOptions {
    */
   emscriptenModule?: RetroArchEmscriptenModuleOptions
 
+  /**
+   * The `AbortSignal` object used for cancelling a launch.
+   */
+  signal?: AbortSignal
+
   resolveCoreJs: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string>
   resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string | ArrayBuffer>
   resolveRom: NostalgistResolveFileFunction
