@@ -3,6 +3,12 @@
  */
 export interface RetroArchSkeletonConfig {
   /**
+   * If set to a directory, the content history playlist will be saved
+   * to this directory.
+   */
+  content_history_dir: string
+
+  /**
    * Automatically saves a savestate at the end of RetroArch's lifetime.
    * The path is $SRAM_PATH.auto.
    * RetroArch will automatically load any savestate with this path on startup if savestate_auto_load is set.
