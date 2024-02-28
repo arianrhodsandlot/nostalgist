@@ -435,6 +435,8 @@ export class Nostalgist {
       respondToGlobalEvents = true,
       waitForInteraction,
       signal,
+      beforeLaunch,
+      onLaunch,
       emscriptenModule = {},
     } = this.options
     const element = this.getElementOption()
@@ -464,6 +466,9 @@ export class Nostalgist {
       waitForInteraction,
       emscriptenModule,
       signal,
+      beforeLaunch,
+      onLaunch,
+      nostalgist: this,
     }
     this.emulatorOptions = emulatorOptions
   }

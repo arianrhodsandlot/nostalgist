@@ -1,3 +1,4 @@
+import type { Nostalgist } from '..'
 import type { RetroArchConfig } from './retroarch-config'
 import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
@@ -185,6 +186,8 @@ export interface NostalgistOptions {
     options: NostalgistOptions,
   ) => MaybePromise<NostalgistOptionsFiles | undefined>
   waitForInteraction?: (params: { done: () => void }) => void
+  beforeLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
+  onLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
 }
 
 export type NostalgistOptionsPartial = Partial<NostalgistOptions>

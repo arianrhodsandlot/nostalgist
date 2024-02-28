@@ -96,9 +96,9 @@ export class Emulator {
     }
 
     if (waitForInteraction) {
-      waitForInteraction({ done: () => this.runMain() })
+      waitForInteraction({ done: async () => await this.runMain() })
     } else {
-      this.runMain()
+      await this.runMain()
     }
   }
 
@@ -375,7 +375,7 @@ export class Emulator {
     )
   }
 
-  private runMain() {
+  private async runMain() {
     this.checkIsAborted()
     const { Module } = this.getEmscripten()
     const raArgs: string[] = []
@@ -384,9 +384,19 @@ export class Emulator {
       const [{ fileName }] = rom
       raArgs.push(join(raContentDir, fileName))
     }
+
+    const { nostalgist, beforeLaunch, onLaunch } = this.options
+    if (beforeLaunch) {
+      await beforeLaunch(nostalgist)
+    }
+
     Module.callMain(raArgs)
     this.gameStatus = 'running'
     this.postRun()
+
+    if (onLaunch) {
+      await onLaunch(nostalgist)
+    }
   }
 
   private postRun() {
