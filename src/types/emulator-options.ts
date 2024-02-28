@@ -1,7 +1,9 @@
+import type { Nostalgist } from '..'
 import type { RetroArchConfig } from './retroarch-config'
 import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
 export interface EmulatorOptions {
+  nostalgist: Nostalgist
   element: HTMLCanvasElement
 
   style: Partial<CSSStyleDeclaration>
@@ -51,4 +53,6 @@ export interface EmulatorOptions {
   waitForInteraction: ((params: { done: () => void }) => void) | undefined
 
   signal?: AbortSignal | undefined
+  beforeLaunch?: undefined | ((nostalgist: Nostalgist) => Promise<void> | void)
+  onLaunch?: undefined | ((nostalgist: Nostalgist) => Promise<void> | void)
 }
