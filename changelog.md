@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - add support for cancelling a launch via an `AbortController`
+- add `beforeLaunch` and `onLaunch` parameters to hook into the launching process
 
 ## [0.8.1](https://github.com/arianrhodsandlot/nostalgist/compare/v0.8.0...v0.8.1) - 2024-02-24
 
