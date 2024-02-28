@@ -219,6 +219,28 @@ const nostalgist = await Nostalgist.launch({
 
     In most cases, it is recommended to specify the size of the element through CSS or the `style` parameter first.
 
+  + #### `signal`
+
+    **type:** `Object`
+
+    **since:** `0.9.0`
+
+    An [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) object used for cancelling a launch.
+
+    Here is an example,
+    ```js
+    const abortController = new AbortController()
+
+    // Cancel the launch after 500ms
+    setTimeout(() => abortController.abort(), 500)
+
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+      signal: abortController.signal,
+    })
+    ```
+
   + #### `runEmulatorManually`
     **type:** `boolean` **default:** `false`
 
