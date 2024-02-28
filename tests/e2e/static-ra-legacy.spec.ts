@@ -55,4 +55,14 @@ test.describe('static methods with retroarch legacy', () => {
     await page.waitForTimeout(2000)
     await expect(canvas).toHaveScreenshot('launch-shader.png')
   })
+
+  test('launch and cancel', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('launchAndCancel', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(500)
+    await expect(canvas).not.toBeAttached()
+  })
 })
