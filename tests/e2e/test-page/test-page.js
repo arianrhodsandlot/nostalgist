@@ -24,6 +24,14 @@ async function launchShader() {
   nostalgist = await Nostalgist.launch({ core: 'genesis_plus_gx', rom: 'asciiwar.bin', shader: 'crt/crt-geom' })
 }
 
+async function launchAndCancel() {
+  const abortController = new AbortController()
+  setTimeout(() => {
+    abortController.abort()
+  }, 500)
+  nostalgist = await Nostalgist.nes({ rom: 'pong1k.nes', signal: abortController.signal })
+}
+
 async function saveState() {
   state = await nostalgist.saveState()
   console.info(state)
@@ -86,6 +94,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     gbc,
     launchSize,
     launchShader,
+    launchAndCancel,
     saveState,
     loadState,
     pause,
