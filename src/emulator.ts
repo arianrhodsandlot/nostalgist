@@ -95,10 +95,22 @@ export class Emulator {
       })
     }
 
+    const { nostalgist, beforeLaunch, onLaunch } = this.options
+    if (beforeLaunch) {
+      await beforeLaunch(nostalgist)
+    }
+
+    const run = async () => {
+      this.runMain()
+      if (onLaunch) {
+        await onLaunch(nostalgist)
+      }
+    }
+
     if (waitForInteraction) {
-      waitForInteraction({ done: async () => await this.runMain() })
+      waitForInteraction({ done: run })
     } else {
-      await this.runMain()
+      run()
     }
   }
 
@@ -375,7 +387,7 @@ export class Emulator {
     )
   }
 
-  private async runMain() {
+  private runMain() {
     this.checkIsAborted()
     const { Module } = this.getEmscripten()
     const raArgs: string[] = []
@@ -385,18 +397,9 @@ export class Emulator {
       raArgs.push(join(raContentDir, fileName))
     }
 
-    const { nostalgist, beforeLaunch, onLaunch } = this.options
-    if (beforeLaunch) {
-      await beforeLaunch(nostalgist)
-    }
-
     Module.callMain(raArgs)
     this.gameStatus = 'running'
     this.postRun()
-
-    if (onLaunch) {
-      await onLaunch(nostalgist)
-    }
   }
 
   private postRun() {
