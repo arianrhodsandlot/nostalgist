@@ -32,6 +32,19 @@ async function launchAndCancel() {
   nostalgist = await Nostalgist.nes({ rom: 'pong1k.nes', signal: abortController.signal })
 }
 
+async function launchWithHooks() {
+  nostalgist = await Nostalgist.nes({
+    rom: 'pong1k.nes',
+    async beforeLaunch(nostalgist) {
+      console.warn(typeof nostalgist, 'beforeLaunch')
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    },
+    onLaunch(nostalgist) {
+      console.warn(typeof nostalgist, 'onLaunch')
+    },
+  })
+}
+
 async function saveState() {
   state = await nostalgist.saveState()
   console.info(state)
@@ -95,6 +108,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     launchSize,
     launchShader,
     launchAndCancel,
+    launchWithHooks,
     saveState,
     loadState,
     pause,
