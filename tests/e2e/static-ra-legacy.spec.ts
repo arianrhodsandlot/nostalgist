@@ -65,4 +65,15 @@ test.describe('static methods with retroarch legacy', () => {
     await page.waitForTimeout(500)
     await expect(canvas).not.toBeAttached()
   })
+
+  test('launch with hooks', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('launchWithHooks', { exact: true }).click()
+    const event1 = await page.waitForEvent('console')
+    expect(event1.text()).toBe('object beforeLaunch')
+    const event2 = await page.waitForEvent('console')
+    expect(event2.text()).toBe('object onLaunch')
+  })
 })
