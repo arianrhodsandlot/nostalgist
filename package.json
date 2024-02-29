@@ -54,7 +54,7 @@
     "@types/ini": "4.1.0",
     "@types/is-ci": "3.0.4",
     "@types/wicg-file-system-access": "2023.10.4",
-    "astro": "4.4.5",
+    "astro": "4.4.6",
     "browserfs": "1.4.3",
     "eslint": "8.57.0",
     "happy-dom": "13.6.2",
