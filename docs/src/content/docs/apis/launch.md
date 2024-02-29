@@ -338,17 +338,23 @@ const nostalgist = await Nostalgist.launch({
   + #### `resolveShader`
     **type:** `Function`
 
+    **since:** `0.7.0`
+
     A custom function used for resolving shader files. The return value of this function can be a `string | File | { fileName: string; fileContent: Blob } | Array` or a `Promise` of above. The files should be some `glslp` and `glsl` files. At least one `glslp` file should be returned to make the shader to be applied.
 
   + #### `beforeLaunch`
 
     **type:** `Function`
 
-    A custom function before the emulator is launched. The Nostalgist instance will be passed as its first parameter. You can access the file system with `nostalgist.getEmscriptenFS` and then read or write its content inside this function. If this function returns a `Promise`, the emulator will launch when that return value is resolved.
+    **since:** `0.9.0`
+
+    A custom function before the emulator is launched. The Nostalgist instance will be passed as its first parameter. You can access the file system with `nostalgist.getEmscriptenFS` and then read or write its content inside this function. If this function returns a `Promise`, the emulator will be launched when that return value is resolved.
 
   + #### `onLaunch`
 
     **type:** `Function`
+
+    **since:** `0.9.0`
 
     A custom function after the emulator is launched. The Nostalgist instance will be passed as its first parameter.
 
