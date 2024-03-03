@@ -1,3 +1,4 @@
+import { type EmscriptenFS } from 'browserfs'
 import ini from 'ini'
 import { coreInfoMap } from './constants/core-info'
 import { keyboardCodeMap } from './constants/keyboard-code-map'
@@ -30,6 +31,7 @@ interface EmulatorEmscripten {
 
 export class Emulator {
   emscripten: EmulatorEmscripten | undefined
+  browserFS: EmscriptenFS | undefined
   private options: EmulatorOptions
   private messageQueue: [Uint8Array, number][] = []
   private gameStatus: GameStatus = 'initial'
@@ -273,8 +275,9 @@ export class Emulator {
     const { FS, PATH, ERRNO_CODES } = Module
     const { rom, bios } = this.options
 
-    const emscriptenFS = createEmscriptenFS({ FS, PATH, ERRNO_CODES })
-    FS.mount(emscriptenFS, { root: '/home' }, '/home')
+    const browserFS = createEmscriptenFS({ FS, PATH, ERRNO_CODES })
+    this.browserFS = browserFS
+    FS.mount(browserFS, { root: '/home' }, '/home')
 
     if (rom.length > 0) {
       FS.mkdirTree(raContentDir)

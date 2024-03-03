@@ -19,7 +19,6 @@ async function launchNestopia() {
   const abortController = new AbortController()
   setTimeout(() => {
     abortController.abort()
-    console.log(abortController.signal)
   }, 500)
   nostalgist = await Nostalgist.launch({
     core: 'nestopia',

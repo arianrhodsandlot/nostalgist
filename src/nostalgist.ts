@@ -198,6 +198,11 @@ export class Nostalgist {
     return emscripten.Module.FS
   }
 
+  getBrowserFS() {
+    const emulator = this.getEmulator()
+    return emulator.browserFS
+  }
+
   getOptions() {
     return this.options
   }
