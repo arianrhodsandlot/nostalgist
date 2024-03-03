@@ -27,5 +27,6 @@ title: API reference
 + [`launchEmulator`](/apis/launch-emulator) (advanced)
 + [`getEmscriptenModule`](/apis/get-emscripten-module) (advanced)
 + [`getEmscriptenFS`](/apis/get-emscripten-fs) (advanced)
++ [`getBrowserFS`](/apis/get-browser-fs) (advanced)
 + [`pressDown`](/apis/press-down) (advanced)
 + [`pressUp`](/apis/press-up) (advanced)

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - add support for cancelling a launch via an `AbortController`
 - add `beforeLaunch` and `onLaunch` parameters to allow us to hook into the launching process
+- add `getBrowserFS` method for accessing the corresponding `BFSEmscriptenFS` object of the emulator
 
 ## [0.8.1](https://github.com/arianrhodsandlot/nostalgist/compare/v0.8.0...v0.8.1) - 2024-02-24
 

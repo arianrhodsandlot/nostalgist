@@ -2,7 +2,7 @@
 title: getEmscriptenFS
 ---
 
-Get the Emscripten FS object of the current running emulator.
+Get the Emscripten `FS` object of the current running emulator.
 
 See [FS object](https://emscripten.org/docs/api_reference/Filesystem-API.html#id2) for more information.
 
