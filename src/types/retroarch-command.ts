@@ -1,4 +1,4 @@
-// Commands reference https://docs.libretro.com/development/retroarch/network-control-interface/
+// Commands reference https://docs.libretro.com/development/retroarch/network-control-interface/#commands
 export type RetroArchCommand =
   | 'FAST_FORWARD'
   | 'FAST_FORWARD_HOLD'

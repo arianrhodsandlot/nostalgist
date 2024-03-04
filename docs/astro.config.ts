@@ -68,6 +68,7 @@ export default defineConfig({
                 { label: 'getBrowserFS', link: '/apis/get-browser-fs', badge },
                 { label: 'pressDown', link: '/apis/press-down', badge },
                 { label: 'pressUp', link: '/apis/press-up', badge },
+                { label: 'sendCommand', link: '/apis/send-command', badge },
               ],
             },
           ],

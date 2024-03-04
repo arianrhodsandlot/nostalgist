@@ -116,6 +116,11 @@ export class Emulator {
     }
   }
 
+  sendCommand(msg: RetroArchCommand) {
+    const bytes = encoder.encode(`${msg}\n`)
+    this.messageQueue.push([bytes, 0])
+  }
+
   resume() {
     if (this.gameStatus === 'paused') {
       this.sendCommand('PAUSE_TOGGLE')
@@ -323,11 +328,6 @@ export class Emulator {
     await Module.monitorRunDependencies()
     this.checkIsAborted()
     await this.setupFileSystem()
-  }
-
-  private sendCommand(msg: RetroArchCommand) {
-    const bytes = encoder.encode(`${msg}\n`)
-    this.messageQueue.push([bytes, 0])
   }
 
   // copied from https://github.com/libretro/RetroArch/pull/15017

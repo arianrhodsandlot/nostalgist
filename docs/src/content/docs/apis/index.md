@@ -30,3 +30,4 @@ title: API reference
 + [`getBrowserFS`](/apis/get-browser-fs) (advanced)
 + [`pressDown`](/apis/press-down) (advanced)
 + [`pressUp`](/apis/press-up) (advanced)
++ [`sendCommand`](/apis/send-command) (advanced)

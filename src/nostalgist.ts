@@ -10,6 +10,7 @@ import type {
   NostalgistOptionsPartial,
   NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
+import type { RetroArchCommand } from './types/retroarch-command'
 import { merge } from './utils'
 import { vendors } from './vendors'
 
@@ -419,6 +420,25 @@ export class Nostalgist {
   screenshot() {
     const emulator = this.getEmulator()
     return emulator.screenshot()
+  }
+
+  /**
+   * Send a command to RetroArch.
+   * The commands are listed here: https://docs.libretro.com/development/retroarch/network-control-interface/#commands .
+   * But not all of them are supported inside a browser.
+   *
+   * @see {@link https://nostalgist.js.org/apis/send-command}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * nostalgist.sendCommand('FAST_FORWARD')
+   * ```
+   */
+  sendCommand(command: RetroArchCommand) {
+    const emulator = this.getEmulator()
+    return emulator.sendCommand(command)
   }
 
   /**
