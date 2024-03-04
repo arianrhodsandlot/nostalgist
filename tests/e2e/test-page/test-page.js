@@ -95,15 +95,33 @@ async function screenshot() {
   document.body.append(image)
 }
 
-Nostalgist.configure({
+const nostalgistConfig = {
   style: {
     width: '800px',
     height: '600px',
     position: 'static',
     backgroundColor: 'transparent',
   },
-  ...window.nostalgistConfig,
-})
+}
+
+if (location.search.includes('legacy')) {
+  const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
+
+  const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
+  const coreVersion = 'v1.16.0'
+  const coreDirectory = 'retroarch'
+
+  Object.assign(nostalgistConfig, {
+    resolveCoreJs(core) {
+      return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`
+    },
+    resolveCoreWasm(core) {
+      return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`
+    },
+  })
+}
+
+Nostalgist.configure(nostalgistConfig)
 
 document.body.addEventListener('click', async function listener({ target }) {
   if (!(target instanceof HTMLButtonElement)) {
