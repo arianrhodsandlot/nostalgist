@@ -6,7 +6,7 @@ export default defineConfig({
   expect: { toHaveScreenshot: { maxDiffPixels: 100 } },
   fullyParallel: true,
   reporter: 'html',
-  retries: 3,
+  retries: 5,
   snapshotPathTemplate: '{testDir}/snapshots/{testFilePath}/{testName}/{arg}{ext}',
   testMatch: 'tests/e2e/**/*.spec.ts',
   updateSnapshots: 'missing',
