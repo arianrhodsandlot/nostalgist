@@ -171,29 +171,6 @@ const nostalgist = await Nostalgist.launch({
 
     This parameter is used for simple shaders only. For some complicated cases, you might need to use the [`beforeLaunch`](#beforelaunch) parameter to write the shader files into the file system.
 
-  + #### `retroarchConfig`
-    **type:** `Object`
-
-    The content you want to specify in `retroarch.cfg`, custom stuff like key mappings can be set using this option. Refer to [libretro/RetroArch/retroarch.cfg](https://github.com/libretro/RetroArch/blob/master/retroarch.cfg) for more information about how to config RetroArch.
-
-    Keep in mind that not all options can take effects since we are launching RetroArch in a browser, not a native environment. And setting `stdin_cmd_enable` to `false` can cause Nostalgist.js saving or loading broken.
-
-  + #### `retroarchCoreConfig`
-    **type:** `Object`
-
-    The content you want to specify in the core option file.
-
-    For example,
-    ```js
-    const nostalgist = await Nostalgist.launch({
-      core: 'fceumm',
-      rom: 'flappybird.nes',
-      retroarchCoreConfig: {
-        fceumm_turbo_enable: 'Both',
-      },
-    })
-    ```
-
   + #### `style`
 
     **type:** `Object`
@@ -251,6 +228,29 @@ const nostalgist = await Nostalgist.launch({
     })
     ```
 
+  + #### `retroarchConfig`
+    **type:** `Object`
+
+    The content you want to specify in `retroarch.cfg`, custom stuff like key mappings can be set using this option. Refer to [libretro/RetroArch/retroarch.cfg](https://github.com/libretro/RetroArch/blob/master/retroarch.cfg) for more information about how to config RetroArch.
+
+    Keep in mind that not all options can take effects since we are launching RetroArch in a browser, not a native environment. And setting `stdin_cmd_enable` to `false` can cause Nostalgist.js saving or loading broken.
+
+  + #### `retroarchCoreConfig`
+    **type:** `Object`
+
+    The content you want to specify in the core option file.
+
+    For example,
+    ```js
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+      retroarchCoreConfig: {
+        fceumm_turbo_enable: 'Both',
+      },
+    })
+    ```
+
   + #### `runEmulatorManually`
     **type:** `boolean` **default:** `false`
 
@@ -265,7 +265,7 @@ const nostalgist = await Nostalgist.launch({
     ```
 
   + #### `emscriptenModule`
-    **type:** `boolean` **default:** `{}`
+    **type:** `Object` **default:** `{}`
 
     An option to override the `Module` object for Emscripten. See [Module object](https://emscripten.org/docs/api_reference/module.html).
 
@@ -282,6 +282,11 @@ const nostalgist = await Nostalgist.launch({
       }
     })
     ```
+
+  + #### `respondToGlobalEvents`
+    **type:** `boolean` **default:** `true`
+
+    Should user input events be bound to the global root element or the canvas element.
 
   + #### `resolveCoreJs`
     **type:** `Function`
