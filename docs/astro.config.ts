@@ -65,6 +65,7 @@ export default defineConfig({
                 { label: 'launchEmulator', link: '/apis/launch-emulator', badge },
                 { label: 'getEmscriptenModule', link: '/apis/get-emscripten-module', badge },
                 { label: 'getEmscriptenFS', link: '/apis/get-emscripten-fs', badge },
+                { label: 'getBrowserFS', link: '/apis/get-browser-fs', badge },
                 { label: 'pressDown', link: '/apis/press-down', badge },
                 { label: 'pressUp', link: '/apis/press-up', badge },
               ],
