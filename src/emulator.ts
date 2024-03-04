@@ -48,13 +48,17 @@ export class Emulator {
     return fileName.slice(0, fileName.lastIndexOf('.'))
   }
 
-  private get stateFileName() {
+  private get stateFileDirectory() {
     const { core } = this.options
     const coreFullName = coreInfoMap[core.name].corename
     if (!coreFullName) {
       throw new Error(`invalid core name: ${core.name}`)
     }
-    return join(raUserdataDir, 'states', coreFullName, `${this.romBaseName}.state`)
+    return join(raUserdataDir, 'states', coreFullName)
+  }
+
+  private get stateFileName() {
+    return join(this.stateFileDirectory, `${this.romBaseName}.state`)
   }
 
   private get stateThumbnailFileName() {
@@ -278,7 +282,7 @@ export class Emulator {
   private async setupFileSystem() {
     const { Module } = this.getEmscripten()
     const { FS, PATH, ERRNO_CODES } = Module
-    const { rom, bios } = this.options
+    const { rom, bios, state } = this.options
 
     const browserFS = createEmscriptenFS({ FS, PATH, ERRNO_CODES })
     this.browserFS = browserFS
@@ -289,6 +293,9 @@ export class Emulator {
     }
     if (bios.length > 0) {
       FS.mkdirTree(raSystemDir)
+    }
+    if (state) {
+      FS.mkdirTree(this.stateFileDirectory)
     }
 
     // a hack used for waiting for wasm's instantiation.
@@ -302,10 +309,21 @@ export class Emulator {
       waitTime += 5
     }
 
-    await Promise.all([
+    const filePromises: Promise<void>[] = []
+    filePromises.push(
       ...rom.map((file) => this.writeBlobToDirectory({ ...file, directory: raContentDir })),
       ...bios.map((file) => this.writeBlobToDirectory({ ...file, directory: raSystemDir })),
-    ])
+    )
+    if (state) {
+      const statePromise = this.writeBlobToDirectory({
+        fileName: `${this.romBaseName}.state.auto`,
+        fileContent: state,
+        directory: this.stateFileDirectory,
+      })
+      filePromises.push(statePromise)
+    }
+    await Promise.all(filePromises)
+
     this.checkIsAborted()
   }
 
@@ -393,11 +411,13 @@ export class Emulator {
   private runMain() {
     this.checkIsAborted()
     const { Module } = this.getEmscripten()
-    const raArgs: string[] = []
-    const { rom } = this.options
-    if (rom.length > 0) {
-      const [{ fileName }] = rom
-      raArgs.push(join(raContentDir, fileName))
+    const { arguments: raArgs = [] } = Module
+    if (!Module.arguments) {
+      const { rom } = this.options
+      if (rom.length > 0) {
+        const [{ fileName }] = rom
+        raArgs.push(join(raContentDir, fileName))
+      }
     }
 
     Module.callMain(raArgs)

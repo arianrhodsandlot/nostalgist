@@ -5,6 +5,7 @@ import { isAbsoluteUrl, path } from './utils'
 const defaultRetroarchConfig: RetroArchConfig = {
   menu_driver: 'rgui',
   notification_show_when_menu_is_alive: true,
+  savestate_auto_load: true,
   savestate_thumbnail_enable: true,
   stdin_cmd_enable: true,
   video_shader_enable: true,

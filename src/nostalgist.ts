@@ -458,6 +458,7 @@ export class Nostalgist {
     const {
       size = 'auto',
       respondToGlobalEvents = true,
+      state,
       waitForInteraction,
       signal,
       beforeLaunch,
@@ -485,6 +486,7 @@ export class Nostalgist {
       rom,
       bios,
       shader,
+      state,
       respondToGlobalEvents,
       retroarchConfig,
       retroarchCoreConfig,

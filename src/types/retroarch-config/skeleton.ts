@@ -13,8 +13,8 @@ export interface RetroArchSkeletonConfig {
    * The path is $SRAM_PATH.auto.
    * RetroArch will automatically load any savestate with this path on startup if savestate_auto_load is set.
    */
-  savestate_auto_save: string
-  savestate_auto_load: string
+  savestate_auto_save: boolean
+  savestate_auto_load: boolean
 
   /**
    * Path to a libretro implementation.

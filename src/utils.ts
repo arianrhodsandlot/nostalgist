@@ -112,17 +112,22 @@ function isPrimitive(obj: unknown) {
   return primitevTypes.includes(type)
 }
 
+function isPlainObject(obj: any) {
+  const { constructor } = obj
+  return constructor === Object || !constructor
+}
+
 function mergeSourceToTarget(target: any, source: any) {
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key)) {
       const targetValue = target[key]
       const sourceValue = source[key]
-      if (isPrimitive(sourceValue)) {
+      if (isPrimitive(sourceValue) || !isPlainObject(sourceValue)) {
         target[key] = sourceValue
       } else if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
         target[key] = [...targetValue, ...sourceValue]
       } else {
-        target[key] = isPrimitive(targetValue) ? {} : target[key]
+        target[key] = isPrimitive(targetValue) || !isPlainObject(targetValue) ? {} : target[key]
         merge(target[key], sourceValue)
       }
     }

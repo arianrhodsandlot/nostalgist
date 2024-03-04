@@ -144,6 +144,8 @@ export interface NostalgistOptions {
    */
   bios?: NostalgistOptionsFiles
 
+  state?: Blob
+
   respondToGlobalEvents?: boolean
 
   /**

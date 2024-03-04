@@ -4,7 +4,7 @@ let nostalgist: Nostalgist
 let state: Awaited<ReturnType<Nostalgist['saveState']>>
 
 async function nes() {
-  nostalgist = await Nostalgist.nes('flappybird.nes')
+  nostalgist = await Nostalgist.nes({ rom: 'flappybird.nes' })
 }
 
 async function megadrive() {
@@ -129,6 +129,7 @@ document.body.addEventListener('click', async function listener({ target }) {
     await handler()
     target.blur()
   }
+  Object.assign(window, { nostalgist })
 })
 
 // @ts-expect-error debug code
