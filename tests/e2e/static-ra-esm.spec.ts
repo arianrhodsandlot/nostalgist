@@ -76,4 +76,14 @@ test.describe('static methods with retroarch esm', () => {
     const event2 = await page.waitForEvent('console')
     expect(event2.text()).toBe('object onLaunch')
   })
+
+  test('launch with an initial state', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('launchState', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(500)
+    await expect(canvas).toHaveScreenshot('launch-state.png')
+  })
 })

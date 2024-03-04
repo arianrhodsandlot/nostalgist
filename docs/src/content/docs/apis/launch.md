@@ -146,6 +146,14 @@ const nostalgist = await Nostalgist.launch({
 
     Basically it's the same as the `rom` option. Files passed here will be written to RetroArch's `system` directory.
 
+  + #### `state`
+
+    **type:** `Blob`
+
+    **since:** `0.9.0`
+
+    The initial state to be loaded after launching.
+
   + #### `shader`
 
     **type:** `string`
@@ -154,12 +162,14 @@ const nostalgist = await Nostalgist.launch({
 
     The name of a shader. By default, shader files will be loaded from [libretro/glsl-shaders](https://github.com/libretro/glsl-shaders) via jsDelivr with a loose matching logic.
 
-    For example, if `shader` is `'crt/crt-easymode'`, then these two files will be loaded:
+    For example, if `shader` is `'crt/crt-easymode'`, then these two files will be loaded from jsDelivr:
 
     + [crt/crt-easymode.glslp](https://github.com/libretro/glsl-shaders/blob/master/crt/crt-easymode.glslp)
     + [crt/shaders/crt-easymode.glsl](https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-easymode.glsl)
 
-    If you want to load a shader which does not match this simple pattern, you might need to customize it by implementing the `resolveShader` function.
+    If you want to load a shader which does not match this pattern, you might need to customize it by implementing the `resolveShader` function.
+
+    This parameter is used for simple shaders only. For some complicated cases, you might need to use the [`beforeLaunch`](#beforelaunch) parameter to write the shader files into the file system.
 
   + #### `retroarchConfig`
     **type:** `Object`
