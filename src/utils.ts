@@ -53,7 +53,7 @@ function isGlobalScript(js: string) {
 }
 
 function isEsmScript(js: string) {
-  return js.includes('_scriptDir = import.meta.url')
+  return js.includes('import.meta.url')
 }
 
 function patchCoreJs({ name, js }: { name: string; js: string }) {
