@@ -83,7 +83,6 @@ export class Emulator {
       document.body.append(element)
       signal?.addEventListener('abort', () => {
         element?.remove()
-        this.exit()
       })
     }
     this.canvasInitialSize = this.getElementSize()
@@ -412,15 +411,16 @@ export class Emulator {
     this.checkIsAborted()
     const { Module } = this.getEmscripten()
     const { arguments: raArgs = [] } = Module
-    if (!Module.arguments) {
-      const { rom } = this.options
-      if (rom.length > 0) {
-        const [{ fileName }] = rom
-        raArgs.push(join(raContentDir, fileName))
-      }
+    const { rom, signal } = this.options
+    if (!Module.arguments && rom.length > 0) {
+      const [{ fileName }] = rom
+      raArgs.push(join(raContentDir, fileName))
     }
 
     Module.callMain(raArgs)
+    signal?.addEventListener('abort', () => {
+      this.exit()
+    })
     this.gameStatus = 'running'
     this.postRun()
   }
