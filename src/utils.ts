@@ -103,16 +103,10 @@ function isNil(obj: unknown) {
   return obj === undefined || obj === null
 }
 
-function isPrimitive(obj: unknown) {
-  if (isNil(obj)) {
-    return true
-  }
-  const type = typeof obj
-  const primitevTypes = ['string', 'number', 'boolean', 'bigint', 'symbol', 'function']
-  return primitevTypes.includes(type)
-}
-
 function isPlainObject(obj: any) {
+  if (isNil(obj)) {
+    return false
+  }
   const { constructor } = obj
   return constructor === Object || !constructor
 }
@@ -122,13 +116,15 @@ function mergeSourceToTarget(target: any, source: any) {
     if (Object.prototype.hasOwnProperty.call(source, key)) {
       const targetValue = target[key]
       const sourceValue = source[key]
-      if (isPrimitive(sourceValue) || !isPlainObject(sourceValue)) {
+      if (isNil(targetValue)) {
         target[key] = sourceValue
       } else if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
         target[key] = [...targetValue, ...sourceValue]
+      } else if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
+        target[key] = isPlainObject(targetValue) ? target[key] : {}
+        mergeSourceToTarget(target[key], sourceValue)
       } else {
-        target[key] = isPrimitive(targetValue) || !isPlainObject(targetValue) ? {} : target[key]
-        merge(target[key], sourceValue)
+        target[key] = sourceValue
       }
     }
   }

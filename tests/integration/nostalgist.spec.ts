@@ -12,7 +12,7 @@ function resolveBios(bios: any) {
   return `https://buildbot.libretro.com/assets/system/${bios}`
 }
 
-describe('nostalgist', () => {
+describe.concurrent('nostalgist', () => {
   beforeEach(() => {
     Nostalgist.configure({ runEmulatorManually: true })
   })
@@ -225,6 +225,7 @@ describe('nostalgist', () => {
     expect(options.retroarchConfig).toMatchObject({
       menu_driver: 'rgui',
       input_menu_toggle: 'nul',
+      input_max_users: 4,
       input_audio_mute: 'b',
     })
   })

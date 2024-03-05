@@ -33,26 +33,9 @@ export class Nostalgist {
   private constructor(options: NostalgistLaunchOptions) {
     const globalOptions: Partial<NostalgistLaunchOptions> = { ...Nostalgist.globalOptions }
     const localOptions = { ...options }
-
-    const element = globalOptions.element || localOptions.element
-    const rom = globalOptions.rom || localOptions.rom
-    const bios = globalOptions.bios || localOptions.bios
-    const signal = globalOptions.signal || localOptions.signal
-
-    const mergedOptions = { rom, bios, element, signal }
-
-    delete globalOptions.rom
-    delete globalOptions.bios
-    delete globalOptions.element
-    delete globalOptions.signal
-
-    delete localOptions.rom
-    delete localOptions.bios
-    delete localOptions.element
-    delete localOptions.signal
-
+    const mergedOptions = {} as NostalgistOptions
     merge(mergedOptions, globalOptions, localOptions)
-    this.options = mergedOptions as NostalgistOptions
+    this.options = mergedOptions
   }
 
   /**
