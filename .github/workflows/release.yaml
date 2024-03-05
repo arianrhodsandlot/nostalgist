@@ -12,14 +12,8 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v3
-      - uses: snapADDY/snapaddy-changelog-parser@0.1.0
-        id: read
-        with:
-          changelog-path: changelog.md
       - uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
-        with:
-          body: ${{ steps.read.outputs.changelog }}
 
   publish:
     runs-on: ubuntu-latest
