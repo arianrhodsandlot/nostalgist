@@ -4,6 +4,14 @@ const { Buffer } = BFSRequire('buffer')
 export const path = BFSRequire('path')
 export const { basename, extname, dirname, join, relative } = path
 
+export function urlBaseName(url: string) {
+  let pathname = url
+  try {
+    pathname = new URL(url).pathname
+  } catch {}
+  return basename(pathname)
+}
+
 export function isAbsoluteUrl(string: string) {
   if (!string) {
     return false

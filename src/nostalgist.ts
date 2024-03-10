@@ -11,14 +11,8 @@ import type {
   NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
 import type { RetroArchCommand } from './types/retroarch-command'
-import { merge } from './utils'
+import { merge, urlBaseName } from './utils'
 import { vendors } from './vendors'
-
-function baseName(url: string) {
-  let name = url.split('/').pop() || ''
-  name = decodeURIComponent(name)
-  return name
-}
 
 export class Nostalgist {
   static Nostalgist = Nostalgist
@@ -579,14 +573,14 @@ export class Nostalgist {
     } else if (file instanceof Blob) {
       fileContent = file
     } else if (typeof file === 'string') {
-      fileName = baseName(file)
+      fileName = urlBaseName(file)
       const resolvedRom = resolveFunction ? await resolveFunction(file, this.options) : file
       if (!resolvedRom) {
         throw new Error('file is invalid')
       } else if (resolvedRom instanceof Blob) {
         fileContent = resolvedRom
       } else if (typeof resolvedRom === 'string') {
-        fileName = baseName(resolvedRom)
+        fileName = urlBaseName(resolvedRom)
         const response = await this.fetch(resolvedRom)
         fileContent = await response.blob()
       }
@@ -603,6 +597,7 @@ export class Nostalgist {
       throw new TypeError('file is invalid')
     }
 
+    fileName = fileName.replaceAll(/["%*/:<>?\\|]/g, '-')
     fileName ||= 'rom.bin'
 
     return { fileName, fileContent }
