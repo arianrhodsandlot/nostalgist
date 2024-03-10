@@ -263,4 +263,11 @@ describe.concurrent('nostalgist', () => {
     const options = nostalgist.getOptions()
     expect(options.core).toStrictEqual('nestopia')
   })
+
+  test('Nostalgist.launch with a malformed url', async () => {
+    const nostalgist = await Nostalgist.nes({ rom: 'http://example.com/a%b%c.nes?xxx=1' })
+
+    const emulatorOptions = nostalgist.getEmulatorOptions()
+    expect(emulatorOptions.rom[0].fileName).toStrictEqual('a-b-c.nes')
+  })
 })
