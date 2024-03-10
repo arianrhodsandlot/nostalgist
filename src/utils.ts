@@ -9,7 +9,12 @@ export function urlBaseName(url: string) {
   try {
     pathname = new URL(url).pathname
   } catch {}
-  return basename(pathname)
+  const name = basename(pathname)
+  try {
+    return decodeURIComponent(name)
+  } catch {
+    return name
+  }
 }
 
 export function isAbsoluteUrl(string: string) {

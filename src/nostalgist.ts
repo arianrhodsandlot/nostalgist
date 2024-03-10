@@ -563,27 +563,36 @@ export class Nostalgist {
     return { name, js, wasm: wasm as ArrayBuffer }
   }
 
+  private async resolveStringFile(file: string, resolveFunction?: NostalgistResolveFileFunction) {
+    let fileName = urlBaseName(file)
+    let fileContent: Blob | undefined
+    const resolvedRom = resolveFunction ? await resolveFunction(file, this.options) : file
+    if (!resolvedRom) {
+      throw new Error('file is invalid')
+    } else if (resolvedRom instanceof Blob) {
+      fileContent = resolvedRom
+    } else if (typeof resolvedRom === 'string') {
+      fileName = urlBaseName(resolvedRom)
+      const response = await this.fetch(resolvedRom)
+      fileContent = await response.blob()
+    }
+    return { fileName, fileContent }
+  }
+
   private async resolveFile(file: NostalgistOptionsFile, resolveFunction?: NostalgistResolveFileFunction) {
     let fileName = ''
-    let fileContent: Blob | false = false
+    let fileContent: Blob | undefined
 
     if (file instanceof File) {
       fileContent = file
       fileName = file.name
     } else if (file instanceof Blob) {
       fileContent = file
+      fileName = 'rom.bin'
     } else if (typeof file === 'string') {
-      fileName = urlBaseName(file)
-      const resolvedRom = resolveFunction ? await resolveFunction(file, this.options) : file
-      if (!resolvedRom) {
-        throw new Error('file is invalid')
-      } else if (resolvedRom instanceof Blob) {
-        fileContent = resolvedRom
-      } else if (typeof resolvedRom === 'string') {
-        fileName = urlBaseName(resolvedRom)
-        const response = await this.fetch(resolvedRom)
-        fileContent = await response.blob()
-      }
+      const resolvedFile = await this.resolveStringFile(file, resolveFunction)
+      fileName = resolvedFile.fileName
+      fileContent = resolvedFile.fileContent
     } else {
       if (typeof file.fileName === 'string') {
         fileName = file.fileName
@@ -594,11 +603,10 @@ export class Nostalgist {
     }
 
     if (!fileContent) {
-      throw new TypeError('file is invalid')
+      throw new TypeError('file content is invalid')
     }
 
-    fileName = fileName.replaceAll(/["%*/:<>?\\|]/g, '-')
-    fileName ||= 'rom.bin'
+    fileName = fileName ? fileName.replaceAll(/["%*/:<>?\\|]/g, '-') : 'rom.bin'
 
     return { fileName, fileContent }
   }
