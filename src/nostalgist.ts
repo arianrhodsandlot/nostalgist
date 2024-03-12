@@ -195,7 +195,7 @@ export class Nostalgist {
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
    * // save the state
-   * const { state } = await nostalgist.saveState(state)
+   * const { state } = await nostalgist.saveState()
    *
    * // load the state
    * await nostalgist.loadState(state)
