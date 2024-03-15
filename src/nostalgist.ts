@@ -201,9 +201,9 @@ export class Nostalgist {
    * await nostalgist.loadState(state)
    * ```
    * @returns
-   * The state of the current running game.
+   * A Promise of the state of the current running game.
    *
-   * Its type is like `{ state: Blob, thumbnail: Blob | undefined }`.
+   * Its type is like `Promise<{ state: Blob, thumbnail: Blob | undefined }>`.
    *
    * If RetroArch is launched with the option `savestate_thumbnail_enable` set to `true`, which is the default value inside Nostalgist.js, then the `thumbnail` will be a `Blob`. Otherwise the `thumbnail` will be `undefined`.
    */
@@ -258,7 +258,7 @@ export class Nostalgist {
    * ```js
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
-   * await nostalgist.pause()
+   * nostalgist.pause()
    * ```
    */
   pause() {
@@ -274,7 +274,7 @@ export class Nostalgist {
    * ```js
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
-   * await nostalgist.restart()
+   * nostalgist.restart()
    * ```
    */
   restart() {
@@ -290,13 +290,13 @@ export class Nostalgist {
    * ```js
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
-   * await nostalgist.exit()
+   * nostalgist.exit()
    * ```
    * ```js
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
    * // the canvas element will not be removed
-   * await nostalgist.exit({ removeCanvas: false })
+   * nostalgist.exit({ removeCanvas: false })
    * ```
    */
   exit({ removeCanvas = true }: { removeCanvas?: boolean } = {}) {
@@ -315,7 +315,7 @@ export class Nostalgist {
    * ```js
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
-   * await nostalgist.resize({ width: 1000, height: 800 })
+   * nostalgist.resize({ width: 1000, height: 800 })
    * ```
    */
   resize(size: { width: number; height: number }) {
@@ -331,7 +331,7 @@ export class Nostalgist {
    * ```js
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
-   * const blob = await nostalgist.pressDown('start')
+   * nostalgist.pressDown('start')
    * ```
    */
   pressDown(options: string | { button: string; player?: number }) {
@@ -351,7 +351,7 @@ export class Nostalgist {
    * ```js
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
-   * const blob = await nostalgist.pressUp('start')
+   * nostalgist.pressUp('start')
    * ```
    */
   pressUp(options: string | { button: string; player?: number }) {
@@ -371,15 +371,14 @@ export class Nostalgist {
    * ```js
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
-   * const blob = await nostalgist.press('start')
+   * await nostalgist.press('start')
    * ```
    */
-  press(options: string | { button: string; player?: number; time?: number }) {
+  async press(options: string | { button: string; player?: number; time?: number }) {
     const emulator = this.getEmulator()
-    if (typeof options === 'string') {
-      return emulator.press(options)
-    }
-    return emulator.press(options.button, options.player, options.time)
+    await (typeof options === 'string'
+      ? emulator.press(options)
+      : emulator.press(options.button, options.player, options.time))
   }
 
   /**
@@ -394,9 +393,9 @@ export class Nostalgist {
    * const blob = await nostalgist.screenshot()
    * ```
    */
-  screenshot() {
+  async screenshot() {
     const emulator = this.getEmulator()
-    return emulator.screenshot()
+    return await emulator.screenshot()
   }
 
   /**

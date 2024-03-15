@@ -10,6 +10,6 @@ See [FS object](https://emscripten.org/docs/api_reference/Filesystem-API.html#id
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
-const FS = await nostalgist.getEmscriptenFS()
+const FS = nostalgist.getEmscriptenFS()
 FS.readdir('/')
 ```

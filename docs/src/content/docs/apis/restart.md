@@ -8,5 +8,5 @@ Restart the current running game.
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
-await nostalgist.restart()
+nostalgist.restart()
 ```

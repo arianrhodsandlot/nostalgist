@@ -10,6 +10,6 @@ See [Module object](https://emscripten.org/docs/api_reference/module.html) for m
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
-const Module = await nostalgist.getEmscriptenModule()
+const Module = nostalgist.getEmscriptenModule()
 Module._cmd_take_screenshot()
 ```

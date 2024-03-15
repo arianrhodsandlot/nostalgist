@@ -8,13 +8,13 @@ Exit the current running game and the emulator. Remove the canvas element used b
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
-await nostalgist.exit()
+nostalgist.exit()
 ```
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
 // the canvas element will not be removed
-await nostalgist.exit({ removeCanvas: false })
+nostalgist.exit({ removeCanvas: false })
 ```
 
 ## Arguments

@@ -62,20 +62,20 @@ async function loadState() {
   await nostalgist.loadState(state.state)
 }
 
-async function pause() {
-  await nostalgist.pause()
+function pause() {
+  nostalgist.pause()
 }
 
-async function resume() {
-  await nostalgist.resume()
+function resume() {
+  nostalgist.resume()
 }
 
-async function restart() {
-  await nostalgist.restart()
+function restart() {
+  nostalgist.restart()
 }
 
-async function resize() {
-  await nostalgist.resize(400, 400)
+function resize() {
+  nostalgist.resize(400, 400)
 }
 
 async function pressA() {

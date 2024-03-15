@@ -13,12 +13,12 @@ Analog Joysticks are not supported by now.
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
-await nostalgist.pressDown('select')
-await nostalgist.pressDown('start')
-await nostalgist.pressDown('a')
-await nostalgist.pressDown('left')
-await nostalgist.pressDown('l')
-await nostalgist.pressDown({ button: 'a', player: 2 }) // press the button "a" on player 2's controller
+nostalgist.pressDown('select')
+nostalgist.pressDown('start')
+nostalgist.pressDown('a')
+nostalgist.pressDown('left')
+nostalgist.pressDown('l')
+nostalgist.pressDown({ button: 'a', player: 2 }) // press the button "a" on player 2's controller
 ```
 
 ## Arguments
