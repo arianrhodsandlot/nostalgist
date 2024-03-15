@@ -34,6 +34,8 @@ export class Nostalgist {
 
   /**
    * Reset the global configuation set by `Nostalgist.configure` to default.
+   *
+   * @see {@link https://nostalgist.js.org/apis/reset-to-default/}
    */
   static resetToDefault() {
     Nostalgist.configure(getDefaultOptions())
@@ -43,6 +45,8 @@ export class Nostalgist {
    * Update the global options for `Nostalgist`, so everytime the `Nostalgist.launch` method or shortcuts like `Nostalgist.nes` is called, the default options specified here will be used.
    *
    * You may want to specify how to resolve ROMs and RetroArch cores here.
+   *
+   * @see {@link https://nostalgist.js.org/apis/configure/}
    *
    * @example
    * ```js
@@ -60,6 +64,8 @@ export class Nostalgist {
 
   /**
    * Launch an emulator and return a `Promise` of the instance of the emulator.
+   *
+   * @see {@link https://nostalgist.js.org/apis/launch/}
    *
    * @example
    * A simple example:
@@ -104,26 +110,68 @@ export class Nostalgist {
     return nostalgist
   }
 
+  /**
+   * A shortcut method for Nostalgist.launch method, with some additional default options for GB emulation.
+   *
+   * It will use mgba as the default core for emulation.
+   *
+   * @see {@link https://nostalgist.js.org/apis/gb/}
+   */
   static async gb(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gb', options)
   }
 
+  /**
+   * A shortcut method for Nostalgist.launch method, with some additional default options for GBA emulation.
+   *
+   * It will use mgba as the default core for emulation.
+   *
+   * @see {@link https://nostalgist.js.org/apis/gba/}
+   */
   static async gba(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gba', options)
   }
 
+  /**
+   * A shortcut method for Nostalgist.launch method, with some additional default options for GBC emulation.
+   *
+   * It will use mgba as the default core for emulation.
+   *
+   * @see {@link https://nostalgist.js.org/apis/gbc/}
+   */
   static async gbc(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('gbc', options)
   }
 
+  /**
+   * A shortcut method for Nostalgist.launch method, with some additional default options for Sega Genesis / Megadrive emulation.
+   *
+   * It will use genesis_plus_gx as the default core for emulation.
+   *
+   * @see {@link https://nostalgist.js.org/apis/megadrive/}
+   */
   static async megadrive(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('megadrive', options)
   }
 
+  /**
+   * A shortcut method for Nostalgist.launch method, with some additional default options for NES emulation.
+   *
+   * It will use fceumm as the default core for emulation.
+   *
+   * @see {@link https://nostalgist.js.org/apis/nes/}
+   */
   static async nes(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('nes', options)
   }
 
+  /**
+   * A shortcut method for Nostalgist.launch method, with some additional default options for SNES emulation.
+   *
+   * It will use snes9x as the default core for emulation.
+   *
+   * @see {@link https://nostalgist.js.org/apis/snes/}
+   */
   static async snes(options: NostalgistOptionsFile | NostalgistLaunchRomOptions) {
     return await Nostalgist.launchSystem('snes', options)
   }
@@ -156,26 +204,51 @@ export class Nostalgist {
     return this.emulatorOptions
   }
 
+  /**
+   * Get the canvas DOM element that the current emulator is using.
+   *
+   * @see {@link https://nostalgist.js.org/apis/get-canvas/}
+   */
   getCanvas() {
     return this.getEmulatorOptions().element
   }
 
+  /**
+   * Launch the emulator, if it's not launched, because of the launch option `runEmulatorManually` being set to `true`.
+   *
+   * @see {@link https://nostalgist.js.org/apis/launch-emulator/}
+   */
   async launchEmulator() {
     return await this.getEmulator().launch()
   }
 
+  /**
+   * Get the Emscripten Module object of the current running emulator.
+   *
+   * @see {@link https://nostalgist.js.org/apis/get-emscripten-module/}
+   */
   getEmscriptenModule() {
     const emulator = this.getEmulator()
     const emscripten = emulator.getEmscripten()
     return emscripten.Module
   }
 
+  /**
+   * Get the Emscripten FS object of the current running emulator.
+   *
+   * @see {@link https://nostalgist.js.org/apis/get-emscripten-fs/}
+   */
   getEmscriptenFS() {
     const emulator = this.getEmulator()
     const emscripten = emulator.getEmscripten()
     return emscripten.Module.FS
   }
 
+  /**
+   * Get the BFSEmscriptenFS object of the current running emulator.
+   *
+   * @see {@link https://nostalgist.js.org/apis/get-browser-fs/}
+   */
   getBrowserFS() {
     const emulator = this.getEmulator()
     return emulator.browserFS
@@ -188,7 +261,7 @@ export class Nostalgist {
   /**
    * Save the state of the current running game.
    *
-   * @see {@link https://nostalgist.js.org/apis/save-state}
+   * @see {@link https://nostalgist.js.org/apis/save-state/}
    *
    * @example
    * ```js
@@ -214,7 +287,7 @@ export class Nostalgist {
   /**
    * Load a state for the current running emulator and game.
    *
-   * @see {@link https://nostalgist.js.org/apis/load-state}
+   * @see {@link https://nostalgist.js.org/apis/load-state/}
    *
    * @example
    * ```js
@@ -234,7 +307,7 @@ export class Nostalgist {
   /**
    * Resume the current running game, if it has been paused by `pause`.
    *
-   * @see {@link https://nostalgist.js.org/apis/resume}
+   * @see {@link https://nostalgist.js.org/apis/resume/}
    *
    * @example
    * ```js
@@ -252,7 +325,7 @@ export class Nostalgist {
   /**
    * Pause the current running game.
    *
-   * @see {@link https://nostalgist.js.org/apis/pause}
+   * @see {@link https://nostalgist.js.org/apis/pause/}
    *
    * @example
    * ```js
@@ -268,7 +341,7 @@ export class Nostalgist {
   /**
    * Restart the current running game.
    *
-   * @see {@link https://nostalgist.js.org/apis/restart}
+   * @see {@link https://nostalgist.js.org/apis/restart/}
    *
    * @example
    * ```js
@@ -284,7 +357,7 @@ export class Nostalgist {
   /**
    * Exit the current running game and the emulator. Remove the canvas element used by the emulator if needed.
    *
-   * @see {@link https://nostalgist.js.org/apis/exit}
+   * @see {@link https://nostalgist.js.org/apis/exit/}
    *
    * @example
    * ```js
@@ -309,7 +382,7 @@ export class Nostalgist {
   /**
    * Resize the canvas element of the emulator.
    *
-   * @see {@link https://nostalgist.js.org/apis/resize}
+   * @see {@link https://nostalgist.js.org/apis/resize/}
    *
    * @example
    * ```js
@@ -325,7 +398,7 @@ export class Nostalgist {
   /**
    * Press a button programmatically. Analog Joysticks are not supported by now.
    *
-   * @see {@link https://nostalgist.js.org/apis/press-down}
+   * @see {@link https://nostalgist.js.org/apis/press-down/}
    *
    * @example
    * ```js
@@ -345,7 +418,7 @@ export class Nostalgist {
   /**
    * Release it programmatically. Analog Joysticks are not supported by now.
    *
-   * @see {@link https://nostalgist.js.org/apis/press-up}
+   * @see {@link https://nostalgist.js.org/apis/press-up/}
    *
    * @example
    * ```js
@@ -365,7 +438,7 @@ export class Nostalgist {
   /**
    * Press a button and then release it programmatically. Analog Joysticks are not supported by now.
    *
-   * @see {@link https://nostalgist.js.org/apis/press}
+   * @see {@link https://nostalgist.js.org/apis/press/}
    *
    * @example
    * ```js
@@ -384,7 +457,7 @@ export class Nostalgist {
   /**
    * Take a screenshot for the current running game.
    *
-   * @see {@link https://nostalgist.js.org/apis/screenshot}
+   * @see {@link https://nostalgist.js.org/apis/screenshot/}
    *
    * @example
    * ```js
@@ -403,7 +476,7 @@ export class Nostalgist {
    * The commands are listed here: https://docs.libretro.com/development/retroarch/network-control-interface/#commands .
    * But not all of them are supported inside a browser.
    *
-   * @see {@link https://nostalgist.js.org/apis/send-command}
+   * @see {@link https://nostalgist.js.org/apis/send-command/}
    *
    * @example
    * ```js
