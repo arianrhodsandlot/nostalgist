@@ -49,7 +49,7 @@ Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online example
 
   const nostalgist = await Nostalgist.nes('flappybird.nes')
   const { state } = await nostalgist.saveState()
-  nostalgist.loadState(state)
+  await nostalgist.loadState(state)
   ```
 
   Related APIs: [`saveState`](https://nostalgist.js.org/apis/save-state), [`loadState`](https://nostalgist.js.org/apis/load-state)

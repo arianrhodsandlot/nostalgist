@@ -103,7 +103,7 @@ await Nostalgist.nes('flappybird.nes')
 
     const nostalgist = await Nostalgist.nes('flappybird.nes')
     const { state } = await nostalgist.saveState()
-    nostalgist.loadState(state)
+    await nostalgist.loadState(state)
     ```
     </div>
 
