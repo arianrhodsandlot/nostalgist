@@ -11,7 +11,7 @@ import type {
   NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
 import type { RetroArchCommand } from './types/retroarch-command'
-import { merge, urlBaseName } from './utils'
+import { checkIsAborted, merge, urlBaseName } from './utils'
 import { vendors } from './vendors'
 
 export class Nostalgist {
@@ -495,7 +495,7 @@ export class Nostalgist {
    */
   private async launch(): Promise<void> {
     await this.loadEmulatorOptions()
-    this.checkIsAborted()
+    checkIsAborted(this.options.signal)
     this.loadEmulator()
 
     if (!this.options.runEmulatorManually) {
@@ -525,7 +525,7 @@ export class Nostalgist {
       this.getShaderOption(),
     ])
 
-    this.checkIsAborted()
+    checkIsAborted(signal)
 
     const emulatorOptions = {
       element,
@@ -741,11 +741,5 @@ export class Nostalgist {
   private async fetch(input: string) {
     const { signal = null } = this.options
     return await fetch(input, { signal })
-  }
-
-  private checkIsAborted() {
-    if (this.options.signal?.aborted) {
-      throw new Error('Launch aborted')
-    }
   }
 }

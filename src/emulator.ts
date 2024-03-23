@@ -6,7 +6,17 @@ import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
 import type { RetroArchEmscriptenModule } from './types/retroarch-emscripten'
-import { basename, blobToBuffer, delay, dirname, importCoreJsAsESM, join, stringToBuffer, updateStyle } from './utils'
+import {
+  basename,
+  blobToBuffer,
+  checkIsAborted,
+  delay,
+  dirname,
+  importCoreJsAsESM,
+  join,
+  stringToBuffer,
+  updateStyle,
+} from './utils'
 
 const encoder = new TextEncoder()
 
@@ -71,10 +81,10 @@ export class Emulator {
 
   async launch() {
     await this.setupEmscripten()
-    this.checkIsAborted()
+    checkIsAborted(this.options.signal)
 
     await this.setupRaConfigFile()
-    this.checkIsAborted()
+    checkIsAborted(this.options.signal)
 
     const { element, style, respondToGlobalEvents, waitForInteraction, signal } = this.options
     updateStyle(element, style)
@@ -281,7 +291,7 @@ export class Emulator {
   private async setupFileSystem() {
     const { Module } = this.getEmscripten()
     const { FS, PATH, ERRNO_CODES } = Module
-    const { rom, bios, state } = this.options
+    const { rom, bios, state, signal } = this.options
 
     const browserFS = createEmscriptenFS({ FS, PATH, ERRNO_CODES })
     this.browserFS = browserFS
@@ -304,7 +314,7 @@ export class Emulator {
     // eslint-disable-next-line unicorn/consistent-destructuring
     while (!Module.asm && waitTime < maxWaitTime) {
       await delay(10)
-      this.checkIsAborted()
+      checkIsAborted(signal)
       waitTime += 5
     }
 
@@ -323,7 +333,7 @@ export class Emulator {
     }
     await Promise.all(filePromises)
 
-    this.checkIsAborted()
+    checkIsAborted(signal)
   }
 
   private async setupEmscripten() {
@@ -332,7 +342,7 @@ export class Emulator {
       window.setImmediate ??= window.setTimeout
     }
 
-    const { element, core, emscriptenModule } = this.options
+    const { element, core, emscriptenModule, signal } = this.options
     const { wasm } = core
     const moduleOptions = { wasmBinary: wasm, canvas: element, preRun: [], ...emscriptenModule }
     const initialModule = getEmscriptenModuleOverrides(moduleOptions)
@@ -343,7 +353,7 @@ export class Emulator {
     this.emscripten = emscripten
     const { Module } = emscripten
     await Module.monitorRunDependencies()
-    this.checkIsAborted()
+    checkIsAborted(signal)
     await this.setupFileSystem()
   }
 
@@ -408,7 +418,7 @@ export class Emulator {
   }
 
   private runMain() {
-    this.checkIsAborted()
+    checkIsAborted(this.options.signal)
     const { Module } = this.getEmscripten()
     const { arguments: raArgs = [] } = Module
     const { rom, signal } = this.options
@@ -580,12 +590,6 @@ export class Emulator {
     const dateString = `${year}${month}${day}-${hour}${minute}${second}`
     const baseName = this.romBaseName
     return `${baseName}-${dateString}.png`
-  }
-
-  private checkIsAborted() {
-    if (this.options.signal?.aborted) {
-      throw new Error('Launch aborted')
-    }
   }
 }
 

@@ -148,3 +148,9 @@ export function merge(target: any, ...sources: any[]) {
     mergeSourceToTarget(target, source)
   }
 }
+
+export function checkIsAborted(signal: AbortSignal | undefined) {
+  if (signal?.aborted) {
+    throw new Error('Launch aborted')
+  }
+}
