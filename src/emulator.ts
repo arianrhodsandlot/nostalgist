@@ -1,4 +1,4 @@
-import { type EmscriptenFS } from 'browserfs'
+import type { EmscriptenFS } from 'browserfs'
 import ini from 'ini'
 import { coreInfoMap } from './constants/core-info'
 import { keyboardCodeMap } from './constants/keyboard-code-map'
@@ -311,7 +311,7 @@ export class Emulator {
     // it's dirty but it works
     const maxWaitTime = 100
     let waitTime = 0
-    // eslint-disable-next-line unicorn/consistent-destructuring
+
     while (!Module.asm && waitTime < maxWaitTime) {
       await delay(10)
       checkIsAborted(signal)

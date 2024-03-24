@@ -27,7 +27,7 @@ export class Nostalgist {
   private constructor(options: NostalgistLaunchOptions) {
     const globalOptions: Partial<NostalgistLaunchOptions> = { ...Nostalgist.globalOptions }
     const localOptions = { ...options }
-    const mergedOptions = {} as NostalgistOptions
+    const mergedOptions = {} as unknown as NostalgistOptions
     merge(mergedOptions, globalOptions, localOptions)
     this.options = mergedOptions
   }
@@ -641,7 +641,8 @@ export class Nostalgist {
     const resolvedRom = resolveFunction ? await resolveFunction(file, this.options) : file
     if (!resolvedRom) {
       throw new Error('file is invalid')
-    } else if (resolvedRom instanceof Blob) {
+    }
+    if (resolvedRom instanceof Blob) {
       fileContent = resolvedRom
     } else if (typeof resolvedRom === 'string') {
       fileName = urlBaseName(resolvedRom)
