@@ -1,5 +1,5 @@
 /**
- * @see {@link https://github.com/libretro/RetroArch/blob/master/retroarch.cfg RetroArch Skeleton config file in the repo of RetroArch}
+ * @see {@link https://github.com/libretro/RetroArch/blob/master/retroarch.cfg | RetroArch Skeleton config file in the repo of RetroArch}
  */
 export interface RetroArchSkeletonConfig {
   /**
@@ -2079,7 +2079,7 @@ export interface RetroArchSkeletonConfig {
   cheevos_verbose_enable: boolean
 
   /**
-   * Show achievements' badges in Quick Menu > Achievements List.
+   * Show achievements' badges in Quick Menu \> Achievements List.
    * (note: has no effect if menu_driver = rgui).
    */
   cheevos_badges_enable: boolean
@@ -2197,7 +2197,7 @@ export interface RetroArchSkeletonConfig {
   slowmotion_ratio: number
 
   /**
-   * The maximum rate at which content will be run when using fast forward. (E.g. 5.0 for 60 fps content => 300 fps cap).
+   * The maximum rate at which content will be run when using fast forward. (E.g. 5.0 for 60 fps content =\> 300 fps cap).
    * RetroArch will go to sleep to ensure that the maximum rate will not be exceeded.
    * Do not rely on this cap to be perfectly accurate.
    * If this is set at 0, then fastforward ratio is unlimited (no FPS cap)

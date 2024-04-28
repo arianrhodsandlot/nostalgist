@@ -1,1 +1,5 @@
-export { config as default } from '@arianrhodsandlot/eslint-config'
+import { createConfig } from '@arianrhodsandlot/eslint-config'
+
+export default createConfig({
+  perfectionist: false,
+})

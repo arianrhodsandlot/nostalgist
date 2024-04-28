@@ -437,17 +437,15 @@ export class Emulator {
 
   private postRun() {
     this.resize(this.canvasInitialSize)
-    this.fireGamepadEvents()
-    this.updateKeyboardEventHandlers()
-  }
 
-  private fireGamepadEvents() {
     // tell retroarch that controllers are connected
     for (const gamepad of navigator.getGamepads?.() ?? []) {
       if (gamepad) {
         window.dispatchEvent(new GamepadEvent('gamepadconnected', { gamepad }))
       }
     }
+
+    this.updateKeyboardEventHandlers()
   }
 
   private updateKeyboardEventHandlers() {

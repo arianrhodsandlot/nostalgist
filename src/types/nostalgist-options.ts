@@ -26,7 +26,7 @@ export type NostalgistResolveFileFunction = (
 export interface NostalgistOptions {
   /**
    * The canvas element to use.
-   * @default '' an empty string
+   * @defaultValue '' an empty string
    */
   element: string | HTMLCanvasElement
 
@@ -139,7 +139,7 @@ export interface NostalgistOptions {
    * This property can be:
    * + a string
    * + a [File object](https://developer.mozilla.org/en-US/docs/Web/API/File)
-   * + an object, with a fileName property and a fileContent property. for example: { filename: 'xx.nes', fileContent: someBlob }
+   * + an object, with a fileName property and a fileContent property. for example: `{ filename: 'xx.nes', fileContent: someBlob }`
    * + an array of above
    */
   bios?: NostalgistOptionsFiles

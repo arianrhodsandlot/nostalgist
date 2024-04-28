@@ -105,7 +105,6 @@ export async function importCoreJsAsESM({ name, js }: { name: string; js: string
     return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsBlobUrl)
   } catch {
     // a dirty hack for using with SystemJS, for example, in StackBlitz
-    // eslint-disable-next-line no-eval
     return await eval('import(jsBlobUrl)')
   } finally {
     URL.revokeObjectURL(jsBlobUrl)
