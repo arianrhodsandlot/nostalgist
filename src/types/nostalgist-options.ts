@@ -2,9 +2,9 @@ import type { Nostalgist } from '..'
 import type { RetroArchConfig } from './retroarch-config'
 import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
-type MaybePromise<T> = T | Promise<T>
+type MaybePromise<T> = Promise<T> | T
 
-export type NostalgistOptionsFile = string | File | { fileName: string; fileContent: Blob }
+export type NostalgistOptionsFile = { fileContent: Blob; fileName: string } | File | string
 type NostalgistOptionsFiles = NostalgistOptionsFile | NostalgistOptionsFile[]
 
 export interface NostalgistCoreDict {
@@ -15,7 +15,7 @@ export interface NostalgistCoreDict {
   js: string
 
   /** the url or array buffer of core's js file */
-  wasm: string | ArrayBuffer
+  wasm: ArrayBuffer | string
 }
 
 export type NostalgistResolveFileFunction = (
@@ -28,7 +28,7 @@ export interface NostalgistOptions {
    * The canvas element to use.
    * @defaultValue '' an empty string
    */
-  element: string | HTMLCanvasElement
+  element: HTMLCanvasElement | string
 
   /**
    * The style of the canvas element.
@@ -56,9 +56,9 @@ export interface NostalgistOptions {
    * The size of the canvas element.
    * If it's `'auto'`, the canvas element will keep its original size, or it's width and height will be updated as specified.
    */
-  size?: 'auto' | { width: number; height: number }
+  size?: 'auto' | { height: number; width: number }
 
-  core: string | NostalgistCoreDict
+  core: NostalgistCoreDict | string
 
   /**
    * The rom needs to be launched.
@@ -179,22 +179,22 @@ export interface NostalgistOptions {
    */
   signal?: AbortSignal
 
-  resolveCoreJs: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string>
-  resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string | ArrayBuffer>
-  resolveRom: NostalgistResolveFileFunction
+  beforeLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
+  onLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
   resolveBios: NostalgistResolveFileFunction
+  resolveCoreJs: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string>
+  resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<ArrayBuffer | string>
+  resolveRom: NostalgistResolveFileFunction
   resolveShader: (
     shader: NostalgistOptions['shader'],
     options: NostalgistOptions,
   ) => MaybePromise<NostalgistOptionsFiles | undefined>
   waitForInteraction?: (params: { done: () => void }) => void
-  beforeLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
-  onLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
 }
 
 export type NostalgistOptionsPartial = Partial<NostalgistOptions>
 
-export type NostalgistLaunchOptions = Pick<NostalgistOptions, 'core'> & NostalgistOptionsPartial
+export type NostalgistLaunchOptions = NostalgistOptionsPartial & Pick<NostalgistOptions, 'core'>
 export interface NostalgistLaunchRomOptions extends Omit<NostalgistOptionsPartial, 'core'> {
   rom: NostalgistOptionsFiles
 }

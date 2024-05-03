@@ -19,8 +19,8 @@ export interface RetroArchThemeConfig {
   materialui_thumbnail_view_landscape: number
   materialui_thumbnail_view_portrait: number
 
-  rgui_aspect_ratio_lock: number
   rgui_aspect_ratio: number
+  rgui_aspect_ratio_lock: number
   rgui_background_filler_thickness_enable: boolean
   rgui_border_filler_enable: boolean
   rgui_border_filler_thickness_enable: boolean
@@ -31,9 +31,9 @@ export interface RetroArchThemeConfig {
   rgui_internal_upscale_level: number
   rgui_menu_color_theme: number
   rgui_menu_theme_preset: number
+  rgui_particle_effect: number
   rgui_particle_effect_screensaver: boolean
   rgui_particle_effect_speed: number
-  rgui_particle_effect: number
   rgui_show_start_screen: boolean
   rgui_swap_thumbnails: boolean
   rgui_switch_icons: boolean

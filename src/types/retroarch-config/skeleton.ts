@@ -8,13 +8,13 @@ export interface RetroArchSkeletonConfig {
    */
   content_history_dir: string
 
+  savestate_auto_load: boolean
   /**
    * Automatically saves a savestate at the end of RetroArch's lifetime.
    * The path is $SRAM_PATH.auto.
    * RetroArch will automatically load any savestate with this path on startup if savestate_auto_load is set.
    */
   savestate_auto_save: boolean
-  savestate_auto_load: boolean
 
   /**
    * Path to a libretro implementation.
@@ -27,7 +27,7 @@ export interface RetroArchSkeletonConfig {
    * DEBUG logs are always ignored unless verbose mode is activated (--verbose).
    * DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3.
    */
-  libretro_log_level: string | number
+  libretro_log_level: number | string
 
   /**
    * Enable or disable verbosity level of frontend.

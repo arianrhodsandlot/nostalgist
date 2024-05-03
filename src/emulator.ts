@@ -34,21 +34,119 @@ const raCoreConfigPath = join(raUserdataDir, 'retroarch-core-options.cfg')
 type GameStatus = 'initial' | 'paused' | 'running'
 
 interface EmulatorEmscripten {
-  Module: RetroArchEmscriptenModule
   exit: (code: number) => void
   JSEvents: any
+  Module: RetroArchEmscriptenModule
 }
 
 export class Emulator {
-  emscripten: EmulatorEmscripten | undefined
-  browserFS: EmscriptenFS | undefined
-  private options: EmulatorOptions
-  private messageQueue: [Uint8Array, number][] = []
+  private canvasInitialSize = { height: 0, width: 0 }
   private gameStatus: GameStatus = 'initial'
-  private canvasInitialSize = { width: 0, height: 0 }
+  private messageQueue: [Uint8Array, number][] = []
+  private options: EmulatorOptions
+  browserFS: EmscriptenFS | undefined
+  emscripten: EmulatorEmscripten | undefined
 
   constructor(options: EmulatorOptions) {
     this.options = options
+  }
+
+  private clearStateFile() {
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
+    try {
+      FS.unlink(this.stateFileName)
+      FS.unlink(this.stateThumbnailFileName)
+    } catch {}
+  }
+
+  private fireKeyboardEvent(type: 'keydown' | 'keyup', code: string) {
+    const { JSEvents } = this.getEmscripten()
+    for (const { eventListenerFunc, eventTypeString } of JSEvents.eventHandlers) {
+      if (eventTypeString === type) {
+        try {
+          eventListenerFunc({ code, target: this.options.element })
+        } catch {}
+      }
+    }
+  }
+
+  private getCurrentRetroarchConfig() {
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
+    const configContent = FS.readFile(raConfigPath, { encoding: 'utf8' })
+    return ini.parse(configContent)
+  }
+
+  private getElementSize() {
+    const { element, size } = this.options
+    return !size || size === 'auto' ? { height: element.offsetHeight, width: element.offsetWidth } : size
+  }
+
+  private getKeyboardCode(button: string, player = 1) {
+    const config = this.getCurrentRetroarchConfig()
+    const configName = `input_player${player}_${button}`
+    const key: string = config[configName]
+    if (!key || key === 'nul') {
+      return
+    }
+    const { length } = key
+    // single letters
+    if (length === 1) {
+      return `Key${key.toUpperCase()}`
+    }
+    // f1, f2, f3...
+    if (key[0] === 'f' && (length === 2 || length === 3)) {
+      return key.toUpperCase()
+    }
+    // num1, num2, num3...
+    if (length === 4 && key.startsWith('num')) {
+      return `Numpad${key.at(-1)}`
+    }
+    if (length === 7 && key.startsWith('keypad')) {
+      return `Digit${key.at(-1)}`
+    }
+    return keyboardCodeMap[key] || ''
+  }
+
+  private guessScreenshotFileName() {
+    const date = new Date()
+    const year = date.getFullYear() % 1000
+    const month = padZero(date.getMonth() + 1)
+    const day = padZero(date.getDate())
+    const hour = padZero(date.getHours())
+    const minute = padZero(date.getMinutes())
+    const second = padZero(date.getSeconds())
+    const dateString = `${year}${month}${day}-${hour}${minute}${second}`
+    const baseName = this.romBaseName
+    return `${baseName}-${dateString}.png`
+  }
+
+  private keyboardDown(code: string) {
+    this.fireKeyboardEvent('keydown', code)
+  }
+
+  private async keyboardPress(code: string, time = 100) {
+    this.keyboardDown(code)
+    await delay(time)
+    this.keyboardUp(code)
+  }
+
+  private keyboardUp(code: string) {
+    this.fireKeyboardEvent('keyup', code)
+  }
+
+  private postRun() {
+    this.resize(this.canvasInitialSize)
+
+    // tell retroarch that controllers are connected
+    for (const gamepad of navigator.getGamepads?.() ?? []) {
+      if (gamepad) {
+        window.dispatchEvent(new GamepadEvent('gamepadconnected', { gamepad }))
+      }
+    }
+
+    this.updateKeyboardEventHandlers()
   }
 
   private get romBaseName() {
@@ -58,242 +156,51 @@ export class Emulator {
     return fileName.slice(0, fileName.lastIndexOf('.'))
   }
 
-  private get stateFileDirectory() {
-    const { core } = this.options
-    const coreFullName = coreInfoMap[core.name].corename
-    if (!coreFullName) {
-      throw new Error(`invalid core name: ${core.name}`)
-    }
-    return join(raUserdataDir, 'states', coreFullName)
-  }
-
-  private get stateFileName() {
-    return join(this.stateFileDirectory, `${this.romBaseName}.state`)
-  }
-
-  private get stateThumbnailFileName() {
-    return `${this.stateFileName}.png`
-  }
-
-  getOptions() {
-    return this.options
-  }
-
-  async launch() {
-    await this.setupEmscripten()
+  private runMain() {
     checkIsAborted(this.options.signal)
-
-    await this.setupRaConfigFile()
-    checkIsAborted(this.options.signal)
-
-    const { element, style, respondToGlobalEvents, waitForInteraction, signal } = this.options
-    updateStyle(element, style)
-
-    if (!element.isConnected) {
-      document.body.append(element)
-      signal?.addEventListener('abort', () => {
-        element?.remove()
-      })
-    }
-    this.canvasInitialSize = this.getElementSize()
-
-    if (respondToGlobalEvents === false) {
-      if (!element.tabIndex || element.tabIndex === -1) {
-        element.tabIndex = 0
-      }
-      const { activeElement } = document
-      element.focus()
-      signal?.addEventListener('abort', () => {
-        if (activeElement instanceof HTMLElement) {
-          activeElement.focus()
-        }
-      })
+    const { Module } = this.getEmscripten()
+    const { arguments: raArgs = [] } = Module
+    const { rom, signal } = this.options
+    if (!Module.arguments && rom.length > 0) {
+      const [{ fileName }] = rom
+      raArgs.push(join(raContentDir, fileName))
     }
 
-    const { nostalgist, beforeLaunch, onLaunch } = this.options
-    if (beforeLaunch) {
-      await beforeLaunch(nostalgist)
-    }
-
-    const run = async () => {
-      this.runMain()
-      if (onLaunch) {
-        await onLaunch(nostalgist)
-      }
-    }
-
-    if (waitForInteraction) {
-      waitForInteraction({ done: run })
-    } else {
-      run()
-    }
-  }
-
-  sendCommand(msg: RetroArchCommand) {
-    const bytes = encoder.encode(`${msg}\n`)
-    this.messageQueue.push([bytes, 0])
-  }
-
-  resume() {
-    if (this.gameStatus === 'paused') {
-      this.sendCommand('PAUSE_TOGGLE')
-    }
+    Module.callMain(raArgs)
+    signal?.addEventListener('abort', () => {
+      this.exit()
+    })
     this.gameStatus = 'running'
+    this.postRun()
   }
 
-  restart() {
-    this.sendCommand('RESET')
-    this.resume()
-  }
-
-  pause() {
-    if (this.gameStatus === 'running') {
-      this.sendCommand('PAUSE_TOGGLE')
+  private async setupEmscripten() {
+    if (typeof window === 'object') {
+      // @ts-expect-error for retroarch fast forward
+      window.setImmediate ??= window.setTimeout
     }
-    this.gameStatus = 'paused'
-  }
 
-  getEmscripten() {
-    if (!this.emscripten) {
-      throw new Error('emulator is not ready')
-    }
-    return this.emscripten
-  }
+    const { core, element, emscriptenModule, signal } = this.options
+    const { wasm } = core
+    const moduleOptions = { canvas: element, preRun: [], wasmBinary: wasm, ...emscriptenModule }
+    const initialModule = getEmscriptenModuleOverrides(moduleOptions)
+    initialModule.preRun?.push(() => initialModule.FS.init(() => this.stdin()))
 
-  async saveState() {
-    this.clearStateFile()
-    this.sendCommand('SAVE_STATE')
-    const savestateThumbnailEnable = this.options.retroarchConfig.savestate_thumbnail_enable
-    let stateBuffer: Buffer
-    let stateThumbnailBuffer: Buffer | undefined
-    if (savestateThumbnailEnable) {
-      ;[stateBuffer, stateThumbnailBuffer] = await Promise.all([
-        this.waitForEmscriptenFile(this.stateFileName),
-        this.waitForEmscriptenFile(this.stateThumbnailFileName),
-      ])
-    } else {
-      stateBuffer = await this.waitForEmscriptenFile(this.stateFileName)
-    }
-    this.clearStateFile()
-
-    const state = new Blob([stateBuffer], { type: 'application/octet-stream' })
-    const thumbnail = stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], { type: 'image/png' }) : undefined
-    return { state, thumbnail }
-  }
-
-  async loadState(blob: Blob) {
-    this.clearStateFile()
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const buffer = await blobToBuffer(blob)
-    FS.writeFile(this.stateFileName, buffer)
-    await this.waitForEmscriptenFile(this.stateFileName)
-    this.sendCommand('LOAD_STATE')
-  }
-
-  exit(statusCode = 0) {
-    const { emscripten } = this
-    if (emscripten) {
-      const { Module, exit, JSEvents } = this.getEmscripten()
-      const { FS } = Module
-      exit(statusCode)
-      FS.unmount('/home')
-      JSEvents.removeAllEventListeners()
-    }
-  }
-
-  resize({ width, height }: { width: number; height: number }) {
-    const { Module } = this.getEmscripten()
-    if (typeof width === 'number' && typeof height === 'number') {
-      Module.setCanvasSize(width, height)
-    }
-  }
-
-  pressDown(button: string, player = 1) {
-    const code = this.getKeyboardCode(button, player)
-    if (code) {
-      this.keyboardDown(code)
-    }
-  }
-
-  pressUp(button: string, player = 1) {
-    const code = this.getKeyboardCode(button, player)
-    if (code) {
-      this.keyboardUp(code)
-    }
-  }
-
-  async press(button: string, player = 1, time = 100) {
-    const code = this.getKeyboardCode(button, player)
-    if (code) {
-      await this.keyboardPress(code, time)
-    }
-  }
-
-  async screenshot() {
-    this.sendCommand('SCREENSHOT')
-    const screenshotDirectory = join(raUserdataDir, 'screenshots')
-    const screenshotFileName = this.guessScreenshotFileName()
-    const screenshotPath = join(screenshotDirectory, screenshotFileName)
-    const buffer = await this.waitForEmscriptenFile(screenshotPath)
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    FS.unlink(screenshotPath)
-    const blobProperty = { type: 'image/png' }
-    return new Blob([buffer], blobProperty)
-  }
-
-  private getElementSize() {
-    const { element, size } = this.options
-    return !size || size === 'auto' ? { width: element.offsetWidth, height: element.offsetHeight } : size
-  }
-
-  private async writeBlobToDirectory({
-    fileName,
-    fileContent,
-    directory,
-  }: {
-    fileName: string
-    fileContent: Blob
-    directory: string
-  }) {
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const buffer = await blobToBuffer(fileContent)
-    FS.createDataFile('/', fileName, buffer, true, false)
-    const encoding = 'binary'
-    const data = FS.readFile(fileName, { encoding })
-    FS.mkdirTree(directory)
-    FS.writeFile(join(directory, fileName), data, { encoding })
-    FS.unlink(fileName)
-  }
-
-  private writeTextToDirectory({
-    fileName,
-    fileContent,
-    directory,
-  }: {
-    fileName: string
-    fileContent: string
-    directory: string
-  }) {
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const buffer = stringToBuffer(fileContent)
-    FS.createDataFile('/', fileName, buffer, true, false)
-    const encoding = 'binary'
-    const data = FS.readFile(fileName, { encoding })
-    FS.mkdirTree(directory)
-    FS.writeFile(join(directory, fileName), data, { encoding })
-    FS.unlink(fileName)
+    const { getEmscripten } = await importCoreJsAsESM(core)
+    const emscripten: EmulatorEmscripten = await getEmscripten({ Module: initialModule })
+    this.emscripten = emscripten
+    const { Module } = emscripten
+    await Module.monitorRunDependencies()
+    checkIsAborted(signal)
+    await this.setupFileSystem()
   }
 
   private async setupFileSystem() {
     const { Module } = this.getEmscripten()
-    const { FS, PATH, ERRNO_CODES } = Module
-    const { rom, bios, state, signal } = this.options
+    const { ERRNO_CODES, FS, PATH } = Module
+    const { bios, rom, signal, state } = this.options
 
-    const browserFS = createEmscriptenFS({ FS, PATH, ERRNO_CODES })
+    const browserFS = createEmscriptenFS({ ERRNO_CODES, FS, PATH })
     this.browserFS = browserFS
     FS.mount(browserFS, { root: '/home' }, '/home')
 
@@ -325,9 +232,9 @@ export class Emulator {
     )
     if (state) {
       const statePromise = this.writeBlobToDirectory({
-        fileName: `${this.romBaseName}.state.auto`,
-        fileContent: state,
         directory: this.stateFileDirectory,
+        fileContent: state,
+        fileName: `${this.romBaseName}.state.auto`,
       })
       filePromises.push(statePromise)
     }
@@ -336,25 +243,48 @@ export class Emulator {
     checkIsAborted(signal)
   }
 
-  private async setupEmscripten() {
-    if (typeof window === 'object') {
-      // @ts-expect-error for retroarch fast forward
-      window.setImmediate ??= window.setTimeout
+  private async setupRaConfigFile() {
+    this.writeConfigFile({ config: this.options.retroarchConfig, path: raConfigPath })
+    this.writeConfigFile({ config: this.options.retroarchCoreConfig, path: raCoreConfigPath })
+    await this.setupRaShaderFile()
+  }
+
+  private async setupRaShaderFile() {
+    const { shader } = this.options
+    if (shader.length === 0) {
+      return
     }
+    const glslFiles = shader.filter((file) => file.fileName.endsWith('.glslp'))
+    if (glslFiles.length === 0) {
+      return
+    }
+    const glslpContent = glslFiles.map((file) => `#reference "${join(raShaderDir, file.fileName)}"`).join('\n')
 
-    const { element, core, emscriptenModule, signal } = this.options
-    const { wasm } = core
-    const moduleOptions = { wasmBinary: wasm, canvas: element, preRun: [], ...emscriptenModule }
-    const initialModule = getEmscriptenModuleOverrides(moduleOptions)
-    initialModule.preRun?.push(() => initialModule.FS.init(() => this.stdin()))
+    this.writeTextToDirectory({ directory: raConfigDir, fileContent: glslpContent, fileName: 'global.glslp' })
 
-    const { getEmscripten } = await importCoreJsAsESM(core)
-    const emscripten: EmulatorEmscripten = await getEmscripten({ Module: initialModule })
-    this.emscripten = emscripten
-    const { Module } = emscripten
-    await Module.monitorRunDependencies()
-    checkIsAborted(signal)
-    await this.setupFileSystem()
+    await Promise.all(
+      shader.map(async ({ fileContent, fileName }) => {
+        const directory = fileName.endsWith('.glslp') ? raShaderDir : join(raShaderDir, 'shaders')
+        await this.writeBlobToDirectory({ directory, fileContent, fileName })
+      }),
+    )
+  }
+
+  private get stateFileDirectory() {
+    const { core } = this.options
+    const coreFullName = coreInfoMap[core.name].corename
+    if (!coreFullName) {
+      throw new Error(`invalid core name: ${core.name}`)
+    }
+    return join(raUserdataDir, 'states', coreFullName)
+  }
+
+  private get stateFileName() {
+    return join(this.stateFileDirectory, `${this.romBaseName}.state`)
+  }
+
+  private get stateThumbnailFileName() {
+    return `${this.stateFileName}.png`
   }
 
   // copied from https://github.com/libretro/RetroArch/pull/15017
@@ -375,82 +305,9 @@ export class Emulator {
     return null
   }
 
-  private writeConfigFile({ path, config }: { path: string; config: Record<string, any> }) {
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const dir = path.slice(0, path.lastIndexOf('/'))
-    FS.mkdirTree(dir)
-    for (const key in config) {
-      config[key] = `__${config[key]}__`
-    }
-    let fileContent = ini.stringify(config, { whitespace: true, platform: 'linux' })
-    fileContent = fileContent.replaceAll('__', '"')
-    const fileName = basename(path)
-    const directory = dirname(path)
-    this.writeTextToDirectory({ fileContent, fileName, directory })
-  }
-
-  private async setupRaConfigFile() {
-    this.writeConfigFile({ path: raConfigPath, config: this.options.retroarchConfig })
-    this.writeConfigFile({ path: raCoreConfigPath, config: this.options.retroarchCoreConfig })
-    await this.setupRaShaderFile()
-  }
-
-  private async setupRaShaderFile() {
-    const { shader } = this.options
-    if (shader.length === 0) {
-      return
-    }
-    const glslFiles = shader.filter((file) => file.fileName.endsWith('.glslp'))
-    if (glslFiles.length === 0) {
-      return
-    }
-    const glslpContent = glslFiles.map((file) => `#reference "${join(raShaderDir, file.fileName)}"`).join('\n')
-
-    this.writeTextToDirectory({ fileName: 'global.glslp', fileContent: glslpContent, directory: raConfigDir })
-
-    await Promise.all(
-      shader.map(async ({ fileName, fileContent }) => {
-        const directory = fileName.endsWith('.glslp') ? raShaderDir : join(raShaderDir, 'shaders')
-        await this.writeBlobToDirectory({ fileName, fileContent, directory })
-      }),
-    )
-  }
-
-  private runMain() {
-    checkIsAborted(this.options.signal)
-    const { Module } = this.getEmscripten()
-    const { arguments: raArgs = [] } = Module
-    const { rom, signal } = this.options
-    if (!Module.arguments && rom.length > 0) {
-      const [{ fileName }] = rom
-      raArgs.push(join(raContentDir, fileName))
-    }
-
-    Module.callMain(raArgs)
-    signal?.addEventListener('abort', () => {
-      this.exit()
-    })
-    this.gameStatus = 'running'
-    this.postRun()
-  }
-
-  private postRun() {
-    this.resize(this.canvasInitialSize)
-
-    // tell retroarch that controllers are connected
-    for (const gamepad of navigator.getGamepads?.() ?? []) {
-      if (gamepad) {
-        window.dispatchEvent(new GamepadEvent('gamepadconnected', { gamepad }))
-      }
-    }
-
-    this.updateKeyboardEventHandlers()
-  }
-
   private updateKeyboardEventHandlers() {
     const { JSEvents } = this.getEmscripten()
-    const { respondToGlobalEvents, element } = this.options
+    const { element, respondToGlobalEvents } = this.options
     if (!respondToGlobalEvents) {
       if (!element.getAttribute('tabindex')) {
         element.tabIndex = -1
@@ -466,21 +323,21 @@ export class Emulator {
     // Let's modify the default event liseners as needed
     const keyboardEvents = new Set(['keyup', 'keydown', 'keypress'])
     const globalKeyboardEventHandlers = JSEvents.eventHandlers.filter(
-      ({ eventTypeString, target }: { eventTypeString: string; target: Element | Document }) =>
+      ({ eventTypeString, target }: { eventTypeString: string; target: Document | Element }) =>
         keyboardEvents.has(eventTypeString) && (target === document || target === element),
     )
     for (const globalKeyboardEventHandler of globalKeyboardEventHandlers) {
-      const { eventTypeString, target, handlerFunc } = globalKeyboardEventHandler
+      const { eventTypeString, handlerFunc, target } = globalKeyboardEventHandler
       JSEvents.registerOrRemoveHandler({ eventTypeString, target })
       JSEvents.registerOrRemoveHandler({
         ...globalKeyboardEventHandler,
-        target: respondToGlobalEvents ? document : element,
         handlerFunc: (...args: [Event]) => {
           const [event] = args
           if (respondToGlobalEvents || event?.target === element) {
             handlerFunc(...args)
           }
         },
+        target: respondToGlobalEvents ? document : element,
       })
     }
   }
@@ -510,84 +367,227 @@ export class Emulator {
     return buffer
   }
 
-  private clearStateFile() {
+  private async writeBlobToDirectory({
+    directory,
+    fileContent,
+    fileName,
+  }: {
+    directory: string
+    fileContent: Blob
+    fileName: string
+  }) {
     const { Module } = this.getEmscripten()
     const { FS } = Module
-    try {
-      FS.unlink(this.stateFileName)
-      FS.unlink(this.stateThumbnailFileName)
-    } catch {}
+    const buffer = await blobToBuffer(fileContent)
+    FS.createDataFile('/', fileName, buffer, true, false)
+    const encoding = 'binary'
+    const data = FS.readFile(fileName, { encoding })
+    FS.mkdirTree(directory)
+    FS.writeFile(join(directory, fileName), data, { encoding })
+    FS.unlink(fileName)
   }
 
-  private getCurrentRetroarchConfig() {
+  private writeConfigFile({ config, path }: { config: Record<string, any>; path: string }) {
     const { Module } = this.getEmscripten()
     const { FS } = Module
-    const configContent = FS.readFile(raConfigPath, { encoding: 'utf8' })
-    return ini.parse(configContent)
+    const dir = path.slice(0, path.lastIndexOf('/'))
+    FS.mkdirTree(dir)
+    for (const key in config) {
+      config[key] = `__${config[key]}__`
+    }
+    let fileContent = ini.stringify(config, { platform: 'linux', whitespace: true })
+    fileContent = fileContent.replaceAll('__', '"')
+    const fileName = basename(path)
+    const directory = dirname(path)
+    this.writeTextToDirectory({ directory, fileContent, fileName })
   }
 
-  private fireKeyboardEvent(type: 'keydown' | 'keyup', code: string) {
-    const { JSEvents } = this.getEmscripten()
-    for (const { eventTypeString, eventListenerFunc } of JSEvents.eventHandlers) {
-      if (eventTypeString === type) {
-        try {
-          eventListenerFunc({ code, target: this.options.element })
-        } catch {}
+  private writeTextToDirectory({
+    directory,
+    fileContent,
+    fileName,
+  }: {
+    directory: string
+    fileContent: string
+    fileName: string
+  }) {
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
+    const buffer = stringToBuffer(fileContent)
+    FS.createDataFile('/', fileName, buffer, true, false)
+    const encoding = 'binary'
+    const data = FS.readFile(fileName, { encoding })
+    FS.mkdirTree(directory)
+    FS.writeFile(join(directory, fileName), data, { encoding })
+    FS.unlink(fileName)
+  }
+
+  exit(statusCode = 0) {
+    const { emscripten } = this
+    if (emscripten) {
+      const { exit, JSEvents, Module } = this.getEmscripten()
+      const { FS } = Module
+      exit(statusCode)
+      FS.unmount('/home')
+      JSEvents.removeAllEventListeners()
+    }
+  }
+
+  getEmscripten() {
+    if (!this.emscripten) {
+      throw new Error('emulator is not ready')
+    }
+    return this.emscripten
+  }
+
+  getOptions() {
+    return this.options
+  }
+
+  async launch() {
+    await this.setupEmscripten()
+    checkIsAborted(this.options.signal)
+
+    await this.setupRaConfigFile()
+    checkIsAborted(this.options.signal)
+
+    const { element, respondToGlobalEvents, signal, style, waitForInteraction } = this.options
+    updateStyle(element, style)
+
+    if (!element.isConnected) {
+      document.body.append(element)
+      signal?.addEventListener('abort', () => {
+        element?.remove()
+      })
+    }
+    this.canvasInitialSize = this.getElementSize()
+
+    if (respondToGlobalEvents === false) {
+      if (!element.tabIndex || element.tabIndex === -1) {
+        element.tabIndex = 0
+      }
+      const { activeElement } = document
+      element.focus()
+      signal?.addEventListener('abort', () => {
+        if (activeElement instanceof HTMLElement) {
+          activeElement.focus()
+        }
+      })
+    }
+
+    const { beforeLaunch, nostalgist, onLaunch } = this.options
+    if (beforeLaunch) {
+      await beforeLaunch(nostalgist)
+    }
+
+    const run = async () => {
+      this.runMain()
+      if (onLaunch) {
+        await onLaunch(nostalgist)
       }
     }
+
+    if (waitForInteraction) {
+      waitForInteraction({ done: run })
+    } else {
+      run()
+    }
   }
 
-  private getKeyboardCode(button: string, player = 1) {
-    const config = this.getCurrentRetroarchConfig()
-    const configName = `input_player${player}_${button}`
-    const key: string = config[configName]
-    if (!key || key === 'nul') {
-      return
-    }
-    const { length } = key
-    // single letters
-    if (length === 1) {
-      return `Key${key.toUpperCase()}`
-    }
-    // f1, f2, f3...
-    if (key[0] === 'f' && (length === 2 || length === 3)) {
-      return key.toUpperCase()
-    }
-    // num1, num2, num3...
-    if (length === 4 && key.startsWith('num')) {
-      return `Numpad${key.at(-1)}`
-    }
-    if (length === 7 && key.startsWith('keypad')) {
-      return `Digit${key.at(-1)}`
-    }
-    return keyboardCodeMap[key] || ''
+  async loadState(blob: Blob) {
+    this.clearStateFile()
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
+    const buffer = await blobToBuffer(blob)
+    FS.writeFile(this.stateFileName, buffer)
+    await this.waitForEmscriptenFile(this.stateFileName)
+    this.sendCommand('LOAD_STATE')
   }
 
-  private keyboardUp(code: string) {
-    this.fireKeyboardEvent('keyup', code)
+  pause() {
+    if (this.gameStatus === 'running') {
+      this.sendCommand('PAUSE_TOGGLE')
+    }
+    this.gameStatus = 'paused'
   }
 
-  private keyboardDown(code: string) {
-    this.fireKeyboardEvent('keydown', code)
+  async press(button: string, player = 1, time = 100) {
+    const code = this.getKeyboardCode(button, player)
+    if (code) {
+      await this.keyboardPress(code, time)
+    }
   }
 
-  private async keyboardPress(code: string, time = 100) {
-    this.keyboardDown(code)
-    await delay(time)
-    this.keyboardUp(code)
+  pressDown(button: string, player = 1) {
+    const code = this.getKeyboardCode(button, player)
+    if (code) {
+      this.keyboardDown(code)
+    }
   }
 
-  private guessScreenshotFileName() {
-    const date = new Date()
-    const year = date.getFullYear() % 1000
-    const month = padZero(date.getMonth() + 1)
-    const day = padZero(date.getDate())
-    const hour = padZero(date.getHours())
-    const minute = padZero(date.getMinutes())
-    const second = padZero(date.getSeconds())
-    const dateString = `${year}${month}${day}-${hour}${minute}${second}`
-    const baseName = this.romBaseName
-    return `${baseName}-${dateString}.png`
+  pressUp(button: string, player = 1) {
+    const code = this.getKeyboardCode(button, player)
+    if (code) {
+      this.keyboardUp(code)
+    }
+  }
+
+  resize({ height, width }: { height: number; width: number }) {
+    const { Module } = this.getEmscripten()
+    if (typeof width === 'number' && typeof height === 'number') {
+      Module.setCanvasSize(width, height)
+    }
+  }
+
+  restart() {
+    this.sendCommand('RESET')
+    this.resume()
+  }
+
+  resume() {
+    if (this.gameStatus === 'paused') {
+      this.sendCommand('PAUSE_TOGGLE')
+    }
+    this.gameStatus = 'running'
+  }
+
+  async saveState() {
+    this.clearStateFile()
+    this.sendCommand('SAVE_STATE')
+    const savestateThumbnailEnable = this.options.retroarchConfig.savestate_thumbnail_enable
+    let stateBuffer: Buffer
+    let stateThumbnailBuffer: Buffer | undefined
+    if (savestateThumbnailEnable) {
+      ;[stateBuffer, stateThumbnailBuffer] = await Promise.all([
+        this.waitForEmscriptenFile(this.stateFileName),
+        this.waitForEmscriptenFile(this.stateThumbnailFileName),
+      ])
+    } else {
+      stateBuffer = await this.waitForEmscriptenFile(this.stateFileName)
+    }
+    this.clearStateFile()
+
+    const state = new Blob([stateBuffer], { type: 'application/octet-stream' })
+    const thumbnail = stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], { type: 'image/png' }) : undefined
+    return { state, thumbnail }
+  }
+
+  async screenshot() {
+    this.sendCommand('SCREENSHOT')
+    const screenshotDirectory = join(raUserdataDir, 'screenshots')
+    const screenshotFileName = this.guessScreenshotFileName()
+    const screenshotPath = join(screenshotDirectory, screenshotFileName)
+    const buffer = await this.waitForEmscriptenFile(screenshotPath)
+    const { Module } = this.getEmscripten()
+    const { FS } = Module
+    FS.unlink(screenshotPath)
+    const blobProperty = { type: 'image/png' }
+    return new Blob([buffer], blobProperty)
+  }
+
+  sendCommand(msg: RetroArchCommand) {
+    const bytes = encoder.encode(`${msg}\n`)
+    this.messageQueue.push([bytes, 0])
   }
 }
 

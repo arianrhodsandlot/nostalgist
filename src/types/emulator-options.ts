@@ -3,8 +3,8 @@ import type { RetroArchConfig } from './retroarch-config'
 import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
 export interface EmulatorOptions {
-  nostalgist: Nostalgist
   element: HTMLCanvasElement
+  nostalgist: Nostalgist
 
   style: Partial<CSSStyleDeclaration>
 
@@ -13,8 +13,9 @@ export interface EmulatorOptions {
    * The size of the canvas element.
    * If it's `'auto'`, the canvas element will keep its original size, or it's width and height will be updated as specified.
    */
-  size?: 'auto' | { width: number; height: number }
+  size?: 'auto' | { height: number; width: number }
 
+  bios: { fileContent: Blob; fileName: string }[]
   core: {
     /** the name of core */
     name: string
@@ -25,9 +26,8 @@ export interface EmulatorOptions {
     /** the array buffer of core's js file */
     wasm: ArrayBuffer
   }
-  rom: { fileName: string; fileContent: Blob }[]
-  bios: { fileName: string; fileContent: Blob }[]
-  shader: { fileName: string; fileContent: Blob }[]
+  rom: { fileContent: Blob; fileName: string }[]
+  shader: { fileContent: Blob; fileName: string }[]
   state?: Blob | undefined
 
   respondToGlobalEvents: boolean
@@ -53,7 +53,7 @@ export interface EmulatorOptions {
 
   waitForInteraction: ((params: { done: () => void }) => void) | undefined
 
+  beforeLaunch?: ((nostalgist: Nostalgist) => Promise<void> | void) | undefined
+  onLaunch?: ((nostalgist: Nostalgist) => Promise<void> | void) | undefined
   signal?: AbortSignal | undefined
-  beforeLaunch?: undefined | ((nostalgist: Nostalgist) => Promise<void> | void)
-  onLaunch?: undefined | ((nostalgist: Nostalgist) => Promise<void> | void)
 }

@@ -2,7 +2,7 @@ import { BFSRequire } from 'browserfs'
 
 const { Buffer } = BFSRequire('buffer')
 export const path = BFSRequire('path')
-export const { basename, extname, dirname, join, relative } = path
+export const { basename, dirname, extname, join, relative } = path
 
 export function urlBaseName(url: string) {
   let pathname = url
@@ -37,7 +37,7 @@ export function stringToBuffer(string: string) {
   return Buffer.from(string, 'utf8')
 }
 
-export async function toBuffer(file: string | Blob) {
+export async function toBuffer(file: Blob | string) {
   if (typeof file === 'string') {
     return stringToBuffer(file)
   }
@@ -69,7 +69,7 @@ function isEsmScript(js: string) {
   return js.includes('import.meta.url')
 }
 
-function patchCoreJs({ name, js }: { name: string; js: string }) {
+function patchCoreJs({ js, name }: { js: string; name: string }) {
   let jsContent = js
 
   if (isGlobalScript(js)) {
@@ -93,8 +93,8 @@ function patchCoreJs({ name, js }: { name: string; js: string }) {
   return jsContent
 }
 
-export async function importCoreJsAsESM({ name, js }: { name: string; js: string }) {
-  const jsContent = patchCoreJs({ name, js })
+export async function importCoreJsAsESM({ js, name }: { js: string; name: string }) {
+  const jsContent = patchCoreJs({ js, name })
   const jsBlob = new Blob([jsContent], { type: 'application/javascript' })
   const jsBlobUrl = URL.createObjectURL(jsBlob)
   if (!jsBlobUrl) {

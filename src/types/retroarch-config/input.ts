@@ -1,49 +1,49 @@
 type RetroArchInputButton = number | string
 
 export interface RetroArchInputConfig {
+  input_close_content: RetroArchInputButton
   input_close_content_axis: RetroArchInputButton
   input_close_content_btn: RetroArchInputButton
   input_close_content_mbtn: RetroArchInputButton
-  input_close_content: RetroArchInputButton
+  input_desktop_menu_toggle: RetroArchInputButton
   input_desktop_menu_toggle_axis: RetroArchInputButton
   input_desktop_menu_toggle_btn: RetroArchInputButton
   input_desktop_menu_toggle_mbtn: RetroArchInputButton
-  input_desktop_menu_toggle: RetroArchInputButton
+  input_fps_toggle: RetroArchInputButton
   input_fps_toggle_axis: RetroArchInputButton
   input_fps_toggle_btn: RetroArchInputButton
   input_fps_toggle_mbtn: RetroArchInputButton
-  input_fps_toggle: RetroArchInputButton
+  input_game_focus_toggle: RetroArchInputButton
   input_game_focus_toggle_axis: RetroArchInputButton
   input_game_focus_toggle_btn: RetroArchInputButton
   input_game_focus_toggle_mbtn: RetroArchInputButton
-  input_game_focus_toggle: RetroArchInputButton
   input_hold_fast_forward_btn: RetroArchInputButton
   input_hold_slowmotion: RetroArchInputButton
   input_netplay_game_watch: RetroArchInputButton
+  input_netplay_player_chat: RetroArchInputButton
   input_netplay_player_chat_axis: RetroArchInputButton
   input_netplay_player_chat_btn: RetroArchInputButton
   input_netplay_player_chat_mbtn: RetroArchInputButton
-  input_netplay_player_chat: RetroArchInputButton
+  input_preempt_toggle: RetroArchInputButton
   input_preempt_toggle_axis: RetroArchInputButton
   input_preempt_toggle_btn: RetroArchInputButton
   input_preempt_toggle_mbtn: RetroArchInputButton
-  input_preempt_toggle: RetroArchInputButton
+  input_record_replay: RetroArchInputButton
   input_record_replay_axis: RetroArchInputButton
   input_record_replay_btn: RetroArchInputButton
   input_record_replay_mbtn: RetroArchInputButton
-  input_record_replay: RetroArchInputButton
+  input_recording_toggle: RetroArchInputButton
   input_recording_toggle_axis: RetroArchInputButton
   input_recording_toggle_btn: RetroArchInputButton
   input_recording_toggle_mbtn: RetroArchInputButton
-  input_recording_toggle: RetroArchInputButton
+  input_replay_slot_decrease: RetroArchInputButton
   input_replay_slot_decrease_axis: RetroArchInputButton
   input_replay_slot_decrease_btn: RetroArchInputButton
   input_replay_slot_decrease_mbtn: RetroArchInputButton
-  input_replay_slot_decrease: RetroArchInputButton
+  input_replay_slot_increase: RetroArchInputButton
   input_replay_slot_increase_axis: RetroArchInputButton
   input_replay_slot_increase_btn: RetroArchInputButton
   input_replay_slot_increase_mbtn: RetroArchInputButton
-  input_replay_slot_increase: RetroArchInputButton
   input_reset_axis: RetroArchInputButton
   input_reset_btn: RetroArchInputButton
   input_reset_mbtn: RetroArchInputButton
@@ -51,10 +51,10 @@ export interface RetroArchInputConfig {
   input_rewind_btn: RetroArchInputButton
   input_rewind_mbtn: RetroArchInputButton
   input_rumble_gain: RetroArchInputButton
+  input_runahead_toggle: RetroArchInputButton
   input_runahead_toggle_axis: RetroArchInputButton
   input_runahead_toggle_btn: RetroArchInputButton
   input_runahead_toggle_mbtn: RetroArchInputButton
-  input_runahead_toggle: RetroArchInputButton
   input_save_state_axis: RetroArchInputButton
   input_save_state_btn: RetroArchInputButton
   input_save_state_mbtn: RetroArchInputButton
@@ -77,20 +77,20 @@ export interface RetroArchInputConfig {
   input_state_slot_increase_axis: RetroArchInputButton
   input_state_slot_increase_btn: RetroArchInputButton
   input_state_slot_increase_mbtn: RetroArchInputButton
+  input_streaming_toggle: RetroArchInputButton
   input_streaming_toggle_axis: RetroArchInputButton
   input_streaming_toggle_btn: RetroArchInputButton
   input_streaming_toggle_mbtn: RetroArchInputButton
-  input_streaming_toggle: RetroArchInputButton
   input_toggle_fast_forward_axis: RetroArchInputButton
   input_toggle_fast_forward_btn: RetroArchInputButton
   input_toggle_fast_forward_mbtn: RetroArchInputButton
   input_toggle_fullscreen_axis: RetroArchInputButton
   input_toggle_fullscreen_btn: RetroArchInputButton
   input_toggle_fullscreen_mbtn: RetroArchInputButton
+  input_toggle_slowmotion: RetroArchInputButton
   input_toggle_slowmotion_axis: RetroArchInputButton
   input_toggle_slowmotion_btn: RetroArchInputButton
   input_toggle_slowmotion_mbtn: RetroArchInputButton
-  input_toggle_slowmotion: RetroArchInputButton
   input_toggle_statistics_axis: RetroArchInputButton
   input_toggle_statistics_btn: RetroArchInputButton
   input_toggle_statistics_mbtn: RetroArchInputButton

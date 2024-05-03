@@ -58,9 +58,9 @@ const shaderVersion = 'bc8df9'
 export function getDefaultOptions() {
   const defaultOptions: Omit<NostalgistOptions, 'core'> = {
     element: '',
-    runEmulatorManually: false,
     retroarchConfig: defaultRetroarchConfig,
     retroarchCoreConfig: {},
+    runEmulatorManually: false,
 
     resolveCoreJs(core) {
       return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`

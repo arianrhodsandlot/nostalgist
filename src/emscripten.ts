@@ -3,7 +3,7 @@ import type { RetroArchEmscriptenModuleOptions } from './types/retroarch-emscrip
 
 const raUserdataDir = '/home/web_user/retroarch/userdata'
 
-export function createEmscriptenFS({ FS, PATH, ERRNO_CODES }: any) {
+export function createEmscriptenFS({ ERRNO_CODES, FS, PATH }: any) {
   const inMemoryFS = new FileSystem.InMemory()
   const mountableFS = new FileSystem.MountableFileSystem()
   try {
@@ -23,11 +23,19 @@ export function getEmscriptenModuleOverrides(overrides: RetroArchEmscriptenModul
   })
 
   const emscriptenModuleOverrides: RetroArchEmscriptenModuleOptions = {
-    noInitialRun: true,
     noExitRuntime: false,
+    noInitialRun: true,
 
     locateFile(file) {
       return file
+    },
+
+    // the return value of `monitorRunDependencies` seems to be misused here, but it works for now
+    async monitorRunDependencies(left?: number) {
+      if (left === 0) {
+        resolveRunDependenciesPromise()
+      }
+      return await runDependenciesPromise
     },
 
     print(...args: unknown[]) {
@@ -45,13 +53,6 @@ export function getEmscriptenModuleOverrides(overrides: RetroArchEmscriptenModul
       }
     },
 
-    // the return value of `monitorRunDependencies` seems to be misused here, but it works for now
-    async monitorRunDependencies(left?: number) {
-      if (left === 0) {
-        resolveRunDependenciesPromise()
-      }
-      return await runDependenciesPromise
-    },
     ...overrides,
   }
   return emscriptenModuleOverrides
