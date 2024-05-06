@@ -47,7 +47,7 @@
     "test:integration": "vitest -c tests/integration/vitest.config"
   },
   "devDependencies": {
-    "@arianrhodsandlot/eslint-config": "0.13.0",
+    "@arianrhodsandlot/eslint-config": "0.14.0",
     "@astrojs/starlight": "0.22.1",
     "@playwright/test": "1.43.1",
     "@types/emscripten": "1.39.11",
@@ -57,16 +57,16 @@
     "@types/wicg-file-system-access": "2023.10.5",
     "astro": "4.7.1",
     "browserfs": "1.4.3",
-    "eslint": "9.1.1",
+    "eslint": "9.2.0",
     "happy-dom": "14.7.1",
     "ini": "4.1.2",
     "is-ci": "3.0.1",
     "prettier": "3.2.5",
     "serve": "14.2.3",
     "sharp": "0.33.3",
-    "tsx": "4.9.0",
+    "tsx": "4.9.3",
     "typescript": "5.4.5",
     "vite": "5.2.11",
-    "vitest": "1.5.3"
+    "vitest": "1.6.0"
   }
 }
