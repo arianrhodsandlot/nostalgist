@@ -1,5 +1,5 @@
 ---
-title: getEmscriptenFS
+title: getEmscripten
 ---
 
 Get the Emscripten object of the current running emulator.
