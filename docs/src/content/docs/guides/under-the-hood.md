@@ -12,8 +12,8 @@ Nostalgist.js itself doesn't contain any emulators, but it has a resonable defau
 [retrobrews](https://retrobrews.github.io/) project without additional configuration.
 
 By default, cores will be loaded via [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) from [retroarch-emscripten-build](https://github.com/arianrhodsandlot/retroarch-emscripten-build) through [jsDelivr](https://www.jsdelivr.com). For example, the fceumm core, an NES emulator, will be loaded from these URLs:
-+ https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.17.0/retroarch/fceumm_libretro.js
-+ https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.17.0/retroarch/fceumm_libretro.wasm
++ https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.19.1/retroarch/fceumm_libretro.js
++ https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.19.1/retroarch/fceumm_libretro.wasm
 
 Games from [retrobrews](https://retrobrews.github.io/) are loaded in a similar way too. And of course you can also load all the nessasary contents by yourself.
 
