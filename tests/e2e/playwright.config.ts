@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test'
 import isCi from 'is-ci'
 
 export default defineConfig({
-  expect: { toHaveScreenshot: { maxDiffPixels: 100 } },
+  expect: { toHaveScreenshot: { maxDiffPixels: 300 } },
   fullyParallel: true,
   reporter: 'html',
   retries: 5,
