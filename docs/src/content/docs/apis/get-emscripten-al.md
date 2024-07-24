@@ -14,5 +14,5 @@ See [FS object](https://emscripten.org/docs/api_reference/Filesystem-API.html#id
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
 const AL = nostalgist.getEmscriptenAL()
-FS.readdir('/')
+console.log(AL.currentCtx)
 ```
