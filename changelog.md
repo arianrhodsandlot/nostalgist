@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0](https://github.com/arianrhodsandlot/nostalgist/compare/v0.9.2...v0.10.0) - 2024-07-24
+### Changed
+- update default retroarch-emscripten-build version to v1.19.1
+- add `getEmscripten` and `getEmscriptenAL`
+
 ## [0.9.2](https://github.com/arianrhodsandlot/nostalgist/compare/v0.9.1...v0.9.2) - 2024-03-15
 
 ### Fixed

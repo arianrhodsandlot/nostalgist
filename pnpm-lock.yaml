@@ -587,8 +587,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@mdn/browser-compat-data@5.5.40':
-    resolution: {integrity: sha512-5hByR+TGX/iKG7Uv3Zk8f+aUftkBcHqWE3Ym229jxm+cRjeJSBZzUKPm6H+p46vaeooql72kydrqpz0B3UrErw==}
+  '@mdn/browser-compat-data@5.5.41':
+    resolution: {integrity: sha512-KvL22UrK01+L1d8tISvZfQ7hcqV8XJoY92e9CvbqUE9LaxrTd+emXKuAgRE2QXB7PBdWaBy+b4A4erTIb/Mp6A==}
 
   '@mdx-js/mdx@3.0.1':
     resolution: {integrity: sha512-eIQ4QTrOWyL3LWEe/bu6Taqzq2HQvHcyTMaOrI95P2/LmJE7AsfPfgJGuFLPVqBUE1BC1rik3VIhU+s9u72arA==}
@@ -4519,7 +4519,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@mdn/browser-compat-data@5.5.40': {}
+  '@mdn/browser-compat-data@5.5.41': {}
 
   '@mdx-js/mdx@3.0.1':
     dependencies:
@@ -5007,7 +5007,7 @@ snapshots:
 
   ast-metadata-inferer@0.8.0:
     dependencies:
-      '@mdn/browser-compat-data': 5.5.40
+      '@mdn/browser-compat-data': 5.5.41
 
   ast-types-flow@0.0.8: {}
 
@@ -5656,7 +5656,7 @@ snapshots:
 
   eslint-plugin-compat@6.0.0(eslint@9.7.0):
     dependencies:
-      '@mdn/browser-compat-data': 5.5.40
+      '@mdn/browser-compat-data': 5.5.41
       ast-metadata-inferer: 0.8.0
       browserslist: 4.23.2
       caniuse-lite: 1.0.30001643

@@ -16,38 +16,33 @@ async function gbc() {
 }
 
 async function launchNestopia() {
-  const abortController = new AbortController()
-  setTimeout(() => {
-    abortController.abort()
-  }, 500)
   nostalgist = await Nostalgist.launch({
     core: 'nestopia',
     rom: 'pong1k.nes',
-    signal: abortController.signal,
   })
 }
 
 async function launchFceummWithCoreConfig() {
   nostalgist = await Nostalgist.launch({
     core: 'fceumm',
-    rom: 'flappybird.nes',
-    shader: 'crt/crt-easymode',
     retroarchCoreConfig: {
       fceumm_turbo_enable: 'Both',
     },
+    rom: 'flappybird.nes',
+    shader: 'crt/crt-easymode',
   })
 }
 
 async function launchFceummWithRaLegacy() {
   nostalgist = await Nostalgist.launch({
     core: 'fceumm',
-    rom: 'flappybird.nes',
     resolveCoreJs(core) {
       return `https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.16.0/retroarch/${core}_libretro.js`
     },
     resolveCoreWasm(core) {
       return `https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.16.0/retroarch/${core}_libretro.wasm`
     },
+    rom: 'flappybird.nes',
   })
 }
 
@@ -87,7 +82,7 @@ function restart() {
 }
 
 function resize() {
-  nostalgist.resize({ width: 400, height: 400 })
+  nostalgist.resize({ height: 400, width: 400 })
 }
 
 async function screenshot() {
@@ -107,7 +102,7 @@ function getCurrentNostalgist() {
 }
 
 Nostalgist.configure({
-  style: { width: '800px', height: '600px', position: 'static' },
+  style: { height: '600px', position: 'static', width: '800px' },
 })
 
 document.body.addEventListener('click', async function listener({ target }) {
@@ -115,22 +110,22 @@ document.body.addEventListener('click', async function listener({ target }) {
     return
   }
   const handlers = {
-    nes,
-    megadrive,
+    exit,
     gbc,
-    launchNestopia,
+    launchCustomRom,
     launchFceummWithCoreConfig,
     launchFceummWithRaLegacy,
-    launchCustomRom,
+    launchNestopia,
     launchState,
-    saveState,
     loadState,
+    megadrive,
+    nes,
     pause,
-    resume,
-    restart,
     resize,
+    restart,
+    resume,
+    saveState,
     screenshot,
-    exit,
   }
   const textContent = target.textContent || ''
   if (textContent in handlers) {
