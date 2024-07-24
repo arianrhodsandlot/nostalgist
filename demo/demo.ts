@@ -103,6 +103,11 @@ function getCurrentNostalgist() {
 
 Nostalgist.configure({
   style: { height: '600px', position: 'static', width: '800px' },
+
+  onLaunch(instance) {
+    // @ts-expect-error for debug usage
+    window.nostalgist = instance
+  },
 })
 
 document.body.addEventListener('click', async function listener({ target }) {

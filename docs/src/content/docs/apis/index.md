@@ -15,19 +15,30 @@ title: API reference
 
 ## Instance methods
 + [`saveState`](/apis/save-state)
+
 + [`loadState`](/apis/load-state)
+
 + [`restart`](/apis/restart)
+
 + [`pause`](/apis/pause)
+
 + [`resume`](/apis/resume)
+
 + [`exit`](/apis/exit)
+
 + [`resize`](/apis/resize)
+
 + [`press`](/apis/press)
+
 + [`screenshot`](/apis/screenshot)
-+ [`getCanvas`](/apis/get-canvas) (advanced)
-+ [`launchEmulator`](/apis/launch-emulator) (advanced)
-+ [`getEmscriptenModule`](/apis/get-emscripten-module) (advanced)
-+ [`getEmscriptenFS`](/apis/get-emscripten-fs) (advanced)
+
 + [`getBrowserFS`](/apis/get-browser-fs) (advanced)
++ [`getCanvas`](/apis/get-canvas) (advanced)
++ [`getEmscripten`](/apis/get-emscripten) (advanced)
++ [`getEmscriptenAL`](/apis/get-emscripten-al) (advanced)
++ [`getEmscriptenFS`](/apis/get-emscripten-fs) (advanced)
++ [`getEmscriptenModule`](/apis/get-emscripten-module) (advanced)
++ [`launchEmulator`](/apis/launch-emulator) (advanced)
 + [`pressDown`](/apis/press-down) (advanced)
 + [`pressUp`](/apis/press-up) (advanced)
 + [`sendCommand`](/apis/send-command) (advanced)
