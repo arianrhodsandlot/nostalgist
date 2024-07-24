@@ -74,7 +74,7 @@ export function tests() {
     await expect(canvas).toHaveScreenshot('pause-and-resume.png')
 
     await page.getByText('resume', { exact: true }).click()
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
     await expect(canvas).not.toHaveScreenshot('pause-and-resume.png')
   })
 
