@@ -14,6 +14,7 @@ import {
   dirname,
   importCoreJsAsESM,
   join,
+  padZero,
   stringToBuffer,
   updateStyle,
 } from './utils'
@@ -34,6 +35,8 @@ const raCoreConfigPath = join(raUserdataDir, 'retroarch-core-options.cfg')
 type GameStatus = 'initial' | 'paused' | 'running'
 
 interface EmulatorEmscripten {
+  AL: any
+  Browser: any
   exit: (code: number) => void
   JSEvents: any
   Module: RetroArchEmscriptenModule
@@ -589,8 +592,4 @@ export class Emulator {
     const bytes = encoder.encode(`${msg}\n`)
     this.messageQueue.push([bytes, 0])
   }
-}
-
-function padZero(number: number) {
-  return (number < 10 ? '0' : '') + number
 }

@@ -488,6 +488,26 @@ export class Nostalgist {
   }
 
   /**
+   * Get the Emscripten object exposed by RetroArch.
+   *
+   * @see {@link https://nostalgist.js.org/apis/get-emscripten-module/}
+   */
+  getEmscripten(): any {
+    const emulator = this.getEmulator()
+    return emulator.getEmscripten()
+  }
+
+  /**
+   * Get the Emscripten AL object exposed by RetroArch.
+   *
+   * @see {@link https://nostalgist.js.org/apis/get-emscripten-module/}
+   */
+  getEmscriptenAL() {
+    const emulator = this.getEmulator()
+    return emulator.getEmscripten().AL
+  }
+
+  /**
    * Get the Emscripten FS object of the current running emulator.
    *
    * @see {@link https://nostalgist.js.org/apis/get-emscripten-fs/}

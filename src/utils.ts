@@ -78,12 +78,12 @@ function patchCoreJs({ js, name }: { js: string; name: string }) {
         Module.FS = FS;
         Module.PATH = PATH;
         Module.ERRNO_CODES = ERRNO_CODES;
-        return { JSEvents, Module, exit: _emscripten_force_exit }
+        return { AL, Browser, JSEvents, Module, exit: _emscripten_force_exit }
       }`
   } else if (isEsmScript(js)) {
     jsContent = `${js.replace(
       'readyPromiseResolve(Module)',
-      'readyPromiseResolve({ JSEvents, Module, exit: _emscripten_force_exit })',
+      'readyPromiseResolve({ AL, Browser, JSEvents, Module, exit: _emscripten_force_exit })',
     )};
       export function getEmscripten({ Module }) {
         return (libretro_${name} || ${name})(Module)
@@ -152,4 +152,8 @@ export function checkIsAborted(signal: AbortSignal | undefined) {
   if (signal?.aborted) {
     throw new Error('Launch aborted')
   }
+}
+
+export function padZero(number: number) {
+  return (number < 10 ? '0' : '') + number
 }
