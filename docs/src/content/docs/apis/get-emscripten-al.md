@@ -4,8 +4,6 @@ title: getEmscriptenFS
 
 Get the Emscripten `AL` object of the current running emulator.
 
-See [FS object](https://emscripten.org/docs/api_reference/Filesystem-API.html#id2) for more information.
-
 ## Since
 `0.10.0`
 
