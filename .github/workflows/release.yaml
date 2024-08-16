@@ -21,11 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
-        with:
-          version: 8
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: latest
           cache: pnpm
           registry-url: 'https://registry.npmjs.org/'
       - run: pnpm i

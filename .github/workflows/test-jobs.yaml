@@ -6,11 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
-        with:
-          version: 8
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: latest
           cache: pnpm
       - run: pnpm i
       - run: pnpm lint
@@ -20,11 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
-        with:
-          version: 8
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: latest
           cache: pnpm
       - run: pnpm i
       - run: pnpm test:integration
@@ -34,11 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
-        with:
-          version: 8
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: latest
           cache: pnpm
       - uses: actions/cache@v4
         id: playwright-cache

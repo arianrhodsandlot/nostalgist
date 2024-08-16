@@ -23,6 +23,7 @@
     "emscripten"
   ],
   "type": "module",
+  "packageManager": "pnpm@9.7.1",
   "main": "./dist/nostalgist.umd.js",
   "module": "./dist/nostalgist.js",
   "browser": "./dist/nostalgist.umd.js",
