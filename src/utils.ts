@@ -78,12 +78,24 @@ function patchCoreJs({ js, name }: { js: string; name: string }) {
         Module.FS = FS;
         Module.PATH = PATH;
         Module.ERRNO_CODES = ERRNO_CODES;
-        return { AL, Browser, JSEvents, Module, exit: _emscripten_force_exit }
+        return {
+          AL: typeof AL === 'undefined' ? null: AL,
+          Browser: typeof Browser === 'undefined' ? null: Browser,
+          JSEvents,
+          Module,
+          exit: _emscripten_force_exit
+         }
       }`
   } else if (isEsmScript(js)) {
     jsContent = `${js.replace(
       'readyPromiseResolve(Module)',
-      'readyPromiseResolve({ AL, Browser, JSEvents, Module, exit: _emscripten_force_exit })',
+      `readyPromiseResolve({
+        AL: typeof AL === 'undefined' ? null: AL,
+        Browser: typeof Browser === 'undefined' ? null: Browser,
+        JSEvents,
+        Module,
+        exit: _emscripten_force_exit
+      })`,
     )};
       export function getEmscripten({ Module }) {
         return (libretro_${name} || ${name})(Module)
