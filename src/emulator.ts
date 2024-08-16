@@ -152,13 +152,6 @@ export class Emulator {
     this.updateKeyboardEventHandlers()
   }
 
-  private get romBaseName() {
-    const {
-      rom: [{ fileName }],
-    } = this.options
-    return fileName.slice(0, fileName.lastIndexOf('.'))
-  }
-
   private runMain() {
     checkIsAborted(this.options.signal)
     const { Module } = this.getEmscripten()
@@ -271,23 +264,6 @@ export class Emulator {
         await this.writeBlobToDirectory({ directory, fileContent, fileName })
       }),
     )
-  }
-
-  private get stateFileDirectory() {
-    const { core } = this.options
-    const coreFullName = coreInfoMap[core.name].corename
-    if (!coreFullName) {
-      throw new Error(`invalid core name: ${core.name}`)
-    }
-    return join(raUserdataDir, 'states', coreFullName)
-  }
-
-  private get stateFileName() {
-    return join(this.stateFileDirectory, `${this.romBaseName}.state`)
-  }
-
-  private get stateThumbnailFileName() {
-    return `${this.stateFileName}.png`
   }
 
   // copied from https://github.com/libretro/RetroArch/pull/15017
@@ -591,5 +567,29 @@ export class Emulator {
   sendCommand(msg: RetroArchCommand) {
     const bytes = encoder.encode(`${msg}\n`)
     this.messageQueue.push([bytes, 0])
+  }
+
+  private get romBaseName() {
+    const {
+      rom: [{ fileName }],
+    } = this.options
+    return fileName.slice(0, fileName.lastIndexOf('.'))
+  }
+
+  private get stateFileDirectory() {
+    const { core } = this.options
+    const coreFullName = coreInfoMap[core.name].corename
+    if (!coreFullName) {
+      throw new Error(`invalid core name: ${core.name}`)
+    }
+    return join(raUserdataDir, 'states', coreFullName)
+  }
+
+  private get stateFileName() {
+    return join(this.stateFileDirectory, `${this.romBaseName}.state`)
+  }
+
+  private get stateThumbnailFileName() {
+    return `${this.stateFileName}.png`
   }
 }

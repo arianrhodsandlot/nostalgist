@@ -15,13 +15,13 @@ import { checkIsAborted, merge, urlBaseName } from './utils'
 import { vendors } from './vendors'
 
 export class Nostalgist {
+  private static globalOptions = getDefaultOptions()
   static Nostalgist = Nostalgist
+
   static vendors = vendors
 
   private emulator: Emulator | undefined
-
   private emulatorOptions: EmulatorOptions | undefined
-  private static globalOptions = getDefaultOptions()
   private options: NostalgistOptions
 
   private constructor(options: NostalgistLaunchOptions) {
@@ -86,6 +86,10 @@ export class Nostalgist {
     return await Nostalgist.launchSystem('gbc', options)
   }
 
+  private static getCoreForSystem(system: string) {
+    return systemCoreMap[system]
+  }
+
   /**
    * Launch an emulator and return a `Promise` of the instance of the emulator.
    *
@@ -132,6 +136,15 @@ export class Nostalgist {
     const nostalgist = new Nostalgist(options)
     await nostalgist.launch()
     return nostalgist
+  }
+
+  private static async launchSystem(system: string, options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
+    const launchOptions =
+      typeof options === 'string' || options instanceof File || ('fileName' in options && 'fileContent' in options)
+        ? { rom: options }
+        : options
+    const core = Nostalgist.getCoreForSystem(system)
+    return await Nostalgist.launch({ ...launchOptions, core })
   }
 
   /**
@@ -188,10 +201,6 @@ export class Nostalgist {
     }
     const biosFiles = Array.isArray(bios) ? bios : [bios]
     return await Promise.all(biosFiles.map((biosFile) => this.resolveFile(biosFile, resolveBios)))
-  }
-
-  private static getCoreForSystem(system: string) {
-    return systemCoreMap[system]
   }
 
   private async getCoreOption() {
@@ -331,15 +340,6 @@ export class Nostalgist {
     if (!this.options.runEmulatorManually) {
       await this.launchEmulator()
     }
-  }
-
-  private static async launchSystem(system: string, options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
-    const launchOptions =
-      typeof options === 'string' || options instanceof File || ('fileName' in options && 'fileContent' in options)
-        ? { rom: options }
-        : options
-    const core = Nostalgist.getCoreForSystem(system)
-    return await Nostalgist.launch({ ...launchOptions, core })
   }
 
   private loadEmulator() {
