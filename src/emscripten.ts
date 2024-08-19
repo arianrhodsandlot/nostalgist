@@ -1,20 +1,4 @@
-import { EmscriptenFS, FileSystem, initialize } from 'browserfs'
 import type { RetroArchEmscriptenModuleOptions } from './types/retroarch-emscripten'
-
-const raUserdataDir = '/home/web_user/retroarch/userdata'
-
-export function createEmscriptenFS({ ERRNO_CODES, FS, PATH }: any) {
-  const inMemoryFS = new FileSystem.InMemory()
-  const mountableFS = new FileSystem.MountableFileSystem()
-  try {
-    mountableFS.umount(raUserdataDir)
-  } catch {}
-  mountableFS.mount(raUserdataDir, inMemoryFS)
-
-  initialize(mountableFS)
-
-  return new EmscriptenFS(FS, PATH, ERRNO_CODES)
-}
 
 export function getEmscriptenModuleOverrides(overrides: RetroArchEmscriptenModuleOptions) {
   let resolveRunDependenciesPromise: () => void

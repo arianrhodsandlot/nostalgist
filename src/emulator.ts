@@ -1,36 +1,24 @@
-import type { EmscriptenFS } from 'browserfs'
-import ini from 'ini'
 import { coreInfoMap } from './constants/core-info'
 import { keyboardCodeMap } from './constants/keyboard-code-map'
-import { createEmscriptenFS, getEmscriptenModuleOverrides } from './emscripten'
+import { getEmscriptenModuleOverrides } from './emscripten'
 import type { EmulatorOptions } from './types/emulator-options'
 import type { RetroArchCommand } from './types/retroarch-command'
 import type { RetroArchEmscriptenModule } from './types/retroarch-emscripten'
-import {
-  basename,
-  blobToBuffer,
-  checkIsAborted,
-  delay,
-  dirname,
-  importCoreJsAsESM,
-  join,
-  padZero,
-  stringToBuffer,
-  updateStyle,
-} from './utils'
+import { blobToBuffer, checkIsAborted, delay, importCoreJsAsESM, padZero, textEncoder, updateStyle } from './utils'
+import { vendors } from './vendors'
 
-const encoder = new TextEncoder()
+const { ini, path } = vendors
 
 const raUserdataDir = '/home/web_user/retroarch/userdata'
 const raBundleDir = '/home/web_user/retroarch/bundle'
 
-const raContentDir = join(raUserdataDir, 'content')
-const raSystemDir = join(raUserdataDir, 'system')
-const raConfigDir = join(raUserdataDir, 'config')
-const raShaderDir = join(raBundleDir, 'shaders', 'shaders_glsl')
+const raContentDir = path.join(raUserdataDir, 'content')
+const raSystemDir = path.join(raUserdataDir, 'system')
+const raConfigDir = path.join(raUserdataDir, 'config')
+const raShaderDir = path.join(raBundleDir, 'shaders', 'shaders_glsl')
 
-const raConfigPath = join(raUserdataDir, 'retroarch.cfg')
-const raCoreConfigPath = join(raUserdataDir, 'retroarch-core-options.cfg')
+const raConfigPath = path.join(raUserdataDir, 'retroarch.cfg')
+const raCoreConfigPath = path.join(raUserdataDir, 'retroarch-core-options.cfg')
 
 type GameStatus = 'initial' | 'paused' | 'running'
 
@@ -47,7 +35,6 @@ export class Emulator {
   private gameStatus: GameStatus = 'initial'
   private messageQueue: [Uint8Array, number][] = []
   private options: EmulatorOptions
-  browserFS: EmscriptenFS | undefined
   emscripten: EmulatorEmscripten | undefined
 
   constructor(options: EmulatorOptions) {
@@ -159,7 +146,7 @@ export class Emulator {
     const { rom, signal } = this.options
     if (!Module.arguments && rom.length > 0) {
       const [{ fileName }] = rom
-      raArgs.push(join(raContentDir, fileName))
+      raArgs.push(path.join(raContentDir, fileName))
     }
 
     Module.callMain(raArgs)
@@ -193,12 +180,8 @@ export class Emulator {
 
   private async setupFileSystem() {
     const { Module } = this.getEmscripten()
-    const { ERRNO_CODES, FS, PATH } = Module
+    const { FS } = Module
     const { bios, rom, signal, state } = this.options
-
-    const browserFS = createEmscriptenFS({ ERRNO_CODES, FS, PATH })
-    this.browserFS = browserFS
-    FS.mount(browserFS, { root: '/home' }, '/home')
 
     if (rom.length > 0) {
       FS.mkdirTree(raContentDir)
@@ -254,13 +237,13 @@ export class Emulator {
     if (glslFiles.length === 0) {
       return
     }
-    const glslpContent = glslFiles.map((file) => `#reference "${join(raShaderDir, file.fileName)}"`).join('\n')
+    const glslpContent = glslFiles.map((file) => `#reference "${path.join(raShaderDir, file.fileName)}"`).join('\n')
 
     this.writeTextToDirectory({ directory: raConfigDir, fileContent: glslpContent, fileName: 'global.glslp' })
 
     await Promise.all(
       shader.map(async ({ fileContent, fileName }) => {
-        const directory = fileName.endsWith('.glslp') ? raShaderDir : join(raShaderDir, 'shaders')
+        const directory = fileName.endsWith('.glslp') ? raShaderDir : path.join(raShaderDir, 'shaders')
         await this.writeBlobToDirectory({ directory, fileContent, fileName })
       }),
     )
@@ -362,7 +345,7 @@ export class Emulator {
     const encoding = 'binary'
     const data = FS.readFile(fileName, { encoding })
     FS.mkdirTree(directory)
-    FS.writeFile(join(directory, fileName), data, { encoding })
+    FS.writeFile(path.join(directory, fileName), data, { encoding })
     FS.unlink(fileName)
   }
 
@@ -376,8 +359,8 @@ export class Emulator {
     }
     let fileContent = ini.stringify(config, { platform: 'linux', whitespace: true })
     fileContent = fileContent.replaceAll('__', '"')
-    const fileName = basename(path)
-    const directory = dirname(path)
+    const fileName = vendors.path.basename(path)
+    const directory = vendors.path.dirname(path)
     this.writeTextToDirectory({ directory, fileContent, fileName })
   }
 
@@ -392,12 +375,12 @@ export class Emulator {
   }) {
     const { Module } = this.getEmscripten()
     const { FS } = Module
-    const buffer = stringToBuffer(fileContent)
+    const buffer = textEncoder.encode(fileContent)
     FS.createDataFile('/', fileName, buffer, true, false)
     const encoding = 'binary'
     const data = FS.readFile(fileName, { encoding })
     FS.mkdirTree(directory)
-    FS.writeFile(join(directory, fileName), data, { encoding })
+    FS.writeFile(path.join(directory, fileName), data, { encoding })
     FS.unlink(fileName)
   }
 
@@ -553,9 +536,9 @@ export class Emulator {
 
   async screenshot() {
     this.sendCommand('SCREENSHOT')
-    const screenshotDirectory = join(raUserdataDir, 'screenshots')
+    const screenshotDirectory = path.join(raUserdataDir, 'screenshots')
     const screenshotFileName = this.guessScreenshotFileName()
-    const screenshotPath = join(screenshotDirectory, screenshotFileName)
+    const screenshotPath = path.join(screenshotDirectory, screenshotFileName)
     const buffer = await this.waitForEmscriptenFile(screenshotPath)
     const { Module } = this.getEmscripten()
     const { FS } = Module
@@ -565,7 +548,7 @@ export class Emulator {
   }
 
   sendCommand(msg: RetroArchCommand) {
-    const bytes = encoder.encode(`${msg}\n`)
+    const bytes = textEncoder.encode(`${msg}\n`)
     this.messageQueue.push([bytes, 0])
   }
 
@@ -582,11 +565,11 @@ export class Emulator {
     if (!coreFullName) {
       throw new Error(`invalid core name: ${core.name}`)
     }
-    return join(raUserdataDir, 'states', coreFullName)
+    return path.join(raUserdataDir, 'states', coreFullName)
   }
 
   private get stateFileName() {
-    return join(this.stateFileDirectory, `${this.romBaseName}.state`)
+    return path.join(this.stateFileDirectory, `${this.romBaseName}.state`)
   }
 
   private get stateThumbnailFileName() {

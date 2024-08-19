@@ -1,6 +1,7 @@
 import type { NostalgistOptions } from './types/nostalgist-options'
 import type { RetroArchConfig } from './types/retroarch-config'
-import { isAbsoluteUrl, path } from './utils'
+import { isAbsoluteUrl } from './utils'
+import { vendors } from './vendors'
 
 const defaultRetroarchConfig: RetroArchConfig = {
   menu_driver: 'rgui',
@@ -111,6 +112,7 @@ export function getDefaultOptions() {
         return []
       }
 
+      const { path } = vendors
       const preset = `${cdnBaseUrl}/${shaderRepo}@${shaderVersion}/${name}.glslp`
       const segments = name.split(path.sep)
       segments.splice(-1, 0, 'shaders')
