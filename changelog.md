@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0](https://github.com/arianrhodsandlot/nostalgist/compare/v0.10.0...v0.10.1) - 2024-08-16
+### Fixed
+- fix the crash when `AL` and `Browser` are not accessible
+
+### Changed
+- remove redundant dependencies
+- remove `getBrowserFS`
+
 ## [0.10.0](https://github.com/arianrhodsandlot/nostalgist/compare/v0.9.2...v0.10.0) - 2024-07-24
 ### Changed
 - update default retroarch-emscripten-build version to v1.19.1

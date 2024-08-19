@@ -32,7 +32,6 @@ title: API reference
 
 + [`screenshot`](/apis/screenshot)
 
-+ [`getBrowserFS`](/apis/get-browser-fs) (advanced)
 + [`getCanvas`](/apis/get-canvas) (advanced)
 + [`getEmscripten`](/apis/get-emscripten) (advanced)
 + [`getEmscriptenAL`](/apis/get-emscripten-al) (advanced)

@@ -101,7 +101,6 @@ gtag('config', 'G-E6387HS8V0');
 
                 { label: 'screenshot', link: '/apis/screenshot' },
 
-                { badge, label: 'getBrowserFS', link: '/apis/get-browser-fs' },
                 { badge, label: 'getCanvas', link: '/apis/get-canvas' },
                 { badge, label: 'getEmscripten', link: '/apis/get-emscripten' },
                 { badge, label: 'getEmscriptenAL', link: '/apis/get-emscripten-al' },
