@@ -469,16 +469,6 @@ export class Nostalgist {
   }
 
   /**
-   * Get the BFSEmscriptenFS object of the current running emulator.
-   *
-   * @see {@link https://nostalgist.js.org/apis/get-browser-fs/}
-   */
-  getBrowserFS() {
-    const emulator = this.getEmulator()
-    return emulator.browserFS
-  }
-
-  /**
    * Get the canvas DOM element that the current emulator is using.
    *
    * @see {@link https://nostalgist.js.org/apis/get-canvas/}

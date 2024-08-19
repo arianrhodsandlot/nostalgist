@@ -1,15 +1,15 @@
-import { BFSRequire } from 'browserfs'
+import { vendors } from './vendors'
 
-const { Buffer } = BFSRequire('buffer')
-export const path = BFSRequire('path')
-export const { basename, dirname, extname, join, relative } = path
+const { path } = vendors
+
+export const textEncoder = new TextEncoder()
 
 export function urlBaseName(url: string) {
   let pathname = url
   try {
     pathname = new URL(url).pathname
   } catch {}
-  const name = basename(pathname)
+  const name = path.basename(pathname)
   try {
     return decodeURIComponent(name)
   } catch {
@@ -30,18 +30,7 @@ export function isAbsoluteUrl(string: string) {
 
 export async function blobToBuffer(blob: Blob) {
   const arrayBuffer = await blob.arrayBuffer()
-  return Buffer.from(arrayBuffer)
-}
-
-export function stringToBuffer(string: string) {
-  return Buffer.from(string, 'utf8')
-}
-
-export async function toBuffer(file: Blob | string) {
-  if (typeof file === 'string') {
-    return stringToBuffer(file)
-  }
-  return await blobToBuffer(file)
+  return new Uint8Array(arrayBuffer)
 }
 
 export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclaration>) {
@@ -117,7 +106,7 @@ export async function importCoreJsAsESM({ js, name }: { js: string; name: string
     return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsBlobUrl)
   } catch {
     // a dirty hack for using with SystemJS, for example, in StackBlitz
-    return await eval('import(jsBlobUrl)')
+    return await new Function('return import(jsBlobUrl)')()
   } finally {
     URL.revokeObjectURL(jsBlobUrl)
   }

@@ -1,7 +1,7 @@
-import * as browserfs from 'browserfs'
 import ini from 'ini'
+import path from 'path-browserify'
 
 export const vendors = {
-  browserfs,
   ini,
+  path,
 }
