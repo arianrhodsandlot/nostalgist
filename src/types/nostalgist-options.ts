@@ -4,7 +4,7 @@ import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
 type MaybePromise<T> = Promise<T> | T
 
-export type NostalgistOptionsFile = { fileContent: Blob; fileName: string } | File | string | Blob
+export type NostalgistOptionsFile = { fileContent: Blob; fileName: string } | Blob | string
 type NostalgistOptionsFiles = NostalgistOptionsFile | NostalgistOptionsFile[]
 
 export interface NostalgistCoreDict {

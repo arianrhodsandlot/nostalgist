@@ -103,7 +103,7 @@ const nostalgist = await Nostalgist.launch({
 
   + #### `rom`
 
-    **type:** `string | File | { fileName: string; fileContent: Blob } | Array | Blob`
+    **type:** `string | Blob | { fileName: string; fileContent: Blob } | Array`
 
     The game ROM file.
 
