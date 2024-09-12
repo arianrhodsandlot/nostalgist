@@ -140,7 +140,7 @@ export class Nostalgist {
 
   private static async launchSystem(system: string, options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
     const launchOptions =
-      typeof options === 'string' || options instanceof File || ('fileName' in options && 'fileContent' in options)
+      typeof options === 'string' || options instanceof Blob || ('fileName' in options && 'fileContent' in options)
         ? { rom: options }
         : options
     const core = Nostalgist.getCoreForSystem(system)
