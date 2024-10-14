@@ -92,7 +92,7 @@ const nostalgist = await Nostalgist.launch({
     ```js
     await Nostalgist.launch({
       core: {
-        core: 'https://example.com/cores/snes9x.js',
+        js: 'https://example.com/cores/snes9x.js',
         name: 'snes9x',
         wasm: 'https://example.com/cores/snes9x.wasm',
       },
