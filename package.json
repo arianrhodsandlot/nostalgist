@@ -47,7 +47,6 @@
     "test:e2e": "playwright test -c tests/e2e",
     "test:integration": "vitest -c tests/integration/vitest.config"
   },
-  "bundleDependencies": ["ini", "path-browserify"],
   "dependencies": {
     "@types/emscripten": "1.39.13",
     "@types/ini": "4.1.1",

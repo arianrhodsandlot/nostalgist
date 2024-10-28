@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.11.0](https://github.com/arianrhodsandlot/nostalgist/compare/v0.10.0...v0.10.1) - 2024-08-16
 ### Fixed
 - fix the crash when `AL` and `Browser` are not accessible
+- improve the type declaration for the "rom" argument of the "launch" method
 
 ### Changed
 - remove redundant dependencies
