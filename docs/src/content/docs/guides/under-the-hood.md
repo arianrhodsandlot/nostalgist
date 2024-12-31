@@ -25,9 +25,7 @@ await Nostalgist.nes('https://your-server.com/roms/super-mario-bros.nes')
 Make sure your server have configured the CORS headers properly.
 
 ### Step two
-Prepare a virtual file system.
-
-We use [BrowserFS](https://github.com/jvilk/BrowserFS)'s `MemoryFS` to create a virtual file system. The files loaded by step one will be written here as well.
+Prepare a virtual file system. The files loaded by step one will be written here as well.
 
 ### Step three
 Launch RetroArch with the virtual file system and the canvas element we specified in the code.

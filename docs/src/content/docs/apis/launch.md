@@ -67,7 +67,7 @@ const nostalgist = await Nostalgist.launch({
 
     **type:** `string | HTMLCanvasElement` **default:** an empty string `''`
 
-    Use this option to specify the canvas element you want to launch the emulator with. If it's an `string`, we will look up the element by `document.querySelector`
+    Use this option to specify the canvas element you want to launch the emulator with. If it's an `string`, we will look up the element by `document.querySelector`.
 
     If it's an empty string, a canvas element will be created automatically and this canvas element will be append to `document.body`.
 
@@ -260,8 +260,15 @@ const nostalgist = await Nostalgist.launch({
 
     For example,
     ```js
-    const nostalgist = await Nostalgist.launch(options) // will not launch the emulator
-    await nostalgist.launchEmulator() // the emulator will be started
+    // will not launch the emulator
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+      runEmulatorManually: true
+    })
+
+    // the emulator will be launched
+    await nostalgist.launchEmulator()
     ```
 
   + #### `emscriptenModule`

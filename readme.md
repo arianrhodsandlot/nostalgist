@@ -98,7 +98,6 @@ Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
 + These are the fundamental dependencies of Nostalgist.js.
   + [RetroArch](https://www.retroarch.com/) and its friends(the emulators/cores)
   + [Emscripten](https://emscripten.org/)
-  + [BrowserFS](https://github.com/jvilk/BrowserFS)
 
 + We are using ROMs here for the purpose of demonstration.
   + [retrobrews](https://retrobrews.github.io/) and the authors of the homebrew games.
