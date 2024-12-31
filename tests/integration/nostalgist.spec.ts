@@ -5,11 +5,11 @@ const testNesRomUrl =
   'https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/Super%20Tilt%20Bro%20%28USA%29.nes'
 
 function resolveRom(rom: any) {
-  return `https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/${rom}`
+  return `https://buildbot.libretro.com/assets/cores/${encodeURIComponent('Nintendo - Nintendo Entertainment System')}/${encodeURIComponent(rom)}`
 }
 
 function resolveBios(bios: any) {
-  return `https://buildbot.libretro.com/assets/system/${bios}`
+  return `https://buildbot.libretro.com/assets/system/${encodeURIComponent(bios)}`
 }
 
 describe.concurrent('nostalgist', () => {
