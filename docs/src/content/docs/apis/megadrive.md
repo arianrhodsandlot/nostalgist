@@ -12,7 +12,7 @@ Basic usage:
 await Nostalgist.megadrive('30yearsofnintendont.bin')
 
 // is equal to
-await Nostalgist.launch({ rom: '30yearsofnintendont.bin', core: 'genesis_plus_gx' })
+await Nostalgist.launch({ core: 'genesis_plus_gx', rom: '30yearsofnintendont.bin' })
 ```
 
 ## Arguments

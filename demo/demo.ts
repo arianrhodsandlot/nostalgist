@@ -106,7 +106,7 @@ Nostalgist.configure({
 
   onLaunch(instance) {
     // @ts-expect-error for debug usage
-    window.nostalgist = instance
+    globalThis.nostalgist = instance
   },
 })
 
@@ -138,10 +138,10 @@ document.body.addEventListener('click', async function listener({ target }) {
     await handler()
     target.blur()
   }
-  Object.assign(window, { nostalgist })
+  Object.assign(globalThis, { nostalgist })
 })
 
 // @ts-expect-error debug code
-window.Nostalgist = Nostalgist
+globalThis.Nostalgist = Nostalgist
 // @ts-expect-error debug code
-window.getCurrentNostalgist = getCurrentNostalgist
+globalThis.getCurrentNostalgist = getCurrentNostalgist

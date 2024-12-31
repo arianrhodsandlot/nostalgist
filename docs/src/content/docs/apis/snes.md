@@ -12,7 +12,7 @@ Basic usage:
 await Nostalgist.snes('jetpilotrising.sfc')
 
 // is equal to
-await Nostalgist.launch({ rom: 'jetpilotrising.sfc', core: 'snes9x' })
+await Nostalgist.launch({ core: 'snes9x', rom: 'jetpilotrising.sfc' })
 ```
 
 ## Arguments

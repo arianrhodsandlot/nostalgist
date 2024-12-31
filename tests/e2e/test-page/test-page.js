@@ -4,6 +4,8 @@
 let nostalgist
 let state
 
+const { Nostalgist } = globalThis
+
 async function nes() {
   nostalgist = await Nostalgist.nes('pong1k.nes')
 }
@@ -17,7 +19,7 @@ async function gbc() {
 }
 
 async function launchSize() {
-  nostalgist = await Nostalgist.gbc({ rom: 'combatsoccer.gbc', size: { width: 100, height: 100 } })
+  nostalgist = await Nostalgist.gbc({ rom: 'combatsoccer.gbc', size: { height: 100, width: 100 } })
 }
 
 async function launchShader() {
@@ -34,14 +36,16 @@ async function launchAndCancel() {
 
 async function launchWithHooks() {
   nostalgist = await Nostalgist.nes({
-    rom: 'pong1k.nes',
     async beforeLaunch(nostalgist) {
       console.warn(typeof nostalgist, 'beforeLaunch')
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await new Promise((resolve) => {
+        setTimeout(resolve, 100)
+      })
     },
     onLaunch(nostalgist) {
       console.warn(typeof nostalgist, 'onLaunch')
     },
+    rom: 'pong1k.nes',
   })
 }
 
@@ -91,16 +95,18 @@ async function screenshot() {
   const image = new Image()
   image.id = 'screenshot'
   image.src = URL.createObjectURL(blob)
-  await new Promise((resolve) => image.addEventListener('load', resolve))
+  await new Promise((resolve) => {
+    image.addEventListener('load', resolve)
+  })
   document.body.append(image)
 }
 
 const nostalgistConfig = {
   style: {
-    width: '800px',
+    backgroundColor: 'transparent',
     height: '600px',
     position: 'static',
-    backgroundColor: 'transparent',
+    width: '800px',
   },
 }
 
@@ -128,22 +134,22 @@ document.body.addEventListener('click', async function listener({ target }) {
     return
   }
   const handlers = {
-    nes,
-    megadrive,
     gbc,
-    launchSize,
-    launchShader,
     launchAndCancel,
-    launchWithHooks,
+    launchShader,
+    launchSize,
     launchState,
-    saveState,
+    launchWithHooks,
     loadState,
+    megadrive,
+    nes,
     pause,
-    resume,
-    restart,
-    resize,
     pressA,
     pressStart,
+    resize,
+    restart,
+    resume,
+    saveState,
     screenshot,
   }
   const textContent = target.textContent || ''

@@ -38,7 +38,7 @@ describe.concurrent('nostalgist', () => {
   })
 
   test('Nostalgist.nes with custom resolveRom', async () => {
-    const nostalgist = await Nostalgist.nes({ rom: 'Super Tilt Bro (USA).nes', resolveRom })
+    const nostalgist = await Nostalgist.nes({ resolveRom, rom: 'Super Tilt Bro (USA).nes' })
     const emulatorOptions = nostalgist.getEmulatorOptions()
 
     expect(emulatorOptions.core.name).toBe('fceumm')
@@ -66,7 +66,7 @@ describe.concurrent('nostalgist', () => {
   })
 
   test('Nostalgist.launch with custom core', async () => {
-    const nostalgist = await Nostalgist.launch({ rom: testNesRomUrl, core: 'nestopia' })
+    const nostalgist = await Nostalgist.launch({ core: 'nestopia', rom: testNesRomUrl })
 
     const options = nostalgist.getOptions()
     expect(options.core).toBe('nestopia')
@@ -86,8 +86,8 @@ describe.concurrent('nostalgist', () => {
       core: 'nestopia',
       rom: testNesRomUrl,
       size: {
-        width: 100,
         height: 100,
+        width: 100,
       },
     })
 
@@ -95,7 +95,7 @@ describe.concurrent('nostalgist', () => {
     expect(options.core).toBe('nestopia')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.size).toEqual({ width: 100, height: 100 })
+    expect(emulatorOptions.size).toEqual({ height: 100, width: 100 })
     expect(emulatorOptions.core.js).toBeTypeOf('string')
     expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
     expect(emulatorOptions.rom).toHaveLength(1)
@@ -106,11 +106,11 @@ describe.concurrent('nostalgist', () => {
 
   test('Nostalgist.launch with custom emscripten core', async () => {
     const core = {
-      name: 'fceumm',
       js: 'https://web.libretro.com/fceumm_libretro.js',
+      name: 'fceumm',
       wasm: 'https://web.libretro.com/fceumm_libretro.wasm',
     }
-    const nostalgist = await Nostalgist.launch({ rom: testNesRomUrl, core })
+    const nostalgist = await Nostalgist.launch({ core, rom: testNesRomUrl })
 
     const options = nostalgist.getOptions()
     expect(options.core).toStrictEqual(core)
@@ -127,13 +127,13 @@ describe.concurrent('nostalgist', () => {
 
   test('Nostalgist.launch with custom rom and custom emscripten core', async () => {
     const core = {
-      name: 'fceumm',
       js: 'https://web.libretro.com/fceumm_libretro.js',
+      name: 'fceumm',
       wasm: 'https://web.libretro.com/fceumm_libretro.wasm',
     }
     const rom = 'Super Tilt Bro (USA).nes'
 
-    const nostalgist = await Nostalgist.launch({ rom, core, resolveRom })
+    const nostalgist = await Nostalgist.launch({ core, resolveRom, rom })
 
     const options = nostalgist.getOptions()
     expect(options.core).toStrictEqual(core)
@@ -150,14 +150,14 @@ describe.concurrent('nostalgist', () => {
 
   test('Nostalgist.launch with multiple files and bios', async () => {
     const core = {
-      name: 'fceumm',
       js: 'https://web.libretro.com/fceumm_libretro.js',
+      name: 'fceumm',
       wasm: 'https://web.libretro.com/fceumm_libretro.wasm',
     }
     const rom = ['Super Tilt Bro (USA).nes', '240p Test Suite.nes']
     const bios = ['PrBoom.zip', 'FinalBurn Neo (hiscore).zip']
 
-    const nostalgist = await Nostalgist.launch({ core, rom, bios, resolveRom, resolveBios })
+    const nostalgist = await Nostalgist.launch({ bios, core, resolveBios, resolveRom, rom })
 
     const options = nostalgist.getOptions()
     expect(options.core).toStrictEqual(core)
@@ -180,13 +180,13 @@ describe.concurrent('nostalgist', () => {
 
   test('Nostalgist.launch with custom style and size', async () => {
     const nostalgist = await Nostalgist.launch({
-      size: { width: 100, height: 100 },
       core: 'fceumm',
       rom: 'flappybird.nes',
+      size: { height: 100, width: 100 },
     })
 
     const options = nostalgist.getOptions()
-    expect(options.size).toEqual({ width: 100, height: 100 })
+    expect(options.size).toEqual({ height: 100, width: 100 })
   })
 
   test('Nostalgist.launch with shaders', async () => {
@@ -214,27 +214,27 @@ describe.concurrent('nostalgist', () => {
 
     const nostalgist = await Nostalgist.launch({
       core: 'fceumm',
-      rom: 'flappybird.nes',
       retroarchConfig: {
-        input_max_users: 4,
         input_audio_mute: 'b',
+        input_max_users: 4,
       },
+      rom: 'flappybird.nes',
     })
 
     const options = nostalgist.getOptions()
     expect(options.retroarchConfig).toMatchObject({
-      menu_driver: 'rgui',
-      input_menu_toggle: 'nul',
-      input_max_users: 4,
       input_audio_mute: 'b',
+      input_max_users: 4,
+      input_menu_toggle: 'nul',
+      menu_driver: 'rgui',
     })
   })
 
   test('Nostalgist.launch overwrites the configured core', async () => {
     Nostalgist.configure({ core: 'nestopia' })
     const core = {
-      name: 'fceumm',
       js: 'https://web.libretro.com/fceumm_libretro.js',
+      name: 'fceumm',
       wasm: 'https://web.libretro.com/fceumm_libretro.wasm',
     }
     const nostalgist = await Nostalgist.launch({ core, rom: testNesRomUrl })
@@ -245,8 +245,8 @@ describe.concurrent('nostalgist', () => {
 
   test('Nostalgist.launch overwrites the configured custom emscripten core', async () => {
     const core = {
-      name: 'fceumm',
       js: 'https://web.libretro.com/fceumm_libretro.js',
+      name: 'fceumm',
       wasm: 'https://web.libretro.com/fceumm_libretro.wasm',
     }
     Nostalgist.configure({ core })
@@ -258,7 +258,7 @@ describe.concurrent('nostalgist', () => {
 
   test('Nostalgist.launch with a custom element', async () => {
     const element = document.createElement('canvas')
-    const nostalgist = await Nostalgist.launch({ element, core: 'nestopia', rom: 'flappybird.nes' })
+    const nostalgist = await Nostalgist.launch({ core: 'nestopia', element, rom: 'flappybird.nes' })
 
     const options = nostalgist.getOptions()
     expect(options.core).toStrictEqual('nestopia')

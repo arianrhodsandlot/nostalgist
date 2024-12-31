@@ -12,7 +12,7 @@ Basic usage:
 await Nostalgist.nes('flappybird.nes')
 
 // is equal to
-await Nostalgist.launch({ rom: 'flappybird.nes', core: 'fceumm' })
+await Nostalgist.launch({ core: 'fceumm', rom: 'flappybird.nes' })
 ```
 
 ## Arguments

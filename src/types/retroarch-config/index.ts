@@ -17,9 +17,9 @@ interface RetroArchFullConfig
     RetroArchRewindConfig,
     RetroArchRunAheadConfig,
     RetroArchSaveConfig,
+    RetroArchSkeletonConfig,
     RetroArchThemeConfig,
-    RetroArchVideoConfig,
-    RetroArchSkeletonConfig {
+    RetroArchVideoConfig {
   fps_update_interval: number
   frame_time_counter_reset_after_fastforwarding: boolean
   frame_time_counter_reset_after_load_state: boolean

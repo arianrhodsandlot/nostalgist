@@ -12,7 +12,7 @@ Basic usage:
 await Nostalgist.gb('blastah.gb')
 
 // is equal to
-await Nostalgist.launch({ rom: 'blastah.gb', core: 'mgba' })
+await Nostalgist.launch({ core: 'mgba', rom: 'blastah.gb' })
 ```
 
 ## Arguments

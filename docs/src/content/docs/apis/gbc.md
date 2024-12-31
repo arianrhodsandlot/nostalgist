@@ -12,7 +12,7 @@ Basic usage:
 await Nostalgist.gbc('combatsoccer.gbc')
 
 // is equal to
-await Nostalgist.launch({ rom: 'combatsoccer.gbc', core: 'mgba' })
+await Nostalgist.launch({ core: 'mgba', rom: 'combatsoccer.gbc' })
 ```
 
 ## Arguments

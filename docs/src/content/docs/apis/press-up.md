@@ -47,11 +47,11 @@ nostalgist.pressUp({ button: 'a', player: 2 }) // press the button "a" on player
     ```js
     await Nostalgist.launch({
       retroarchConfig: {
+        input_player2_down: 'num3',
+        input_player2_left: 'num2',
+        input_player2_right: 'num4',
         // see https://github.com/libretro/RetroArch/blob/575859e5d76d921cb490f55afcd0bbca90d4a742/retroarch.cfg#L468-L483
         input_player2_up: 'num1',
-        input_player2_left: 'num2',
-        input_player2_down: 'num3',
-        input_player2_right: 'num4',
       }
 
       /* ...other options */

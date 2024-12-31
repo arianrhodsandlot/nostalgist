@@ -59,13 +59,13 @@ Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online example
 
   const nostalgist = await Nostalgist.launch({
     core: 'fceumm',
-    rom: 'flappybird.nes',
     retroarchConfig: {
       rewind_enable: true,
     },
     retroarchCoreConfig: {
       fceumm_turbo_enable: 'Both',
     },
+    rom: 'flappybird.nes',
   })
   ```
 

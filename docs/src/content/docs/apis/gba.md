@@ -12,7 +12,7 @@ Basic usage:
 await Nostalgist.gba('anotherworld.gba')
 
 // is equal to
-await Nostalgist.launch({ rom: 'anotherworld.gba', core: 'mgba' })
+await Nostalgist.launch({ core: 'mgba', rom: 'anotherworld.gba' })
 ```
 
 ## Arguments
