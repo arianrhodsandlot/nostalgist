@@ -561,7 +561,7 @@ export class Emulator {
 
   private get stateFileDirectory() {
     const { core } = this.options
-    const coreFullName = coreInfoMap[core.name].corename
+    const coreFullName = coreInfoMap[core.name].corename || core.name
     if (!coreFullName) {
       throw new Error(`invalid core name: ${core.name}`)
     }
