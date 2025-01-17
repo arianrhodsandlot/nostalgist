@@ -120,8 +120,7 @@ function isPlainObject(obj: any) {
   if (isNil(obj)) {
     return false
   }
-  const { constructor } = obj
-  return constructor === Object || !constructor
+  return obj.constructor === Object || !obj.constructor
 }
 
 function mergeSourceToTarget(target: any, source: any) {
