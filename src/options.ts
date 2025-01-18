@@ -50,7 +50,7 @@ const defaultRetroarchConfig: RetroArchConfig = {
 const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
 
 const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
-const coreVersion = 'v1.19.1'
+const coreVersion = 'v1.20.0'
 const coreDirectory = 'retroarch'
 
 const shaderRepo = 'libretro/glsl-shaders'
