@@ -12,7 +12,7 @@ function resolveBios(bios: any) {
   return `https://buildbot.libretro.com/assets/system/${encodeURIComponent(bios)}`
 }
 
-describe.concurrent('nostalgist', () => {
+describe('nostalgist', () => {
   beforeEach(() => {
     Nostalgist.configure({ runEmulatorManually: true })
   })

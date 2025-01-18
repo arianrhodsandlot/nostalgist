@@ -36,7 +36,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "node --experimental-strip-types scripts/build.ts && tsc",
+    "build": "node scripts/build.ts && tsc",
     "dev": "vite demo",
     "dev:e2e": "playwright test -c tests/e2e --ui",
     "docs:build": "astro build --root docs",
@@ -63,7 +63,7 @@
   "devDependencies": {
     "@arianrhodsandlot/eslint-config": "0.17.1",
     "@arianrhodsandlot/release-kit": "0.1.6",
-    "@astrojs/starlight": "0.31.0",
+    "@astrojs/starlight": "0.31.1",
     "@playwright/test": "1.49.1",
     "@types/is-ci": "3.0.4",
     "@types/node": "22.10.7",
@@ -82,7 +82,7 @@
     "simple-git-hooks": "2.11.1",
     "typescript": "5.7.3",
     "vite": "6.0.7",
-    "vitest": "3.0.1"
+    "vitest": "3.0.2"
   },
   "packageManager": "pnpm@9.15.4"
 }
