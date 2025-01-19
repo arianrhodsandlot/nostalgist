@@ -1,17 +1,16 @@
 import { systemCoreMap } from './constants/system'
 import { Emulator } from './emulator'
 import { getDefaultOptions } from './options'
-import type { EmulatorOptions } from './types/emulator-options'
+import { EmulatorOptions } from './emulator-options'
 import type {
   NostalgistLaunchOptions,
   NostalgistLaunchRomOptions,
   NostalgistOptions,
   NostalgistOptionsFile,
   NostalgistOptionsPartial,
-  NostalgistResolveFileFunction,
 } from './types/nostalgist-options'
 import type { RetroArchCommand } from './types/retroarch-command'
-import { checkIsAborted, merge, urlBaseName } from './utils'
+import { checkIsAborted, merge } from './utils'
 import { vendors } from './vendors'
 
 export class Nostalgist {
@@ -161,8 +160,8 @@ export class Nostalgist {
    *
    * @see {@link https://nostalgist.js.org/apis/reset-to-default/}
    */
-  static resetToDefault() {
-    Nostalgist.configure(getDefaultOptions())
+  static resetToDefault () {
+    Nostalgist.globalOptions =  getDefaultOptions()
   }
 
   /**
@@ -500,151 +499,12 @@ export class Nostalgist {
     return emulator.sendCommand(command)
   }
 
-  private async fetch(input: string) {
-    const { signal = null } = this.options
-    return await fetch(input, { signal })
-  }
-
-  private async getBiosOption() {
-    const { bios, resolveBios } = this.options
-    if (!bios) {
-      return []
-    }
-    const biosFiles = Array.isArray(bios) ? bios : [bios]
-    return await Promise.all(biosFiles.map((biosFile) => this.resolveFile(biosFile, resolveBios)))
-  }
-
-  private async getCoreOption() {
-    const { core, resolveCoreJs, resolveCoreWasm } = this.options
-    let coreDict
-    if (typeof core === 'string') {
-      const [js, wasm] = await Promise.all([resolveCoreJs(core, this.options), resolveCoreWasm(core, this.options)])
-      coreDict = { js, name: core, wasm }
-    } else {
-      coreDict = core
-    }
-    let { js, name, wasm } = coreDict
-
-    const promises = []
-    if (typeof js === 'string') {
-      promises.push(
-        (async () => {
-          const response = await this.fetch(js)
-          js = await response.text()
-        })(),
-      )
-    }
-    if (typeof wasm === 'string') {
-      promises.push(
-        (async () => {
-          const response = await this.fetch(wasm as string)
-          wasm = await response.arrayBuffer()
-        })(),
-      )
-    }
-    if (promises.length > 0) {
-      await Promise.all(promises)
-    }
-
-    return { js, name, wasm: wasm as ArrayBuffer }
-  }
-
-  private getElementOption() {
-    if (typeof document !== 'object') {
-      throw new TypeError('document must be an object')
-    }
-    let { element } = this.options
-    if (typeof element === 'string' && element) {
-      const canvas = document.body.querySelector(element)
-      if (!canvas) {
-        throw new Error(`can not find element "${element}"`)
-      }
-      if (!(canvas instanceof HTMLCanvasElement)) {
-        throw new TypeError(`element "${element}" is not a canvas element`)
-      }
-      element = canvas
-    }
-    if (!element) {
-      element = document.createElement('canvas')
-    }
-
-    if (element instanceof HTMLCanvasElement) {
-      element.id = 'canvas'
-      return element
-    }
-
-    throw new TypeError('invalid element')
-  }
-
-  private getRetroarchCoreOption() {
-    const options = {}
-    merge(options, Nostalgist.globalOptions.retroarchCoreConfig, this.options.retroarchCoreConfig)
-    return options as typeof this.options.retroarchCoreConfig
-  }
-
-  private getRetroarchOption() {
-    const options = {}
-    merge(options, Nostalgist.globalOptions.retroarchConfig, this.options.retroarchConfig)
-    return options as typeof this.options.retroarchConfig
-  }
-
-  private async getRomOption() {
-    const { resolveRom, rom } = this.options
-    if (!rom) {
-      return []
-    }
-    const romFiles = Array.isArray(rom) ? rom : [rom]
-
-    return await Promise.all(romFiles.map((romFile) => this.resolveFile(romFile, resolveRom)))
-  }
-
-  private async getShaderOption() {
-    const { resolveShader, shader } = this.options
-    if (!shader) {
-      return []
-    }
-    const shaderFile = await resolveShader(shader, this.options)
-    if (Array.isArray(shaderFile)) {
-      if (shaderFile.length > 0) {
-        return await Promise.all(shaderFile.map((file) => this.resolveFile(file)))
-      }
-      return []
-    }
-    if (shaderFile) {
-      return [await this.resolveFile(shaderFile)]
-    }
-    return []
-  }
-
-  private getStyleOption() {
-    const { element, style } = this.options
-    const defaultAppearanceStyle: Partial<CSSStyleDeclaration> = {
-      backgroundColor: 'black',
-      imageRendering: 'pixelated',
-    }
-
-    if (element) {
-      merge(defaultAppearanceStyle, style)
-      return defaultAppearanceStyle
-    }
-
-    const defaultLayoutStyle: Partial<CSSStyleDeclaration> = {
-      height: '100%',
-      left: '0',
-      position: 'fixed',
-      top: '0',
-      width: '100%',
-      zIndex: '1',
-    }
-    merge(defaultLayoutStyle, defaultAppearanceStyle, style)
-    return defaultLayoutStyle
-  }
 
   /**
    * Load options and then launch corresponding emulator if should
    */
   private async launch(): Promise<void> {
-    await this.loadEmulatorOptions()
+    this.emulatorOptions = await EmulatorOptions.create(this.options)
     checkIsAborted(this.options.signal)
     this.loadEmulator()
 
@@ -657,100 +517,5 @@ export class Nostalgist {
     const emulatorOptions = this.getEmulatorOptions()
     const emulator = new Emulator(emulatorOptions)
     this.emulator = emulator
-  }
-
-  private async loadEmulatorOptions() {
-    const {
-      beforeLaunch,
-      emscriptenModule = {},
-      onLaunch,
-      respondToGlobalEvents = true,
-      signal,
-      size = 'auto',
-      state,
-      waitForInteraction,
-    } = this.options
-    const element = this.getElementOption()
-    const style = this.getStyleOption()
-    const retroarchConfig = this.getRetroarchOption()
-    const retroarchCoreConfig = this.getRetroarchCoreOption()
-    const [core, rom, bios, shader] = await Promise.all([
-      this.getCoreOption(),
-      this.getRomOption(),
-      this.getBiosOption(),
-      this.getShaderOption(),
-    ])
-
-    checkIsAborted(signal)
-
-    const emulatorOptions = {
-      beforeLaunch,
-      bios,
-      core,
-      element,
-      emscriptenModule,
-      nostalgist: this,
-      onLaunch,
-      respondToGlobalEvents,
-      retroarchConfig,
-      retroarchCoreConfig,
-      rom,
-      shader,
-      signal,
-      size,
-      state,
-      style,
-      waitForInteraction,
-    }
-    this.emulatorOptions = emulatorOptions
-  }
-
-  private async resolveFile(file: NostalgistOptionsFile, resolveFunction?: NostalgistResolveFileFunction) {
-    let fileName = ''
-    let fileContent: Blob | undefined
-
-    if (file instanceof File) {
-      fileContent = file
-      fileName = file.name
-    } else if (file instanceof Blob) {
-      fileContent = file
-      fileName = 'rom.bin'
-    } else if (typeof file === 'string') {
-      const resolvedFile = await this.resolveStringFile(file, resolveFunction)
-      fileName = resolvedFile.fileName
-      fileContent = resolvedFile.fileContent
-    } else {
-      if (typeof file.fileName === 'string') {
-        fileName = file.fileName
-      }
-      if (file.fileContent instanceof Blob) {
-        fileContent = file.fileContent
-      }
-    }
-
-    if (!fileContent) {
-      throw new TypeError('file content is invalid')
-    }
-
-    fileName = fileName ? fileName.replaceAll(/["%*/:<>?\\|]/g, '-') : 'rom.bin'
-
-    return { fileContent, fileName }
-  }
-
-  private async resolveStringFile(file: string, resolveFunction?: NostalgistResolveFileFunction) {
-    let fileName = urlBaseName(file)
-    let fileContent: Blob | undefined
-    const resolvedRom = resolveFunction ? await resolveFunction(file, this.options) : file
-    if (!resolvedRom) {
-      throw new Error('file is invalid')
-    }
-    if (resolvedRom instanceof Blob) {
-      fileContent = resolvedRom
-    } else if (typeof resolvedRom === 'string') {
-      fileName = urlBaseName(resolvedRom)
-      const response = await this.fetch(resolvedRom)
-      fileContent = await response.blob()
-    }
-    return { fileContent, fileName }
   }
 }
