@@ -22,9 +22,9 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/nostalgist.js",
-      "require": "./dist/nostalgist.umd.js",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/nostalgist.umd.js"
     }
   },
   "main": "./dist/nostalgist.umd.js",
@@ -81,7 +81,7 @@
     "sharp": "0.33.5",
     "simple-git-hooks": "2.11.1",
     "typescript": "5.7.3",
-    "vite": "6.0.7",
+    "vite": "6.0.9",
     "vitest": "3.0.2"
   },
   "packageManager": "pnpm@9.15.4"

@@ -105,7 +105,6 @@ Nostalgist.configure({
   style: { height: '600px', position: 'static', width: '800px' },
 
   onLaunch(instance) {
-    // @ts-expect-error for debug usage
     globalThis.nostalgist = instance
   },
 })
@@ -141,7 +140,5 @@ document.body.addEventListener('click', async function listener({ target }) {
   Object.assign(globalThis, { nostalgist })
 })
 
-// @ts-expect-error debug code
 globalThis.Nostalgist = Nostalgist
-// @ts-expect-error debug code
 globalThis.getCurrentNostalgist = getCurrentNostalgist

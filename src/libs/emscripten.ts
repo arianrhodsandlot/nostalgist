@@ -1,4 +1,4 @@
-import type { RetroArchEmscriptenModuleOptions } from './types/retroarch-emscripten'
+import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten'
 
 export function getEmscriptenModuleOverrides(overrides: RetroArchEmscriptenModuleOptions) {
   let resolveRunDependenciesPromise: () => void
