@@ -1,1 +1,1 @@
-export { Nostalgist as default } from './nostalgist'
+export { Nostalgist as default } from './classes/nostalgist'

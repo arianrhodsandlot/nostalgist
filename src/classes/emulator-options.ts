@@ -1,16 +1,15 @@
-import type { Nostalgist } from '..'
+import { getGlobalOptions } from '../libs/options.js'
+import { merge, urlBaseName } from '../libs/utils.js'
 import type {
   NostalgistOptions,
   NostalgistOptionsFile,
   NostalgistResolveFileFunction,
-} from './types/nostalgist-options'
-import type { RetroArchConfig } from './types/retroarch-config'
-import type { RetroArchEmscriptenModuleOptions } from './types/retroarch-emscripten'
-import { checkIsAborted, merge, urlBaseName } from './utils'
+} from '../types/nostalgist-options.js'
+import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten'
 
 export class EmulatorOptions {
-  beforeLaunch?: ((nostalgist: Nostalgist) => Promise<void> | void) | undefined
-  bios: { fileContent: Blob; fileName: string }[]
+  beforeLaunch?: (() => Promise<void> | void) | undefined
+  bios: { fileContent: Blob; fileName: string }[] = []
   core: {
     /** the name of core */
     name: string
@@ -20,7 +19,7 @@ export class EmulatorOptions {
 
     /** the array buffer of core's wasm file */
     wasm: ArrayBuffer
-  }
+  } = {} as any
   /**
    * An option to override the `Module` object for Emscripten. See [Module object](https://emscripten.org/docs/api_reference/module.html).
    *
@@ -28,25 +27,9 @@ export class EmulatorOptions {
    */
   emscriptenModule: RetroArchEmscriptenModuleOptions
 
-  nostalgist: Nostalgist
-
-  onLaunch?: ((nostalgist: Nostalgist) => Promise<void> | void) | undefined
-
-  options: NostalgistOptions
   respondToGlobalEvents: boolean
-  /**
-   * RetroArch config.
-   * Not all options can make effects in browser.
-   */
-  retroarchConfig: RetroArchConfig
-  /**
-   * RetroArch core config.
-   * Not all options can make effects in browser.
-   */
-  retroarchCoreConfig: Record<string, string>
-  rom: { fileContent: Blob; fileName: string }[]
-
-  shader: { fileContent: Blob; fileName: string }[]
+  rom: { fileContent: Blob; fileName: string }[] = []
+  shader: { fileContent: Blob; fileName: string }[] = []
 
   signal?: AbortSignal | undefined
 
@@ -65,7 +48,7 @@ export class EmulatorOptions {
     if (typeof document !== 'object') {
       throw new TypeError('document must be an object')
     }
-    let { element } = this.options
+    let { element } = this.nostalgistOptions
     if (typeof element === 'string' && element) {
       const canvas = document.body.querySelector(element)
       if (!canvas) {
@@ -88,20 +71,28 @@ export class EmulatorOptions {
     throw new TypeError('invalid element')
   }
 
-  get retroarchCoreOption() {
+  /**
+   * RetroArch config.
+   * Not all options can make effects in browser.
+   */
+  get retroarchConfig() {
     const options = {}
-    merge(options, Nostalgist.globalOptions.retroarchCoreConfig, this.options.retroarchCoreConfig)
-    return options as typeof this.options.retroarchCoreConfig
+    merge(options, getGlobalOptions().retroarchConfig, this.nostalgistOptions.retroarchConfig)
+    return options as typeof this.nostalgistOptions.retroarchConfig
   }
 
-  get retroarchOption() {
+  /**
+   * RetroArch core config.
+   * Not all options can make effects in browser.
+   */
+  get retroarchCoreConfig() {
     const options = {}
-    merge(options, Nostalgist.globalOptions.retroarchConfig, this.options.retroarchConfig)
-    return options as typeof this.options.retroarchConfig
+    merge(options, getGlobalOptions().retroarchCoreConfig, this.nostalgistOptions.retroarchCoreConfig)
+    return options as typeof this.nostalgistOptions.retroarchCoreConfig
   }
 
   get style() {
-    const { element, style } = this.options
+    const { element, style } = this.nostalgistOptions
     const defaultAppearanceStyle: Partial<CSSStyleDeclaration> = {
       backgroundColor: 'black',
       imageRendering: 'pixelated',
@@ -124,8 +115,10 @@ export class EmulatorOptions {
     return defaultLayoutStyle
   }
 
+  private nostalgistOptions: NostalgistOptions
+
   private constructor(options: NostalgistOptions) {
-    this.options = options
+    this.nostalgistOptions = options
 
     this.emscriptenModule = options.emscriptenModule ?? {}
     this.respondToGlobalEvents = options.respondToGlobalEvents || true
@@ -133,8 +126,6 @@ export class EmulatorOptions {
     this.size = options.size ?? 'auto'
     this.state = options.state
     this.waitForInteraction = options.waitForInteraction
-    this.beforeLaunch = options.beforeLaunch
-    this.onLaunch = options.onLaunch
   }
 
   static async create(options: NostalgistOptions) {
@@ -157,12 +148,12 @@ export class EmulatorOptions {
   }
 
   private async fetch(input: string) {
-    const { signal = null } = this.options
+    const { signal = null } = this.nostalgistOptions
     return await fetch(input, { signal })
   }
 
   private async getBiosOption() {
-    const { bios, resolveBios } = this.options
+    const { bios, resolveBios } = this.nostalgistOptions
     if (!bios) {
       return []
     }
@@ -171,10 +162,13 @@ export class EmulatorOptions {
   }
 
   private async getCoreOption() {
-    const { core, resolveCoreJs, resolveCoreWasm } = this.options
+    const { core, resolveCoreJs, resolveCoreWasm } = this.nostalgistOptions
     let coreDict
     if (typeof core === 'string') {
-      const [js, wasm] = await Promise.all([resolveCoreJs(core, this.options), resolveCoreWasm(core, this.options)])
+      const [js, wasm] = await Promise.all([
+        resolveCoreJs(core, this.nostalgistOptions),
+        resolveCoreWasm(core, this.nostalgistOptions),
+      ])
       coreDict = { js, name: core, wasm }
     } else {
       coreDict = core
@@ -206,7 +200,7 @@ export class EmulatorOptions {
   }
 
   private async getRomOption() {
-    const { resolveRom, rom } = this.options
+    const { resolveRom, rom } = this.nostalgistOptions
     if (!rom) {
       return []
     }
@@ -216,11 +210,11 @@ export class EmulatorOptions {
   }
 
   private async getShaderOption() {
-    const { resolveShader, shader } = this.options
+    const { resolveShader, shader } = this.nostalgistOptions
     if (!shader) {
       return []
     }
-    const shaderFile = await resolveShader(shader, this.options)
+    const shaderFile = await resolveShader(shader, this.nostalgistOptions)
     if (Array.isArray(shaderFile)) {
       if (shaderFile.length > 0) {
         return await Promise.all(shaderFile.map((file) => this.resolveFile(file)))
@@ -268,7 +262,7 @@ export class EmulatorOptions {
   private async resolveStringFile(file: string, resolveFunction?: NostalgistResolveFileFunction) {
     let fileName = urlBaseName(file)
     let fileContent: Blob | undefined
-    const resolvedRom = resolveFunction ? await resolveFunction(file, this.options) : file
+    const resolvedRom = resolveFunction ? await resolveFunction(file, this.nostalgistOptions) : file
     if (!resolvedRom) {
       throw new Error('file is invalid')
     }

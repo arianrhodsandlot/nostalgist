@@ -1,1 +1,1 @@
-export { Nostalgist } from './nostalgist'
+export { Nostalgist } from './classes/nostalgist'

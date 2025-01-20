@@ -1,11 +1,19 @@
-import { coreInfoMap } from './constants/core-info'
-import { keyboardCodeMap } from './constants/keyboard-code-map'
-import { getEmscriptenModuleOverrides } from './emscripten'
-import type { EmulatorOptions } from './types/emulator-options'
-import type { RetroArchCommand } from './types/retroarch-command'
-import type { RetroArchEmscriptenModule } from './types/retroarch-emscripten'
-import { blobToBuffer, checkIsAborted, delay, importCoreJsAsESM, padZero, textEncoder, updateStyle } from './utils'
-import { vendors } from './vendors'
+import { coreInfoMap } from '../constants/core-info'
+import { keyboardCodeMap } from '../constants/keyboard-code-map'
+import { getEmscriptenModuleOverrides } from '../libs/emscripten'
+import {
+  blobToBuffer,
+  checkIsAborted,
+  delay,
+  importCoreJsAsESM,
+  padZero,
+  textEncoder,
+  updateStyle,
+} from '../libs/utils'
+import { vendors } from '../libs/vendors'
+import type { RetroArchCommand } from '../types/retroarch-command'
+import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
+import type { EmulatorOptions } from './emulator-options'
 
 const { ini, path } = vendors
 
@@ -21,6 +29,7 @@ const raConfigPath = path.join(raUserdataDir, 'retroarch.cfg')
 const raCoreConfigPath = path.join(raUserdataDir, 'retroarch-core-options.cfg')
 
 type GameStatus = 'initial' | 'paused' | 'running'
+type EmulatorEvent = 'beforeLaunch' | 'onLaunch'
 
 interface EmulatorEmscripten {
   AL: any
@@ -33,8 +42,13 @@ interface EmulatorEmscripten {
 export class Emulator {
   emscripten: EmulatorEmscripten | undefined
   private canvasInitialSize = { height: 0, width: 0 }
+  private eventListeners: Record<EmulatorEvent, ((...args: unknown[]) => unknown)[]> = {
+    beforeLaunch: [],
+    onLaunch: [],
+  }
   private gameStatus: GameStatus = 'initial'
   private messageQueue: [Uint8Array, number][] = []
+
   private options: EmulatorOptions
 
   private get romBaseName() {
@@ -118,22 +132,18 @@ export class Emulator {
       })
     }
 
-    const { beforeLaunch, nostalgist, onLaunch } = this.options
-    if (beforeLaunch) {
-      await beforeLaunch(nostalgist)
-    }
-
-    const run = async () => {
-      this.runMain()
-      if (onLaunch) {
-        await onLaunch(nostalgist)
-      }
-    }
+    await this.runEventListeners('beforeLaunch')
 
     if (waitForInteraction) {
-      waitForInteraction({ done: run })
+      waitForInteraction({
+        done: async () => {
+          this.runMain()
+          await this.runEventListeners('onLaunch')
+        },
+      })
     } else {
-      run()
+      this.runMain()
+      await this.runEventListeners('onLaunch')
     }
   }
 
@@ -145,6 +155,10 @@ export class Emulator {
     FS.writeFile(this.stateFileName, buffer)
     await this.waitForEmscriptenFile(this.stateFileName)
     this.sendCommand('LOAD_STATE')
+  }
+
+  on(event: EmulatorEvent, callback: (...args: unknown[]) => unknown) {
+    this.eventListeners[event].push(callback)
   }
 
   pause() {
@@ -329,6 +343,13 @@ export class Emulator {
     }
 
     this.updateKeyboardEventHandlers()
+  }
+
+  private async runEventListeners(event: EmulatorEvent) {
+    const { [event]: eventListeners } = this.eventListeners
+    for (const eventListener of eventListeners) {
+      await eventListener()
+    }
   }
 
   private runMain() {
@@ -555,7 +576,6 @@ export class Emulator {
     const directory = vendors.path.dirname(path)
     this.writeTextToDirectory({ directory, fileContent, fileName })
   }
-
   private writeTextToDirectory({
     directory,
     fileContent,
