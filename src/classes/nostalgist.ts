@@ -1,6 +1,6 @@
 import { Emulator } from '../classes/emulator'
 import { systemCoreMap } from '../constants/system'
-import { getGlobalOptions, updateGlobalOptions } from '../libs/options'
+import { getGlobalOptions, resetGlobalOptions, updateGlobalOptions } from '../libs/options'
 import { checkIsAborted, merge } from '../libs/utils'
 import { vendors } from '../libs/vendors'
 import type {
@@ -157,7 +157,7 @@ export class Nostalgist {
    * @see {@link https://nostalgist.js.org/apis/reset-to-default/}
    */
   static resetToDefault() {
-    updateGlobalOptions()
+    resetGlobalOptions()
   }
 
   /**
