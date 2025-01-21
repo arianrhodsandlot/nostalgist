@@ -121,19 +121,16 @@ const nostalgist = await Nostalgist.launch({
 
     We will use the extension name of the `rom` option to determine which repository to load ROM from. Here is the related code implementation:
     ```js
-    if (file.endsWith('.nes')) {
-      romRepo = 'retrobrews/nes-games'
-    } else if (file.endsWith('.sfc')) {
-      romRepo = 'retrobrews/snes-games'
-    } else if (file.endsWith('.gb') || file.endsWith('.gbc')) {
-      romRepo = 'retrobrews/gbc-games'
-    } else if (file.endsWith('.gba')) {
-      romRepo = 'retrobrews/gba-games'
-    } else if (file.endsWith('.sms')) {
-      romRepo = 'retrobrews/sms-games'
-    } else if (file.endsWith('.md') || file.endsWith('.bin')) {
-      romRepo = 'retrobrews/md-games'
-    }
+    const romRepo = {
+      '.bin': 'retrobrews/md-games',
+      '.gb': 'retrobrews/gbc-games',
+      '.gba': 'retrobrews/gba-games',
+      '.gbc': 'retrobrews/gbc-games',
+      '.md': 'retrobrews/md-games',
+      '.nes': 'retrobrews/nes-games',
+      '.sfc': 'retrobrews/snes-games',
+      '.sms': 'retrobrews/sms-games',
+    }[extension]
     ```
 
     You can also pass a [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) object or an object with `fileName` and `fileContent` properties. The file name will be preserved when being loaded at the file system of Emulator.

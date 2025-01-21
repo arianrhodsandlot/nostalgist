@@ -3,6 +3,8 @@ import type { RetroArchConfig } from '../types/retroarch-config'
 import { isAbsoluteUrl, merge } from './utils'
 import { vendors } from './vendors'
 
+const { path } = vendors
+
 function getDefaultRetroarchConfig() {
   const defaultRetroarchConfig: RetroArchConfig = {
     menu_driver: 'rgui',
@@ -83,20 +85,17 @@ export function getDefaultOptions() {
         return file
       }
 
-      let romRepo = ''
-      if (file.endsWith('.nes')) {
-        romRepo = 'retrobrews/nes-games'
-      } else if (file.endsWith('.sfc')) {
-        romRepo = 'retrobrews/snes-games'
-      } else if (file.endsWith('.gb') || file.endsWith('.gbc')) {
-        romRepo = 'retrobrews/gbc-games'
-      } else if (file.endsWith('.gba')) {
-        romRepo = 'retrobrews/gba-games'
-      } else if (file.endsWith('.sms')) {
-        romRepo = 'retrobrews/sms-games'
-      } else if (file.endsWith('.md') || file.endsWith('.bin')) {
-        romRepo = 'retrobrews/md-games'
-      }
+      const extension = path.extname(file)
+      const romRepo = {
+        '.bin': 'retrobrews/md-games',
+        '.gb': 'retrobrews/gbc-games',
+        '.gba': 'retrobrews/gba-games',
+        '.gbc': 'retrobrews/gbc-games',
+        '.md': 'retrobrews/md-games',
+        '.nes': 'retrobrews/nes-games',
+        '.sfc': 'retrobrews/snes-games',
+        '.sms': 'retrobrews/sms-games',
+      }[extension]
 
       if (romRepo) {
         const encodedFile = encodeURIComponent(file)
@@ -115,7 +114,6 @@ export function getDefaultOptions() {
         return []
       }
 
-      const { path } = vendors
       const preset = `${cdnBaseUrl}/${shaderRepo}@${shaderVersion}/${name}.glslp`
       const segments = name.split(path.sep)
       segments.splice(-1, 0, 'shaders')
