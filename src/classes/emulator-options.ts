@@ -111,10 +111,10 @@ export class EmulatorOptions {
 
   async load() {
     const [core, rom, bios, shader] = await Promise.all([
-      this.getCoreOption(),
-      this.getRomOption(),
-      this.getBiosOption(),
-      this.getShaderOption(),
+      this.getCore(),
+      this.getRom(),
+      this.getBios(),
+      this.getShader(),
     ])
     this.core = core
     this.rom = rom
@@ -127,7 +127,7 @@ export class EmulatorOptions {
     return await fetch(input, { signal })
   }
 
-  private async getBiosOption() {
+  private async getBios() {
     const { bios, resolveBios } = this.nostalgistOptions
     if (!bios) {
       return []
@@ -136,7 +136,7 @@ export class EmulatorOptions {
     return await Promise.all(biosFiles.map((biosFile) => this.resolveFile(biosFile, resolveBios)))
   }
 
-  private async getCoreOption() {
+  private async getCore() {
     const { core, resolveCoreJs, resolveCoreWasm } = this.nostalgistOptions
     let coreDict
     if (typeof core === 'string') {
@@ -201,7 +201,7 @@ export class EmulatorOptions {
     throw new TypeError('invalid element')
   }
 
-  private async getRomOption() {
+  private async getRom() {
     const { resolveRom, rom } = this.nostalgistOptions
     if (!rom) {
       return []
@@ -211,7 +211,7 @@ export class EmulatorOptions {
     return await Promise.all(romFiles.map((romFile) => this.resolveFile(romFile, resolveRom)))
   }
 
-  private async getShaderOption() {
+  private async getShader() {
     const { resolveShader, shader } = this.nostalgistOptions
     if (!shader) {
       return []
