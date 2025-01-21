@@ -57,7 +57,7 @@ const coreVersion = 'v1.20.0'
 const coreDirectory = 'retroarch'
 
 const shaderRepo = 'libretro/glsl-shaders'
-const shaderVersion = 'bc8df9'
+const shaderVersion = '821487'
 
 export function getDefaultOptions() {
   const defaultOptions: Omit<NostalgistOptions, 'core'> = {
