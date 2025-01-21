@@ -20,6 +20,7 @@ export class EmulatorOptions {
     /** the array buffer of core's wasm file */
     wasm: ArrayBuffer
   } = {} as any
+  element: HTMLCanvasElement
   /**
    * An option to override the `Module` object for Emscripten. See [Module object](https://emscripten.org/docs/api_reference/module.html).
    *
@@ -43,33 +44,6 @@ export class EmulatorOptions {
   state?: Blob | undefined
 
   waitForInteraction: ((params: { done: () => void }) => void) | undefined
-
-  get element() {
-    if (typeof document !== 'object') {
-      throw new TypeError('document must be an object')
-    }
-    let { element } = this.nostalgistOptions
-    if (typeof element === 'string' && element) {
-      const canvas = document.body.querySelector(element)
-      if (!canvas) {
-        throw new Error(`can not find element "${element}"`)
-      }
-      if (!(canvas instanceof HTMLCanvasElement)) {
-        throw new TypeError(`element "${element}" is not a canvas element`)
-      }
-      element = canvas
-    }
-    if (!element) {
-      element = document.createElement('canvas')
-    }
-
-    if (element instanceof HTMLCanvasElement) {
-      element.id = 'canvas'
-      return element
-    }
-
-    throw new TypeError('invalid element')
-  }
 
   /**
    * RetroArch config.
@@ -126,6 +100,7 @@ export class EmulatorOptions {
     this.size = options.size ?? 'auto'
     this.state = options.state
     this.waitForInteraction = options.waitForInteraction
+    this.element = this.getElement()
   }
 
   static async create(options: NostalgistOptions) {
@@ -197,6 +172,33 @@ export class EmulatorOptions {
     }
 
     return { js, name, wasm: wasm as ArrayBuffer }
+  }
+
+  private getElement() {
+    if (typeof document !== 'object') {
+      throw new TypeError('document must be an object')
+    }
+    let { element } = this.nostalgistOptions
+    if (typeof element === 'string' && element) {
+      const canvas = document.body.querySelector(element)
+      if (!canvas) {
+        throw new Error(`can not find element "${element}"`)
+      }
+      if (!(canvas instanceof HTMLCanvasElement)) {
+        throw new TypeError(`element "${element}" is not a canvas element`)
+      }
+      element = canvas
+    }
+    if (!element) {
+      element = document.createElement('canvas')
+    }
+
+    if (element instanceof HTMLCanvasElement) {
+      element.id = 'canvas'
+      return element
+    }
+
+    throw new TypeError('invalid element')
   }
 
   private async getRomOption() {
