@@ -65,12 +65,12 @@ export class Emulator {
     return path.join(EmulatorFileSystem.userdataDirectory, 'states', coreFullName)
   }
 
-  private get stateFileName() {
+  private get stateFilePath() {
     return path.join(this.stateFileDirectory, `${this.romBaseName}.state`)
   }
 
-  private get stateThumbnailFileName() {
-    return `${this.stateFileName}.png`
+  private get stateThumbnailFilePath() {
+    return `${this.stateFilePath}.png`
   }
 
   constructor(options: EmulatorOptions) {
@@ -149,11 +149,9 @@ export class Emulator {
 
   async loadState(blob: Blob) {
     this.clearStateFile()
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
     const buffer = await blobToBuffer(blob)
-    FS.writeFile(this.stateFileName, buffer)
-    await this.fs.waitForFile(this.stateFileName)
+    await this.fs.writeFile(this.stateFilePath, buffer)
+    await this.fs.waitForFile(this.stateFilePath)
     this.sendCommand('LOAD_STATE')
   }
 
@@ -217,11 +215,11 @@ export class Emulator {
     let stateThumbnailBuffer: Buffer | undefined
     if (savestateThumbnailEnable) {
       ;[stateBuffer, stateThumbnailBuffer] = await Promise.all([
-        this.fs.waitForFile(this.stateFileName),
-        this.fs.waitForFile(this.stateThumbnailFileName),
+        this.fs.waitForFile(this.stateFilePath),
+        this.fs.waitForFile(this.stateThumbnailFilePath),
       ])
     } else {
-      stateBuffer = await this.fs.waitForFile(this.stateFileName)
+      stateBuffer = await this.fs.waitForFile(this.stateFilePath)
     }
     this.clearStateFile()
 
@@ -246,8 +244,8 @@ export class Emulator {
 
   private clearStateFile() {
     try {
-      this.fs.unlink(this.stateFileName)
-      this.fs.unlink(this.stateThumbnailFileName)
+      this.fs.unlink(this.stateFilePath)
+      this.fs.unlink(this.stateThumbnailFilePath)
     } catch {}
   }
 
