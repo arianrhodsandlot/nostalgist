@@ -52,7 +52,7 @@ nostalgist.pressUp({ button: 'a', player: 2 }) // press the button "a" on player
         input_player2_right: 'num4',
         // see https://github.com/libretro/RetroArch/blob/575859e5d76d921cb490f55afcd0bbca90d4a742/retroarch.cfg#L468-L483
         input_player2_up: 'num1',
-      }
+      },
 
       /* ...other options */
     })

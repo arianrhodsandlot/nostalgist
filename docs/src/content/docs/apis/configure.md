@@ -11,7 +11,7 @@ Nostalgist.configure({
   element: '.emulator-canvas',
   resolveRom(rom) {
     return `https://example.com/roms/${rom}`
-  }
+  },
 })
 
 // emulator will use `document.querySelector('.emulator-canvas')` as the default DOM element for emulating
