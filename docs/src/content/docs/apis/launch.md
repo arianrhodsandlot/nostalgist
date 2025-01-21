@@ -27,8 +27,8 @@ const nostalgist = await Nostalgist.launch({
   // Because of the custom `resolveRom` option
   rom: ['mslug.zip'],
 
-  // Will load https://example.com/roms/mslug.zip as the ROM
-  // Because of the custom `resolveRom` option
+  // Will load https://example.com/system/neogeo.zip as the ROM
+  // Because of the custom `resolveBios` option
   bios: ['neogeo.zip'],
 
   // Custom configuration for RetroArch
@@ -88,7 +88,7 @@ const nostalgist = await Nostalgist.launch({
 
     If you want to specify how to use your custom cores, a custom `resolveCoreJs` can be implemented by your self to achieve this.
 
-    You can also pass an `Object` instead of a `string` to use a loaded a custom url as the core. Here's an example.
+    You can also pass an `Object` instead of a `string` to load data from custom urls as the core. Here's an example.
     ```js
     await Nostalgist.launch({
       core: {
@@ -96,7 +96,7 @@ const nostalgist = await Nostalgist.launch({
         name: 'snes9x',
         wasm: 'https://example.com/cores/snes9x.wasm',
       },
-      rom: 'https://example.com/roms/super metriod.sfc'
+      rom: 'https://example.com/roms/super-metriod.sfc',
     })
     ```
     The `core.wasm` option can be an `ArrayBuffer` as well.
@@ -114,7 +114,7 @@ const nostalgist = await Nostalgist.launch({
     ```js
     await Nostalgist.launch({
       core: 'fceumm',
-      rom: 'flappybird.nes'
+      rom: 'flappybird.nes',
     })
     ```
     This will load `flappybird.nes` from the repository [retrobrews/nes-games](https://github.com/retrobrews/nes-games).
@@ -264,7 +264,7 @@ const nostalgist = await Nostalgist.launch({
     const nostalgist = await Nostalgist.launch({
       core: 'fceumm',
       rom: 'flappybird.nes',
-      runEmulatorManually: true
+      runEmulatorManually: true,
     })
 
     // the emulator will be launched
@@ -284,9 +284,9 @@ const nostalgist = await Nostalgist.launch({
       emscriptenModule: {
         printErr(str) {
           yourLogger.error(str)
-        }
+        },
       },
-      rom: 'flappybird.nes'
+      rom: 'flappybird.nes',
     })
     ```
 
@@ -318,7 +318,7 @@ const nostalgist = await Nostalgist.launch({
         console.log(options)
 
         return `https://example.com/${core}.js`
-      }
+      },
     })
     ```
 
@@ -343,7 +343,7 @@ const nostalgist = await Nostalgist.launch({
         console.log(options)
 
         return `https://example.com/${core}.wasm`
-      }
+      },
     })
     ```
 

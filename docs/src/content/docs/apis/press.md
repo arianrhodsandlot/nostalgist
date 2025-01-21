@@ -54,7 +54,7 @@ await nostalgist.press({ button: 'a', player: 2, time: 200 }) // press the butto
         input_player2_left: 'num2',
         input_player2_right: 'num4',
         input_player2_up: 'num1',
-      }
+      },
 
       /* ...other options */
     })
