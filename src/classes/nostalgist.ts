@@ -1,6 +1,6 @@
 import { Emulator } from '../classes/emulator'
 import { systemCoreMap } from '../constants/system'
-import { getDefaultOptions } from '../libs/options'
+import { getGlobalOptions, updateGlobalOptions } from '../libs/options'
 import { checkIsAborted, merge } from '../libs/utils'
 import { vendors } from '../libs/vendors'
 import type {
@@ -17,17 +17,13 @@ export class Nostalgist {
   static readonly Nostalgist = Nostalgist
   static readonly vendors = vendors
 
-  private static globalOptions = getDefaultOptions()
-
   private emulator: Emulator | undefined
   private emulatorOptions: EmulatorOptions | undefined
   private options: NostalgistOptions
 
   private constructor(options: NostalgistLaunchOptions) {
-    const globalOptions: Partial<NostalgistLaunchOptions> = { ...Nostalgist.globalOptions }
-    const localOptions = { ...options }
     const mergedOptions = {} as unknown as NostalgistOptions
-    merge(mergedOptions, globalOptions, localOptions)
+    merge(mergedOptions, getGlobalOptions(), options)
     this.options = mergedOptions
   }
 
@@ -49,7 +45,7 @@ export class Nostalgist {
    * ```
    */
   static configure(options: NostalgistOptionsPartial) {
-    merge(Nostalgist.globalOptions, options)
+    updateGlobalOptions(options)
   }
 
   /**
@@ -129,7 +125,7 @@ export class Nostalgist {
    */
   static async launch(options: NostalgistLaunchOptions) {
     const nostalgist = new Nostalgist(options)
-    await nostalgist.launch()
+    await nostalgist.load()
     return nostalgist
   }
 
@@ -161,7 +157,7 @@ export class Nostalgist {
    * @see {@link https://nostalgist.js.org/apis/reset-to-default/}
    */
   static resetToDefault() {
-    Nostalgist.configure(getDefaultOptions())
+    updateGlobalOptions()
   }
 
   /**
@@ -175,17 +171,12 @@ export class Nostalgist {
     return await Nostalgist.launchSystem('snes', options)
   }
 
-  private static getCoreForSystem(system: string) {
-    return systemCoreMap[system]
-  }
-
   private static async launchSystem(system: string, options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
     const launchOptions =
       typeof options === 'string' || options instanceof Blob || ('fileName' in options && 'fileContent' in options)
         ? { rom: options }
         : options
-    const core = Nostalgist.getCoreForSystem(system)
-    return await Nostalgist.launch({ ...launchOptions, core })
+    return await Nostalgist.launch({ ...launchOptions, core: systemCoreMap[system] })
   }
 
   /**
@@ -502,7 +493,7 @@ export class Nostalgist {
   /**
    * Load options and then launch corresponding emulator if should
    */
-  private async launch(): Promise<void> {
+  private async load(): Promise<void> {
     this.emulatorOptions = await EmulatorOptions.create(this.options)
     checkIsAborted(this.options.signal)
     this.loadEmulator()

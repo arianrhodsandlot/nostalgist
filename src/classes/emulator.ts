@@ -30,8 +30,8 @@ interface EmulatorEmscripten {
 }
 
 export class Emulator {
-  emscripten: EmulatorEmscripten | undefined
   private canvasInitialSize = { height: 0, width: 0 }
+  private emscripten: EmulatorEmscripten | undefined
   private eventListeners: Record<EmulatorEvent, ((...args: unknown[]) => unknown)[]> = {
     beforeLaunch: [],
     onLaunch: [],
