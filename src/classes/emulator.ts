@@ -13,20 +13,10 @@ import {
 import { vendors } from '../libs/vendors'
 import type { RetroArchCommand } from '../types/retroarch-command'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
+import { EmulatorFileSystem } from './emulator-file-system'
 import type { EmulatorOptions } from './emulator-options'
 
 const { ini, path } = vendors
-
-const raUserdataDir = '/home/web_user/retroarch/userdata'
-const raBundleDir = '/home/web_user/retroarch/bundle'
-
-const raContentDir = path.join(raUserdataDir, 'content')
-const raSystemDir = path.join(raUserdataDir, 'system')
-const raConfigDir = path.join(raUserdataDir, 'config')
-const raShaderDir = path.join(raBundleDir, 'shaders', 'shaders_glsl')
-
-const raConfigPath = path.join(raUserdataDir, 'retroarch.cfg')
-const raCoreConfigPath = path.join(raUserdataDir, 'retroarch-core-options.cfg')
 
 type GameStatus = 'initial' | 'paused' | 'running'
 type EmulatorEvent = 'beforeLaunch' | 'onLaunch'
@@ -46,10 +36,18 @@ export class Emulator {
     beforeLaunch: [],
     onLaunch: [],
   }
+  private fileSystem: EmulatorFileSystem | undefined
   private gameStatus: GameStatus = 'initial'
   private messageQueue: [Uint8Array, number][] = []
 
   private options: EmulatorOptions
+
+  private get fs() {
+    if (!this.fileSystem) {
+      throw new Error('fileSystem is not ready')
+    }
+    return this.fileSystem
+  }
 
   private get romBaseName() {
     const {
@@ -64,7 +62,7 @@ export class Emulator {
     if (!coreFullName) {
       throw new Error(`invalid core name: ${core.name}`)
     }
-    return path.join(raUserdataDir, 'states', coreFullName)
+    return path.join(EmulatorFileSystem.userdataDirectory, 'states', coreFullName)
   }
 
   private get stateFileName() {
@@ -82,10 +80,9 @@ export class Emulator {
   exit(statusCode = 0) {
     const { emscripten } = this
     if (emscripten) {
-      const { exit, JSEvents, Module } = this.getEmscripten()
-      const { FS } = Module
+      const { exit, JSEvents } = this.getEmscripten()
       exit(statusCode)
-      FS.unmount('/home')
+      this.fs.dispose()
       JSEvents.removeAllEventListeners()
     }
   }
@@ -103,6 +100,9 @@ export class Emulator {
 
   async launch() {
     await this.setupEmscripten()
+    checkIsAborted(this.options.signal)
+
+    await this.setupFileSystem()
     checkIsAborted(this.options.signal)
 
     await this.setupRaConfigFile()
@@ -153,7 +153,7 @@ export class Emulator {
     const { FS } = Module
     const buffer = await blobToBuffer(blob)
     FS.writeFile(this.stateFileName, buffer)
-    await this.waitForEmscriptenFile(this.stateFileName)
+    await this.fs.waitForFile(this.stateFileName)
     this.sendCommand('LOAD_STATE')
   }
 
@@ -217,11 +217,11 @@ export class Emulator {
     let stateThumbnailBuffer: Buffer | undefined
     if (savestateThumbnailEnable) {
       ;[stateBuffer, stateThumbnailBuffer] = await Promise.all([
-        this.waitForEmscriptenFile(this.stateFileName),
-        this.waitForEmscriptenFile(this.stateThumbnailFileName),
+        this.fs.waitForFile(this.stateFileName),
+        this.fs.waitForFile(this.stateThumbnailFileName),
       ])
     } else {
-      stateBuffer = await this.waitForEmscriptenFile(this.stateFileName)
+      stateBuffer = await this.fs.waitForFile(this.stateFileName)
     }
     this.clearStateFile()
 
@@ -232,15 +232,11 @@ export class Emulator {
 
   async screenshot() {
     this.sendCommand('SCREENSHOT')
-    const screenshotDirectory = path.join(raUserdataDir, 'screenshots')
     const screenshotFileName = this.guessScreenshotFileName()
-    const screenshotPath = path.join(screenshotDirectory, screenshotFileName)
-    const buffer = await this.waitForEmscriptenFile(screenshotPath)
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    FS.unlink(screenshotPath)
-    const blobProperty = { type: 'image/png' }
-    return new Blob([buffer], blobProperty)
+    const screenshotPath = path.join(EmulatorFileSystem.screenshotsDirectory, screenshotFileName)
+    const buffer = await this.fs.waitForFile(screenshotPath)
+    this.fs.unlink(screenshotPath)
+    return new Blob([buffer], { type: 'image/png' })
   }
 
   sendCommand(msg: RetroArchCommand) {
@@ -249,11 +245,9 @@ export class Emulator {
   }
 
   private clearStateFile() {
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
     try {
-      FS.unlink(this.stateFileName)
-      FS.unlink(this.stateThumbnailFileName)
+      this.fs.unlink(this.stateFileName)
+      this.fs.unlink(this.stateThumbnailFileName)
     } catch {}
   }
 
@@ -269,9 +263,7 @@ export class Emulator {
   }
 
   private getCurrentRetroarchConfig() {
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const configContent = FS.readFile(raConfigPath, { encoding: 'utf8' })
+    const configContent = this.fs.readFile(EmulatorFileSystem.configPath)
     return ini.parse(configContent)
   }
 
@@ -360,7 +352,7 @@ export class Emulator {
     const { rom, signal } = this.options
     if (!Module.arguments && rom.length > 0) {
       const [{ fileName }] = rom
-      raArgs.push(path.join(raContentDir, fileName))
+      raArgs.push(path.join(EmulatorFileSystem.contentDirectory, fileName))
     }
 
     Module.callMain(raArgs)
@@ -377,7 +369,7 @@ export class Emulator {
       globalThis.setImmediate ??= globalThis.setTimeout
     }
 
-    const { core, element, emscriptenModule, signal } = this.options
+    const { core, element, emscriptenModule } = this.options
     const { wasm } = core
     const moduleOptions = { canvas: element, preRun: [], wasmBinary: wasm, ...emscriptenModule }
     const initialModule = getEmscriptenModuleOverrides(moduleOptions)
@@ -388,48 +380,28 @@ export class Emulator {
     this.emscripten = emscripten
     const { Module } = emscripten
     await Module.monitorRunDependencies()
-    checkIsAborted(signal)
-    await this.setupFileSystem()
   }
 
   private async setupFileSystem() {
     const { Module } = this.getEmscripten()
-    const { FS } = Module
     const { bios, rom, signal, state } = this.options
-
-    if (rom.length > 0) {
-      FS.mkdirTree(raContentDir)
-    }
-    if (bios.length > 0) {
-      FS.mkdirTree(raSystemDir)
-    }
+    const fileSystem = await EmulatorFileSystem.create({ emscriptenModule: Module, signal })
+    this.fileSystem = fileSystem
     if (state) {
-      FS.mkdirTree(this.stateFileDirectory)
-    }
-
-    // a hack used for waiting for wasm's instantiation.
-    // it's dirty but it works
-    const maxWaitTime = 100
-    let waitTime = 0
-
-    while (!Module.asm && waitTime < maxWaitTime) {
-      await delay(10)
-      checkIsAborted(signal)
-      waitTime += 5
+      this.fs.mkdirTree(this.stateFileDirectory)
     }
 
     const filePromises: Promise<void>[] = []
     filePromises.push(
-      ...rom.map((file) => this.writeBlobToDirectory({ ...file, directory: raContentDir })),
-      ...bios.map((file) => this.writeBlobToDirectory({ ...file, directory: raSystemDir })),
+      ...rom.map((file) =>
+        this.fs.writeFile(path.join(EmulatorFileSystem.contentDirectory, file.fileName), file.fileContent),
+      ),
+      ...bios.map((file) =>
+        this.fs.writeFile(path.join(EmulatorFileSystem.systemDirectory, file.fileName), file.fileContent),
+      ),
     )
     if (state) {
-      const statePromise = this.writeBlobToDirectory({
-        directory: this.stateFileDirectory,
-        fileContent: state,
-        fileName: `${this.romBaseName}.state.auto`,
-      })
-      filePromises.push(statePromise)
+      filePromises.push(this.fs.writeFile(path.join(this.stateFileDirectory, `${this.romBaseName}.state.auto`), state))
     }
     await Promise.all(filePromises)
 
@@ -437,28 +409,33 @@ export class Emulator {
   }
 
   private async setupRaConfigFile() {
-    this.writeConfigFile({ config: this.options.retroarchConfig, path: raConfigPath })
-    this.writeConfigFile({ config: this.options.retroarchCoreConfig, path: raCoreConfigPath })
-    await this.setupRaShaderFile()
+    this.fs.writeIni(EmulatorFileSystem.configPath, this.options.retroarchConfig)
+    this.fs.writeIni(EmulatorFileSystem.coreConfigPath, this.options.retroarchCoreConfig)
+    await this.setupRaShaderFiles()
   }
 
-  private async setupRaShaderFile() {
+  private async setupRaShaderFiles() {
     const { shader } = this.options
     if (shader.length === 0) {
       return
     }
-    const glslFiles = shader.filter((file) => file.fileName.endsWith('.glslp'))
-    if (glslFiles.length === 0) {
+    const glslpFiles = shader.filter((file) => file.fileName.endsWith('.glslp'))
+    if (glslpFiles.length === 0) {
       return
     }
-    const glslpContent = glslFiles.map((file) => `#reference "${path.join(raShaderDir, file.fileName)}"`).join('\n')
+    const globalGlslpContent = glslpFiles
+      .map((file) => `#reference "${path.join(EmulatorFileSystem.shaderDirectory, file.fileName)}"`)
+      .join('\n')
 
-    this.writeTextToDirectory({ directory: raConfigDir, fileContent: glslpContent, fileName: 'global.glslp' })
+    this.fs.writeFile(path.join(EmulatorFileSystem.configDirectory, 'global.glslp'), globalGlslpContent)
 
     await Promise.all(
       shader.map(async ({ fileContent, fileName }) => {
-        const directory = fileName.endsWith('.glslp') ? raShaderDir : path.join(raShaderDir, 'shaders')
-        await this.writeBlobToDirectory({ directory, fileContent, fileName })
+        const directory =
+          path.extname(fileName) === '.glslp'
+            ? EmulatorFileSystem.shaderDirectory
+            : path.join(EmulatorFileSystem.shaderDirectory, 'shaders')
+        await this.fs.writeFile(path.join(directory, fileName), fileContent)
       }),
     )
   }
@@ -516,88 +493,5 @@ export class Emulator {
         target: respondToGlobalEvents ? document : element,
       })
     }
-  }
-
-  private async waitForEmscriptenFile(fileName: string) {
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const maxRetries = 30
-    let buffer
-    let isFinished = false
-    let retryTimes = 0
-    while (retryTimes <= maxRetries && !isFinished) {
-      const delayTime = Math.min(100 * 2 ** retryTimes, 1000)
-      await delay(delayTime)
-      try {
-        const newBuffer = FS.readFile(fileName).buffer
-        isFinished = buffer?.byteLength > 0 && buffer?.byteLength === newBuffer.byteLength
-        buffer = newBuffer
-      } catch (error) {
-        console.warn(error)
-      }
-      retryTimes += 1
-    }
-    if (!isFinished) {
-      throw new Error('fs timeout')
-    }
-    return buffer
-  }
-
-  private async writeBlobToDirectory({
-    directory,
-    fileContent,
-    fileName,
-  }: {
-    directory: string
-    fileContent: Blob
-    fileName: string
-  }) {
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const buffer = await blobToBuffer(fileContent)
-    FS.createDataFile('/', fileName, buffer, true, false)
-    const encoding = 'binary'
-    const data = FS.readFile(fileName, { encoding })
-    FS.mkdirTree(directory)
-    FS.writeFile(path.join(directory, fileName), data, { encoding })
-    FS.unlink(fileName)
-  }
-
-  private writeConfigFile({ config, path }: { config: Record<string, any>; path: string }) {
-    if (!config) {
-      return
-    }
-
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const dir = path.slice(0, path.lastIndexOf('/'))
-    FS.mkdirTree(dir)
-    for (const key in config) {
-      config[key] = `__${config[key]}__`
-    }
-    let fileContent = ini.stringify(config, { platform: 'linux', whitespace: true })
-    fileContent = fileContent.replaceAll('__', '"')
-    const fileName = vendors.path.basename(path)
-    const directory = vendors.path.dirname(path)
-    this.writeTextToDirectory({ directory, fileContent, fileName })
-  }
-  private writeTextToDirectory({
-    directory,
-    fileContent,
-    fileName,
-  }: {
-    directory: string
-    fileContent: string
-    fileName: string
-  }) {
-    const { Module } = this.getEmscripten()
-    const { FS } = Module
-    const buffer = textEncoder.encode(fileContent)
-    FS.createDataFile('/', fileName, buffer, true, false)
-    const encoding = 'binary'
-    const data = FS.readFile(fileName, { encoding })
-    FS.mkdirTree(directory)
-    FS.writeFile(path.join(directory, fileName), data, { encoding })
-    FS.unlink(fileName)
   }
 }
