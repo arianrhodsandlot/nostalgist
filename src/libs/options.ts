@@ -124,12 +124,11 @@ export function getDefaultOptions() {
   return defaultOptions
 }
 
-let globalOptions: NostalgistOptionsPartial = getDefaultOptions()
+const globalOptions: NostalgistOptionsPartial = getDefaultOptions()
 export function getGlobalOptions() {
   return globalOptions
 }
 
 export function updateGlobalOptions(options: NostalgistOptionsPartial = {}) {
-  globalOptions = getDefaultOptions()
   merge(globalOptions, options)
 }
