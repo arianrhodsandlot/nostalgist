@@ -409,8 +409,8 @@ export class Emulator {
   }
 
   private async setupRaConfigFile() {
-    this.fs.writeIni(EmulatorFileSystem.configPath, this.options.retroarchConfig)
-    this.fs.writeIni(EmulatorFileSystem.coreConfigPath, this.options.retroarchCoreConfig)
+    await this.fs.writeIni(EmulatorFileSystem.configPath, this.options.retroarchConfig)
+    await this.fs.writeIni(EmulatorFileSystem.coreConfigPath, this.options.retroarchCoreConfig)
     await this.setupRaShaderFiles()
   }
 
@@ -427,7 +427,7 @@ export class Emulator {
       .map((file) => `#reference "${path.join(EmulatorFileSystem.shaderDirectory, file.fileName)}"`)
       .join('\n')
 
-    this.fs.writeFile(path.join(EmulatorFileSystem.configDirectory, 'global.glslp'), globalGlslpContent)
+    await this.fs.writeFile(path.join(EmulatorFileSystem.configDirectory, 'global.glslp'), globalGlslpContent)
 
     await Promise.all(
       shader.map(async ({ fileContent, fileName }) => {
