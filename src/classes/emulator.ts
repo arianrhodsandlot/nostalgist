@@ -159,6 +159,7 @@ export class Emulator {
 
   on(event: EmulatorEvent, callback: (...args: unknown[]) => unknown) {
     this.eventListeners[event].push(callback)
+    return this
   }
 
   pause() {
@@ -563,6 +564,10 @@ export class Emulator {
   }
 
   private writeConfigFile({ config, path }: { config: Record<string, any>; path: string }) {
+    if (!config) {
+      return
+    }
+
     const { Module } = this.getEmscripten()
     const { FS } = Module
     const dir = path.slice(0, path.lastIndexOf('/'))
