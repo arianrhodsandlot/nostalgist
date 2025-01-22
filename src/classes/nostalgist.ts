@@ -1,8 +1,7 @@
-import { Emulator } from '../classes/emulator'
-import { systemCoreMap } from '../constants/system'
-import { getGlobalOptions, resetGlobalOptions, updateGlobalOptions } from '../libs/options'
-import { checkIsAborted, merge } from '../libs/utils'
-import { vendors } from '../libs/vendors'
+import { systemCoreMap } from '../constants/system.ts'
+import { getGlobalOptions, resetGlobalOptions, updateGlobalOptions } from '../libs/options.ts'
+import { checkIsAborted, merge } from '../libs/utils.ts'
+import { vendors } from '../libs/vendors.ts'
 import type {
   NostalgistLaunchOptions,
   NostalgistLaunchRomOptions,
@@ -11,7 +10,8 @@ import type {
   NostalgistOptionsPartial,
 } from '../types/nostalgist-options'
 import type { RetroArchCommand } from '../types/retroarch-command'
-import { EmulatorOptions } from './emulator-options'
+import { EmulatorOptions } from './emulator-options.ts'
+import { Emulator } from './emulator.ts'
 
 export class Nostalgist {
   static readonly Nostalgist = Nostalgist

@@ -1,11 +1,11 @@
-import { getGlobalOptions } from '../libs/options.js'
-import { merge, urlBaseName } from '../libs/utils.js'
+import { getGlobalOptions } from '../libs/options.ts'
+import { merge, urlBaseName } from '../libs/utils.ts'
 import type {
   NostalgistOptions,
   NostalgistOptionsFile,
   NostalgistResolveFileFunction,
-} from '../types/nostalgist-options.js'
-import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten'
+} from '../types/nostalgist-options.ts'
+import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten.ts'
 
 export class EmulatorOptions {
   beforeLaunch?: (() => Promise<void> | void) | undefined

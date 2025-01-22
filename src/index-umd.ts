@@ -1,1 +1,1 @@
-export { Nostalgist as default } from './classes/nostalgist'
+export { Nostalgist as default } from './classes/nostalgist.ts'

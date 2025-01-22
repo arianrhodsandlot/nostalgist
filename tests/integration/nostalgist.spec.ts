@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, test } from 'vitest'
-import { Nostalgist } from '../../src'
+import { afterEach, beforeEach, describe, test, type TestContext } from 'node:test'
+import { GlobalRegistrator } from '@happy-dom/global-registrator'
+import { Nostalgist } from '../../src/index.ts'
 
 const testNesRomUrl =
   'https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/Super%20Tilt%20Bro%20%28USA%29.nes'
@@ -12,6 +13,8 @@ function resolveBios(bios: any) {
   return `https://buildbot.libretro.com/assets/system/${encodeURIComponent(bios)}`
 }
 
+GlobalRegistrator.register({ settings: { fetch: { disableSameOriginPolicy: true } } })
+
 describe('nostalgist', () => {
   beforeEach(() => {
     Nostalgist.configure({ runEmulatorManually: true })
@@ -21,67 +24,67 @@ describe('nostalgist', () => {
     Nostalgist.resetToDefault()
   })
 
-  test('Nostalgist.nes', async () => {
+  test('Nostalgist.nes', async (t: TestContext) => {
     const nostalgist = await Nostalgist.nes('flappybird.nes')
 
     const options = nostalgist.getOptions()
-    expect(options.core).toBe('fceumm')
+    t.assert.strictEqual(options.core, 'fceumm')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.core.name).toBe('fceumm')
-    expect(emulatorOptions.core.js).toBeTypeOf('string')
-    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
-    expect(emulatorOptions.rom).toHaveLength(1)
-    expect(emulatorOptions.rom[0].fileName).toEqual('flappybird.nes')
-    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios).toEqual([])
+    t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
+    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
+    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
+    t.assert.strictEqual(emulatorOptions.rom.length, 1)
+    t.assert.strictEqual(emulatorOptions.rom[0].fileName, 'flappybird.nes')
+    t.assert.ok(emulatorOptions.rom[0].fileContent instanceof Blob)
+    t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
-  test('Nostalgist.nes with custom resolveRom', async () => {
+  test('Nostalgist.nes with custom resolveRom', async (t: TestContext) => {
     const nostalgist = await Nostalgist.nes({ resolveRom, rom: 'Super Tilt Bro (USA).nes' })
     const emulatorOptions = nostalgist.getEmulatorOptions()
 
-    expect(emulatorOptions.core.name).toBe('fceumm')
-    expect(emulatorOptions.core.js).toBeTypeOf('string')
-    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
-    expect(emulatorOptions.rom).toHaveLength(1)
-    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
-    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios).toEqual([])
+    t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
+    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
+    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
+    t.assert.strictEqual(emulatorOptions.rom.length, 1)
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
-  test('Nostalgist.configure with global custom resolveRom', async () => {
+  test('Nostalgist.configure with global custom resolveRom', async (t: TestContext) => {
     Nostalgist.configure({ resolveRom })
 
     const nostalgist = await Nostalgist.nes('Super Tilt Bro (USA).nes')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.core.name).toBe('fceumm')
-    expect(emulatorOptions.core.js).toBeTypeOf('string')
-    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
-    expect(emulatorOptions.rom).toHaveLength(1)
-    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
-    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios).toEqual([])
+    t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
+    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
+    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
+    t.assert.strictEqual(emulatorOptions.rom.length, 1)
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
-  test('Nostalgist.launch with custom core', async () => {
+  test('Nostalgist.launch with custom core', async (t: TestContext) => {
     const nostalgist = await Nostalgist.launch({ core: 'nestopia', rom: testNesRomUrl })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toBe('nestopia')
+    t.assert.strictEqual(options.core, 'nestopia')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.core.name).toBe('nestopia')
-    expect(emulatorOptions.core.js).toBeTypeOf('string')
-    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
-    expect(emulatorOptions.rom).toHaveLength(1)
-    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
-    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios).toEqual([])
+    t.assert.strictEqual(emulatorOptions.core.name, 'nestopia')
+    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
+    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
+    t.assert.strictEqual(emulatorOptions.rom.length, 1)
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
-  test('Nostalgist.launch with custom size', async () => {
+  test('Nostalgist.launch with custom size', async (t: TestContext) => {
     const nostalgist = await Nostalgist.launch({
       core: 'nestopia',
       rom: testNesRomUrl,
@@ -92,19 +95,19 @@ describe('nostalgist', () => {
     })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toBe('nestopia')
+    t.assert.strictEqual(options.core, 'nestopia')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.size).toEqual({ height: 100, width: 100 })
-    expect(emulatorOptions.core.js).toBeTypeOf('string')
-    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
-    expect(emulatorOptions.rom).toHaveLength(1)
-    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
-    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios).toEqual([])
+    t.assert.deepStrictEqual(emulatorOptions.size, { height: 100, width: 100 })
+    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
+    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
+    t.assert.strictEqual(emulatorOptions.rom.length, 1)
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
-  test('Nostalgist.launch with custom emscripten core', async () => {
+  test('Nostalgist.launch with custom emscripten core', async (t: TestContext) => {
     const core = {
       js: 'https://web.libretro.com/fceumm_libretro.js',
       name: 'fceumm',
@@ -113,19 +116,19 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.launch({ core, rom: testNesRomUrl })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toStrictEqual(core)
+    t.assert.strictEqual(options.core, core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.core.name).toBe('fceumm')
-    expect(emulatorOptions.core.js).toBeTypeOf('string')
-    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
-    expect(emulatorOptions.rom).toHaveLength(1)
-    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
-    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios).toEqual([])
+    t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
+    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
+    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
+    t.assert.strictEqual(emulatorOptions.rom.length, 1)
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
-  test('Nostalgist.launch with custom rom and custom emscripten core', async () => {
+  test('Nostalgist.launch with custom rom and custom emscripten core', async (t: TestContext) => {
     const core = {
       js: 'https://web.libretro.com/fceumm_libretro.js',
       name: 'fceumm',
@@ -136,19 +139,19 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.launch({ core, resolveRom, rom })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toStrictEqual(core)
+    t.assert.strictEqual(options.core, core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.core.name).toBe('fceumm')
-    expect(emulatorOptions.core.js).toBeTypeOf('string')
-    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
-    expect(emulatorOptions.rom).toHaveLength(1)
-    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
-    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios).toEqual([])
+    t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
+    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
+    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
+    t.assert.strictEqual(emulatorOptions.rom.length, 1)
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
-  test('Nostalgist.launch with multiple files and bios', async () => {
+  test('Nostalgist.launch with multiple files and bios', async (t: TestContext) => {
     const core = {
       js: 'https://web.libretro.com/fceumm_libretro.js',
       name: 'fceumm',
@@ -160,25 +163,25 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.launch({ bios, core, resolveBios, resolveRom, rom })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toStrictEqual(core)
+    t.assert.strictEqual(options.core, core)
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.core.name).toBe('fceumm')
-    expect(emulatorOptions.core.js).toBeTypeOf('string')
-    expect(emulatorOptions.core.wasm).toBeInstanceOf(ArrayBuffer)
-    expect(emulatorOptions.rom).toHaveLength(2)
-    expect(emulatorOptions.rom[0].fileName).toEqual('Super Tilt Bro (USA).nes')
-    expect(emulatorOptions.rom[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.rom[1].fileName).toEqual('240p Test Suite.nes')
-    expect(emulatorOptions.rom[1].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios).toHaveLength(2)
-    expect(emulatorOptions.bios[0].fileName).toEqual('PrBoom.zip')
-    expect(emulatorOptions.bios[0].fileContent.constructor.name).toBe('Blob')
-    expect(emulatorOptions.bios[1].fileName).toEqual('FinalBurn Neo (hiscore).zip')
-    expect(emulatorOptions.bios[1].fileContent.constructor.name).toBe('Blob')
+    t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
+    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
+    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
+    t.assert.strictEqual(emulatorOptions.rom.length, 2)
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.rom[1].fileName, '240p Test Suite.nes')
+    t.assert.strictEqual(emulatorOptions.rom[1].fileContent.constructor.name, 'Blob')
+    t.assert.strictEqual(emulatorOptions.bios.length, 2)
+    t.assert.deepStrictEqual(emulatorOptions.bios[0].fileName, 'PrBoom.zip')
+    t.assert.strictEqual(emulatorOptions.bios[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.bios[1].fileName, 'FinalBurn Neo (hiscore).zip')
+    t.assert.strictEqual(emulatorOptions.bios[1].fileContent.constructor.name, 'Blob')
   })
 
-  test('Nostalgist.launch with custom style and size', async () => {
+  test('Nostalgist.launch with custom style and size', async (t: TestContext) => {
     const nostalgist = await Nostalgist.launch({
       core: 'fceumm',
       rom: 'flappybird.nes',
@@ -186,10 +189,10 @@ describe('nostalgist', () => {
     })
 
     const options = nostalgist.getOptions()
-    expect(options.size).toEqual({ height: 100, width: 100 })
+    t.assert.deepStrictEqual(options.size, { height: 100, width: 100 })
   })
 
-  test('Nostalgist.launch with shaders', async () => {
+  test('Nostalgist.launch with shaders', async (t: TestContext) => {
     const nostalgist = await Nostalgist.launch({
       core: 'fceumm',
       rom: 'flappybird.nes',
@@ -197,14 +200,15 @@ describe('nostalgist', () => {
     })
 
     const { shader } = nostalgist.getEmulatorOptions()
+    t.assert.ok(shader[0].fileName.endsWith('.glslp'))
+    t.assert.ok(shader[1].fileName.endsWith('.glsl'))
     for (const file of shader) {
-      expect(file.fileName).toContain('.glsl')
-      expect(file.fileContent.type).toBe('application/octet-stream')
-      expect(file.fileContent.size).toBeGreaterThan(0)
+      t.assert.strictEqual(file.fileContent.type, 'application/octet-stream')
+      t.assert.ok(file.fileContent.size > 0)
     }
   })
 
-  test('Nostalgist.launch with nested options', async () => {
+  test('Nostalgist.launch with nested options', async (t: TestContext) => {
     Nostalgist.configure({
       retroarchConfig: {
         input_audio_mute: 'a',
@@ -222,7 +226,8 @@ describe('nostalgist', () => {
     })
 
     const options = nostalgist.getOptions()
-    expect(options.retroarchConfig).toMatchObject({
+    // @ts-expect-error this method is still not typed. see https://nodejs.org/api/assert.html#assertpartialdeepstrictequalactual-expected-message
+    t.assert.partialDeepStrictEqual(options.retroarchConfig, {
       input_audio_mute: 'b',
       input_max_users: 4,
       input_menu_toggle: 'nul',
@@ -230,7 +235,7 @@ describe('nostalgist', () => {
     })
   })
 
-  test('Nostalgist.launch overwrites the configured core', async () => {
+  test('Nostalgist.launch overwrites the configured core', async (t: TestContext) => {
     Nostalgist.configure({ core: 'nestopia' })
     const core = {
       js: 'https://web.libretro.com/fceumm_libretro.js',
@@ -240,10 +245,10 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.launch({ core, rom: testNesRomUrl })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toStrictEqual(core)
+    t.assert.strictEqual(options.core, core)
   })
 
-  test('Nostalgist.launch overwrites the configured custom emscripten core', async () => {
+  test('Nostalgist.launch overwrites the configured custom emscripten core', async (t: TestContext) => {
     const core = {
       js: 'https://web.libretro.com/fceumm_libretro.js',
       name: 'fceumm',
@@ -253,21 +258,21 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.launch({ core: 'nestopia', rom: testNesRomUrl })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toStrictEqual('nestopia')
+    t.assert.strictEqual(options.core, 'nestopia')
   })
 
-  test('Nostalgist.launch with a custom element', async () => {
+  test('Nostalgist.launch with a custom element', async (t: TestContext) => {
     const element = document.createElement('canvas')
     const nostalgist = await Nostalgist.launch({ core: 'nestopia', element, rom: 'flappybird.nes' })
 
     const options = nostalgist.getOptions()
-    expect(options.core).toStrictEqual('nestopia')
+    t.assert.strictEqual(options.core, 'nestopia')
   })
 
-  test('Nostalgist.launch with a malformed url', async () => {
+  test('Nostalgist.launch with a malformed url', async (t: TestContext) => {
     const nostalgist = await Nostalgist.nes({ rom: 'http://example.com/a%b%c.nes?xxx=1' })
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    expect(emulatorOptions.rom[0].fileName).toStrictEqual('a-b-c.nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].fileName, 'a-b-c.nes')
   })
 })

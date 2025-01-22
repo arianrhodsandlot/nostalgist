@@ -1,5 +1,5 @@
-import { blobToBuffer, checkIsAborted, delay, textEncoder } from '../libs/utils'
-import { vendors } from '../libs/vendors'
+import { blobToBuffer, checkIsAborted, delay, textEncoder } from '../libs/utils.ts'
+import { vendors } from '../libs/vendors.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
 
 const { ini, path } = vendors
@@ -83,7 +83,7 @@ export class EmulatorFileSystem {
 
   async waitForFile(fileName: string) {
     const maxRetries = 30
-    let buffer
+    let buffer: Uint8Array | undefined
     let isFinished = false
     let retryTimes = 0
     while (retryTimes <= maxRetries && !isFinished) {
@@ -92,7 +92,9 @@ export class EmulatorFileSystem {
       checkIsAborted(this.signal)
       try {
         const newBuffer = this.readFile(fileName, 'binary').buffer
-        isFinished = buffer?.byteLength > 0 && buffer?.byteLength === newBuffer.byteLength
+        if (buffer) {
+          isFinished = buffer.byteLength > 0 && buffer.byteLength === newBuffer.byteLength
+        }
         buffer = newBuffer
       } catch (error) {
         console.warn(error)
@@ -125,7 +127,9 @@ export class EmulatorFileSystem {
 
     const clonedConfig: typeof config = {}
     for (const key in config) {
-      clonedConfig[key] = `__${config[key]}__`
+      if (Object.hasOwn(config, key)) {
+        clonedConfig[key] = `__${config[key]}__`
+      }
     }
     const fileContent = ini.stringify(clonedConfig, { platform: 'linux', whitespace: true }).replaceAll('__', '"')
     await this.writeFile(path, fileContent)

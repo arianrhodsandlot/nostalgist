@@ -1,6 +1,6 @@
-import { coreInfoMap } from '../constants/core-info'
-import { keyboardCodeMap } from '../constants/keyboard-code-map'
-import { getEmscriptenModuleOverrides } from '../libs/emscripten'
+import { coreInfoMap } from '../constants/core-info.ts'
+import { keyboardCodeMap } from '../constants/keyboard-code-map.ts'
+import { getEmscriptenModuleOverrides } from '../libs/emscripten.ts'
 import {
   blobToBuffer,
   checkIsAborted,
@@ -9,11 +9,11 @@ import {
   padZero,
   textEncoder,
   updateStyle,
-} from '../libs/utils'
-import { vendors } from '../libs/vendors'
-import type { RetroArchCommand } from '../types/retroarch-command'
+} from '../libs/utils.ts'
+import { vendors } from '../libs/vendors.ts'
+import type { RetroArchCommand } from '../types/retroarch-command.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
-import { EmulatorFileSystem } from './emulator-file-system'
+import { EmulatorFileSystem } from './emulator-file-system.ts'
 import type { EmulatorOptions } from './emulator-options'
 
 const { ini, path } = vendors

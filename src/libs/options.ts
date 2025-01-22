@@ -1,7 +1,7 @@
-import type { NostalgistOptions, NostalgistOptionsPartial } from '../types/nostalgist-options'
+import type { NostalgistOptions, NostalgistOptionsPartial } from '../types/nostalgist-options.ts'
 import type { RetroArchConfig } from '../types/retroarch-config'
-import { isAbsoluteUrl, merge } from './utils'
-import { vendors } from './vendors'
+import { isAbsoluteUrl, merge } from './utils.ts'
+import { vendors } from './vendors.ts'
 
 const { path } = vendors
 

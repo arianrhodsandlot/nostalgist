@@ -1,4 +1,4 @@
-import { vendors } from './vendors'
+import { vendors } from './vendors.ts'
 
 const { path } = vendors
 
