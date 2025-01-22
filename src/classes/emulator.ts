@@ -211,8 +211,8 @@ export class Emulator {
     this.clearStateFile()
     this.sendCommand('SAVE_STATE')
     const savestateThumbnailEnable = this.options.retroarchConfig.savestate_thumbnail_enable
-    let stateBuffer: Buffer
-    let stateThumbnailBuffer: Buffer | undefined
+    let stateBuffer: Uint8Array
+    let stateThumbnailBuffer: Uint8Array | undefined
     if (savestateThumbnailEnable) {
       ;[stateBuffer, stateThumbnailBuffer] = await Promise.all([
         this.fs.waitForFile(this.stateFilePath),

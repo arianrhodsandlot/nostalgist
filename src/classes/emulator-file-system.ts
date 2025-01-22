@@ -101,7 +101,7 @@ export class EmulatorFileSystem {
       }
       retryTimes += 1
     }
-    if (!isFinished) {
+    if (!(isFinished && buffer)) {
       throw new Error('fs timeout')
     }
     return buffer
