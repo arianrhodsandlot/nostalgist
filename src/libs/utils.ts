@@ -38,11 +38,9 @@ export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclara
     return
   }
   for (const rule in style) {
-    if (Object.hasOwn(style, rule)) {
-      const value = style[rule]
-      // @ts-expect-error null means to delete the rule
-      element.style[rule] = value || null
-    }
+    const value = style[rule]
+    // @ts-expect-error null means to delete the rule
+    element.style[rule] = value || null
   }
 }
 
@@ -144,9 +142,7 @@ export function merge(target: any, ...sources: any[]) {
   if (sources.length === 1) {
     const [source] = sources
     for (const key in source) {
-      if (Object.hasOwn(source, key)) {
-        mergeProperty(target, source, key)
-      }
+      mergeProperty(target, source, key)
     }
   } else {
     for (const source of sources) {

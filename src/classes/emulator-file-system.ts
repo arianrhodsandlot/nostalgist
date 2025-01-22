@@ -127,9 +127,7 @@ export class EmulatorFileSystem {
 
     const clonedConfig: typeof config = {}
     for (const key in config) {
-      if (Object.hasOwn(config, key)) {
-        clonedConfig[key] = `__${config[key]}__`
-      }
+      clonedConfig[key] = `__${config[key]}__`
     }
     const fileContent = ini.stringify(clonedConfig, { platform: 'linux', whitespace: true }).replaceAll('__', '"')
     await this.writeFile(path, fileContent)
