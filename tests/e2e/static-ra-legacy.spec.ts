@@ -3,8 +3,8 @@ import { tests } from './static-ra-common'
 
 test.describe('static methods with retroarch legacy', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/e2e/test-page?legacy')
+    await page.goto('/?e2e-legacy')
   })
 
-  test('tests', tests)
+  tests()
 })

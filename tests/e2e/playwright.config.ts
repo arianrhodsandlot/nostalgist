@@ -8,6 +8,6 @@ export default defineConfig({
   snapshotPathTemplate: '{testDir}/snapshots/{testFilePath}/{testName}/{arg}{ext}',
   testMatch: 'tests/e2e/**/*.spec.ts',
   updateSnapshots: 'missing',
-  use: { baseURL: 'http://localhost:8000/', headless: true },
-  webServer: { command: 'python3 -m http.server', cwd: '../..', port: 8000, reuseExistingServer: false },
+  use: { baseURL: 'http://localhost:5173/', headless: true },
+  webServer: { command: 'vite playground', cwd: '../..', port: 5173, reuseExistingServer: true },
 })

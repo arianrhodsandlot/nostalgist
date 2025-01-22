@@ -37,7 +37,7 @@
   ],
   "scripts": {
     "build": "node scripts/build.ts && tsc",
-    "dev": "vite demo",
+    "dev": "vite playground --open",
     "dev:e2e": "playwright test -c tests/e2e --ui",
     "docs:build": "astro build --root docs",
     "docs:dev": "astro dev --root docs",

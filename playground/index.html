@@ -3,13 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nostalgist.js test page</title>
+    <title>Nostalgist.js Playground</title>
     <link rel="icon" type="image/png" href="https://nostalgist.js.org/favicon.png" />
-    <link rel="stylesheet" href="/tests/e2e/test-page/test-page.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/modern-normalize/modern-normalize.min.css" />
+    <style>
+      body {
+        text-align: center;
+      }
+      h1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+    </style>
   </head>
   <body>
-    <div class="container">
-      <h3>static methods</h3>
+    <h1>
+      <img
+        src="https://raw.githubusercontent.com/arianrhodsandlot/nostalgist/HEAD/docs/src/assets/logo.png"
+        width="48"
+        height="48"
+      />
+      Nostalgist.js Playground
+    </h1>
+    <div>
+      <h3>Static Methods</h3>
       <button type="button">nes</button>
       <button type="button">megadrive</button>
       <button type="button">gbc</button>
@@ -18,7 +37,7 @@
       <button type="button">launchAndCancel</button>
       <button type="button">launchWithHooks</button>
       <button type="button">launchState</button>
-      <h3>instance methods</h3>
+      <h3>Instance Methods</h3>
       <button type="button">saveState</button>
       <button type="button">loadState</button>
       <button type="button">pause</button>
@@ -29,7 +48,15 @@
       <button type="button">pressStart</button>
       <button type="button">screenshot</button>
     </div>
-    <script src="/dist/nostalgist.umd.js"></script>
-    <script src="/tests/e2e/test-page/test-page.js"></script>
+
+    <script type="module">
+      import { activate } from './activate.ts'
+
+      const useDist = location.search.includes('e2e')
+      const { Nostalgist } = useDist ? await import('../dist/nostalgist.js') : await import('../src/index.ts')
+
+      activate(Nostalgist)
+      globalThis.Nostalgist = Nostalgist
+    </script>
   </body>
 </html>

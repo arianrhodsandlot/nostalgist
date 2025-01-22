@@ -3,8 +3,8 @@ import { tests } from './instance-ra-common'
 
 test.describe('instance methods with retroarch esm', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/e2e/test-page')
+    await page.goto('/?e2e')
   })
 
-  test('tests', tests)
+  tests()
 })
