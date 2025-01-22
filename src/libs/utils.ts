@@ -38,9 +38,11 @@ export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclara
     return
   }
   for (const rule in style) {
-    const value = style[rule]
-    // @ts-expect-error null means to delete the rule
-    element.style[rule] = value || null
+    if (Object.hasOwn(style, rule)) {
+      const value = style[rule]
+      // @ts-expect-error null means to delete the rule
+      element.style[rule] = value || null
+    }
   }
 }
 
@@ -123,28 +125,33 @@ function isPlainObject(obj: any) {
   return obj.constructor === Object || !obj.constructor
 }
 
-function mergeSourceToTarget(target: any, source: any) {
-  for (const key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      const targetValue = target[key]
-      const sourceValue = source[key]
-      if (isNil(targetValue)) {
-        target[key] = sourceValue
-      } else if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
-        target[key] = [...targetValue, ...sourceValue]
-      } else if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
-        target[key] = isPlainObject(targetValue) ? target[key] : {}
-        mergeSourceToTarget(target[key], sourceValue)
-      } else {
-        target[key] = sourceValue
-      }
-    }
+function mergeProperty(target: any, source: any, key: string) {
+  const targetValue = target[key]
+  const sourceValue = source[key]
+  if (isNil(targetValue)) {
+    target[key] = sourceValue
+  } else if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+    target[key] = [...targetValue, ...sourceValue]
+  } else if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
+    target[key] = isPlainObject(targetValue) ? target[key] : {}
+    merge(target[key], sourceValue)
+  } else {
+    target[key] = sourceValue
   }
 }
 
 export function merge(target: any, ...sources: any[]) {
-  for (const source of sources) {
-    mergeSourceToTarget(target, source)
+  if (sources.length === 1) {
+    const [source] = sources
+    for (const key in source) {
+      if (Object.hasOwn(source, key)) {
+        mergeProperty(target, source, key)
+      }
+    }
+  } else {
+    for (const source of sources) {
+      merge(target, source)
+    }
   }
 }
 

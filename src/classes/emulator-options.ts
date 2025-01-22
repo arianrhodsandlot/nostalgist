@@ -1,6 +1,7 @@
 import { getGlobalOptions } from '../libs/options.ts'
 import { merge, urlBaseName } from '../libs/utils.ts'
 import type {
+  NostalgistCoreDict,
   NostalgistOptions,
   NostalgistOptionsFile,
   NostalgistResolveFileFunction,
@@ -95,7 +96,7 @@ export class EmulatorOptions {
     this.nostalgistOptions = options
 
     this.emscriptenModule = options.emscriptenModule ?? {}
-    this.respondToGlobalEvents = options.respondToGlobalEvents || true
+    this.respondToGlobalEvents = options.respondToGlobalEvents ?? true
     this.signal = options.signal
     this.size = options.size ?? 'auto'
     this.state = options.state
@@ -138,7 +139,7 @@ export class EmulatorOptions {
 
   private async getCore() {
     const { core, resolveCoreJs, resolveCoreWasm } = this.nostalgistOptions
-    let coreDict
+    let coreDict: NostalgistCoreDict | undefined
     if (typeof core === 'string') {
       const [js, wasm] = await Promise.all([
         resolveCoreJs(core, this.nostalgistOptions),
@@ -150,7 +151,7 @@ export class EmulatorOptions {
     }
     let { js, name, wasm } = coreDict
 
-    const promises = []
+    const promises: Promise<unknown>[] = []
     if (typeof js === 'string') {
       promises.push(
         (async () => {

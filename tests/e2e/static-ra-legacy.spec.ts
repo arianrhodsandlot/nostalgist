@@ -6,5 +6,5 @@ test.describe('static methods with retroarch legacy', () => {
     await page.goto('/tests/e2e/test-page?legacy')
   })
 
-  tests()
+  test('tests', tests)
 })

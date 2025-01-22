@@ -6,5 +6,5 @@ test.describe('instance methods with retroarch esm', () => {
     await page.goto('/tests/e2e/test-page')
   })
 
-  tests()
+  test('tests', tests)
 })
