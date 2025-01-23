@@ -42,6 +42,15 @@ export class Emulator {
 
   private options: EmulatorOptions
 
+  private get coreFullName() {
+    const { core } = this.options
+    const coreFullName = coreInfoMap[core.name].corename || core.name
+    if (!coreFullName) {
+      throw new Error(`invalid core name: ${core.name}`)
+    }
+    return coreFullName
+  }
+
   private get fs() {
     if (!this.fileSystem) {
       throw new Error('fileSystem is not ready')
@@ -56,13 +65,16 @@ export class Emulator {
     return fileName.slice(0, fileName.lastIndexOf('.'))
   }
 
+  private get sramFileDirectory() {
+    return path.join(EmulatorFileSystem.userdataDirectory, 'saves', this.coreFullName)
+  }
+
+  private get sramFilePath() {
+    return path.join(this.sramFileDirectory, `${this.romBaseName}.srm`)
+  }
+
   private get stateFileDirectory() {
-    const { core } = this.options
-    const coreFullName = coreInfoMap[core.name].corename || core.name
-    if (!coreFullName) {
-      throw new Error(`invalid core name: ${core.name}`)
-    }
-    return path.join(EmulatorFileSystem.userdataDirectory, 'states', coreFullName)
+    return path.join(EmulatorFileSystem.userdataDirectory, 'states', this.coreFullName)
   }
 
   private get stateFilePath() {
@@ -75,6 +87,12 @@ export class Emulator {
 
   constructor(options: EmulatorOptions) {
     this.options = options
+  }
+
+  callCommand(command: string) {
+    const { Module } = this.getEmscripten()
+    // @ts-expect-error command may be an arbitrary string here
+    Module[command]?.()
   }
 
   exit(statusCode = 0) {
@@ -98,13 +116,7 @@ export class Emulator {
 
   async launch() {
     await this.setupEmscripten()
-    checkIsAborted(this.options.signal)
-
     await this.setupFileSystem()
-    checkIsAborted(this.options.signal)
-
-    await this.setupRaConfigFile()
-    checkIsAborted(this.options.signal)
 
     const { element, respondToGlobalEvents, signal, style, waitForInteraction } = this.options
     updateStyle(element, style)
@@ -203,6 +215,14 @@ export class Emulator {
       this.sendCommand('PAUSE_TOGGLE')
     }
     this.gameStatus = 'running'
+  }
+
+  async saveSRAM() {
+    this.fs.unlink(this.sramFilePath)
+    this.callCommand('_cmd_savefiles')
+    const buffer = await this.fs.waitForFile(this.sramFilePath)
+    const blob = new Blob([buffer], { type: 'application/octet-stream' })
+    return blob
   }
 
   async saveState() {
@@ -372,19 +392,25 @@ export class Emulator {
     initialModule.preRun?.push(() => initialModule.FS.init(() => this.stdin()))
 
     const { getEmscripten } = await importCoreJsAsESM(core)
+    checkIsAborted(this.options.signal)
     const emscripten: EmulatorEmscripten = await getEmscripten({ Module: initialModule })
+    checkIsAborted(this.options.signal)
     this.emscripten = emscripten
     const { Module } = emscripten
     await Module.monitorRunDependencies()
+    checkIsAborted(this.options.signal)
   }
 
   private async setupFileSystem() {
     const { Module } = this.getEmscripten()
-    const { bios, rom, signal, state } = this.options
+    const { bios, rom, signal, sram, state } = this.options
     const fileSystem = await EmulatorFileSystem.create({ emscriptenModule: Module, signal })
     this.fileSystem = fileSystem
     if (state) {
       this.fs.mkdirTree(this.stateFileDirectory)
+    }
+    if (sram) {
+      this.fs.mkdirTree(this.sramFileDirectory)
     }
 
     const filePromises: Promise<void>[] = []
@@ -397,14 +423,19 @@ export class Emulator {
       ),
     )
     if (state) {
-      filePromises.push(this.fs.writeFile(path.join(this.stateFileDirectory, `${this.romBaseName}.state.auto`), state))
+      filePromises.push(this.fs.writeFile(`${this.stateFilePath}.auto`, state))
+    }
+    if (sram) {
+      filePromises.push(this.fs.writeFile(this.sramFilePath, sram))
     }
     await Promise.all(filePromises)
-
     checkIsAborted(signal)
+
+    await this.setupRaConfigFiles()
+    checkIsAborted(this.options.signal)
   }
 
-  private async setupRaConfigFile() {
+  private async setupRaConfigFiles() {
     await this.fs.writeIni(EmulatorFileSystem.configPath, this.options.retroarchConfig)
     await this.fs.writeIni(EmulatorFileSystem.coreConfigPath, this.options.retroarchCoreConfig)
     await this.setupRaShaderFiles()

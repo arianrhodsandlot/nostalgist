@@ -293,7 +293,7 @@ export class Nostalgist {
    * const nostalgist = await Nostalgist.nes('flappybird.nes')
    *
    * // save the state
-   * const { state } = await nostalgist.saveState(state)
+   * const { state } = await nostalgist.saveState()
    *
    * // load the state
    * await nostalgist.loadState(state)
@@ -426,6 +426,23 @@ export class Nostalgist {
    */
   resume() {
     this.getEmulator().resume()
+  }
+
+  /**
+   * Save the SRAM of the current running game.
+   *
+   * @see {@link https://nostalgist.js.org/apis/save-sram/}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('flappybird.nes')
+   *
+   * const sram = await nostalgist.saveSRAM()
+   * ```
+   */
+  async saveSRAM() {
+    const emulator = this.getEmulator()
+    return await emulator.saveSRAM()
   }
 
   /**

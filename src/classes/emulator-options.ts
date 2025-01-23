@@ -42,6 +42,8 @@ export class EmulatorOptions {
    */
   size?: 'auto' | { height: number; width: number }
 
+  sram?: Blob | undefined
+
   state?: Blob | undefined
 
   waitForInteraction: ((params: { done: () => void }) => void) | undefined
@@ -100,6 +102,7 @@ export class EmulatorOptions {
     this.signal = options.signal
     this.size = options.size ?? 'auto'
     this.state = options.state
+    this.sram = options.sram
     this.waitForInteraction = options.waitForInteraction
     this.element = this.getElement()
   }

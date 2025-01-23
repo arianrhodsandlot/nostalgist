@@ -74,7 +74,9 @@ export class EmulatorFileSystem {
 
   unlink(path: string) {
     const { FS } = this
-    FS.unlink(path)
+    try {
+      FS.unlink(path)
+    } catch {}
   }
 
   async waitForFile(fileName: string) {

@@ -67,7 +67,7 @@
     "@happy-dom/global-registrator": "16.7.2",
     "@playwright/test": "1.49.1",
     "@types/is-ci": "3.0.4",
-    "@types/node": "22.10.7",
+    "@types/node": "22.10.8",
     "@types/wicg-file-system-access": "2023.10.5",
     "astro": "5.1.8",
     "eslint": "9.18.0",

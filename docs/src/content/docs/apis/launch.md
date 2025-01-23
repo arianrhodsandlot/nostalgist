@@ -151,6 +151,14 @@ const nostalgist = await Nostalgist.launch({
 
     The initial state to be loaded after launching.
 
+  + #### `sram`
+
+    **type:** `Blob`
+
+    **since:** `0.12.0`
+
+    The initial sram to be loaded after launching.
+
   + #### `shader`
 
     **type:** `string`

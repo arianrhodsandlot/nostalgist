@@ -144,7 +144,15 @@ export interface NostalgistOptions {
    */
   bios?: NostalgistOptionsFiles
 
+  /**
+   * The initial state to be loaded after launching.
+   */
   state?: Blob
+
+  /**
+   * The initial SRAM to be loaded after launching.
+   */
+  sram?: Blob
 
   respondToGlobalEvents?: boolean
 

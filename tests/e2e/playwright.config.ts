@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
-  expect: { toHaveScreenshot: { maxDiffPixels: 250 } },
+  expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.01 } },
   fullyParallel: true,
   reporter: 'html',
   retries: 5,
