@@ -160,3 +160,20 @@ export function checkIsAborted(signal: AbortSignal | undefined) {
 export function padZero(number: number) {
   return (number < 10 ? '0' : '') + number
 }
+
+export async function getResult(value: ((...args: unknown[]) => unknown) | Promise<unknown> | unknown) {
+  if (!value) {
+    return value
+  }
+
+  // @ts-expect-error it's safe here
+  if (typeof value?.then === 'function') {
+    return getResult(await value)
+  }
+
+  if (typeof value === 'function') {
+    return getResult(value())
+  }
+
+  return value
+}
