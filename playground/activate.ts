@@ -106,6 +106,10 @@ const handlers = {
   exit() {
     nostalgist.exit()
   },
+
+  exitWithoutRemovingCanvas() {
+    nostalgist.exit({ removeCanvas: false })
+  },
 }
 
 export function activate(mod: typeof Nostalgist_) {

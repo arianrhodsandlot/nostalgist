@@ -83,8 +83,6 @@ export class Emulator {
       exit(statusCode)
       JSEvents.removeAllEventListeners()
     } catch {}
-
-    this.fs.dispose()
   }
 
   getEmscripten() {

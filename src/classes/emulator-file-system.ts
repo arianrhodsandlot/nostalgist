@@ -62,10 +62,6 @@ export class EmulatorFileSystem {
     return emulatorFileSystem
   }
 
-  dispose() {
-    this.FS.unmount('/home')
-  }
-
   mkdirTree(directory: string) {
     const { FS } = this
     FS.mkdirTree(directory)

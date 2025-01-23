@@ -116,4 +116,30 @@ export function tests() {
     await page.getByText('screenshot', { exact: true }).click()
     await expect(screenshot).toHaveScreenshot('screenshot.png')
   })
+
+  test('exit', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('nes', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(500)
+    await expect(canvas).toBeAttached()
+
+    await page.getByText('exit', { exact: true }).click()
+    await expect(canvas).not.toBeAttached()
+  })
+
+  test('exit without removing the canvas', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('nes', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(500)
+    await expect(canvas).toBeAttached()
+
+    await page.getByText('exitWithoutRemovingCanvas', { exact: true }).click()
+    await expect(canvas).toBeAttached()
+  })
 }
