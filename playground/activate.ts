@@ -102,7 +102,12 @@ const handlers = {
     })
     document.body.append(image)
   },
+
+  exit() {
+    nostalgist.exit()
+  },
 }
+
 export function activate(mod: typeof Nostalgist_) {
   const nostalgistConfig = {
     style: {

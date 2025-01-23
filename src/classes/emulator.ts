@@ -78,13 +78,13 @@ export class Emulator {
   }
 
   exit(statusCode = 0) {
-    const { emscripten } = this
-    if (emscripten) {
+    try {
       const { exit, JSEvents } = this.getEmscripten()
       exit(statusCode)
-      this.fs.dispose()
       JSEvents.removeAllEventListeners()
-    }
+    } catch {}
+
+    this.fs.dispose()
   }
 
   getEmscripten() {
