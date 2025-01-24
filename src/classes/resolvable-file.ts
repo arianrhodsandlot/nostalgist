@@ -1,4 +1,7 @@
-import { getResult, urlBaseName } from '../libs/utils'
+import { extractValidFileName, getResult, isNil } from '../libs/utils'
+import { vendors } from '../libs/vendors'
+
+const { path } = vendors
 
 function isURL(value: unknown): value is URL {
   return typeof globalThis.URL === 'object' && value instanceof globalThis.URL
@@ -8,16 +11,53 @@ function isRequest(value: unknown): value is Request {
   return typeof globalThis.Request === 'object' && value instanceof globalThis.Request
 }
 
+function isResponse(value: unknown): value is Response {
+  return typeof globalThis.Response === 'object' && value instanceof globalThis.Response
+}
+
 function isFetchable(value: unknown): value is Request | string | URL {
   if (typeof value === 'string') {
-    const prefixes = ['http://', 'https://', '/', './', '../', 'data:', 'blob:']
+    const prefixes = ['http://', 'https://', 'data:', 'blob:']
     return prefixes.some((absolutePrefix) => value.startsWith(absolutePrefix))
   }
   return isURL(value) || isRequest(value)
 }
 
+type ResolvablePrimitive = ArrayBuffer | Blob | Request | Response | string | Uint8Array | URL
+type ResolvableObjects = { fileContent: ResolvablePrimitive; fileName: string } | ResolvablePrimitive
+type ResolvableWrapped = ((...args: unknown[]) => ResolvableObjects) | Promise<ResolvableObjects>
+export type ResolvableFileInput =
+  | ((...args: unknown[]) => ResolvableWrapped)
+  | Promise<ResolvableWrapped>
+  | ResolvableObjects
+  | ResolvableWrapped
+
+interface ResolvableFileConstructorParameters {
+  blobType?: string
+  name?: string
+  raw: ResolvableFileInput
+  signal?: AbortSignal | undefined
+  urlResolver?: (raw: unknown) => unknown
+}
+
+type ResolvableFileParameter =
+  | ResolvableFile
+  | ResolvableFileConstructorParameters
+  | ResolvableFileConstructorParameters['raw']
+
 export class ResolvableFile {
   name = ''
+
+  /** The base name of the file, without its extension. */
+  get baseName() {
+    return path.parse(this.name).name
+  }
+
+  /** The extension name of the file, with a leading ".". */
+  get extension() {
+    return path.parse(this.name).ext
+  }
+
   private arrayBuffer: ArrayBuffer | undefined
   private blob: Blob | undefined
   private blobType = 'application/octet-stream'
@@ -26,21 +66,10 @@ export class ResolvableFile {
   private signal: AbortSignal | undefined
   private text: string | undefined
   private uint8Array: Uint8Array | undefined
-  private urlResolver?: ((raw: unknown) => unknown) | undefined
 
-  constructor({
-    blobType,
-    name,
-    raw,
-    signal,
-    urlResolver,
-  }: {
-    blobType?: string
-    name?: string
-    raw: unknown
-    signal?: AbortSignal
-    urlResolver?: (raw: unknown) => unknown
-  }) {
+  private urlResolver?: ((resolvable: ResolvableFile) => unknown) | undefined
+
+  constructor({ blobType, name, raw, signal, urlResolver }: ResolvableFileConstructorParameters) {
     this.raw = raw
     if (signal) {
       this.signal = signal
@@ -52,12 +81,19 @@ export class ResolvableFile {
       this.blobType = blobType
     }
     if (name) {
-      this.name = name.replaceAll(/["%*/:<>?\\|]/g, '-')
+      this.name = extractValidFileName(name)
     }
   }
 
-  static async create(...args: ConstructorParameters<typeof ResolvableFile>) {
-    const resolvableFile = new ResolvableFile(...args)
+  static async create(rawOrOption: ResolvableFileParameter) {
+    if (isNil(rawOrOption)) {
+      throw new Error('parameter is not valid')
+    }
+    if (rawOrOption instanceof ResolvableFile) {
+      return rawOrOption
+    }
+    const option = typeof rawOrOption === 'object' && 'raw' in rawOrOption ? rawOrOption : { raw: rawOrOption }
+    const resolvableFile = new ResolvableFile(option)
     await resolvableFile.load()
     return resolvableFile
   }
@@ -110,17 +146,21 @@ export class ResolvableFile {
   }
 
   private async load() {
-    const result = await getResult(this.urlResolver ? this.urlResolver(this.raw) : this.raw)
+    const result = await getResult(this.urlResolver ? this.urlResolver(this) : this.raw)
     if (isFetchable(result)) {
       await this.loadFetchable(result)
     } else if (typeof result === 'string') {
       this.loadPlainText(result)
+    } else if ([Blob, ArrayBuffer, Uint8Array].some((clazz) => (result as any)?.fileContent instanceof clazz)) {
+      this.loadObject(result as any)
     } else if (result instanceof Blob) {
       this.loadBlob(result)
     } else if (result instanceof ArrayBuffer) {
       this.loadArrayBuffer(result)
     } else if (result instanceof Uint8Array) {
       this.loadUint8Array(result)
+    } else if (result instanceof Response) {
+      this.loadResponse(result)
     }
   }
 
@@ -128,7 +168,6 @@ export class ResolvableFile {
     this.arrayBuffer = arrayBuffer
     this.blob = new Blob([arrayBuffer], { type: this.blobType })
   }
-
   private loadBlob(blob: Blob) {
     this.blob = blob
   }
@@ -143,15 +182,34 @@ export class ResolvableFile {
       } else {
         fetchableUrl = `${fetchable}`
       }
-      this.name = urlBaseName(fetchableUrl).replaceAll(/["%*/:<>?\\|]/g, '-')
+      this.name = extractValidFileName(fetchableUrl)
     }
 
-    const response = await fetch(fetchable, this.signal ? { signal: this.signal } : undefined)
+    const response = await fetch(fetchable, { signal: this.signal || null })
     this.blob = await response.blob()
+  }
+
+  private loadObject(object: ArrayBuffer | Blob | Response | Uint8Array) {
+    const { fileContent, fileName } = object as any
+    this.name = extractValidFileName(fileName)
+    if (fileContent instanceof Blob) {
+      this.loadBlob(fileContent)
+    } else if (fileContent instanceof ArrayBuffer) {
+      this.loadArrayBuffer(fileContent)
+    } else if (fileContent instanceof Uint8Array) {
+      this.loadUint8Array(fileContent)
+    } else if (isResponse(fileContent)) {
+      this.loadResponse(fileContent)
+    }
   }
 
   private loadPlainText(text: string) {
     this.blob = new Blob([text], { type: this.blobType })
+  }
+
+  private async loadResponse(response: Response) {
+    this.name = extractValidFileName(response.url)
+    this.blob = await response.blob()
   }
 
   private loadUint8Array(uint8Array: Uint8Array) {

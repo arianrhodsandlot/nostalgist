@@ -39,7 +39,6 @@ const handlers = {
     async launchWithHooks() {
       nostalgist = await Nostalgist.nes({
         async beforeLaunch(nostalgist) {
-          globalThis.nostalgist = nostalgist
           console.warn(typeof nostalgist, 'beforeLaunch')
           await new Promise((resolve) => {
             setTimeout(resolve, 100)
@@ -198,5 +197,7 @@ export function activate(mod: typeof Nostalgist_) {
     }
     target.disabled = false
     target.blur()
+
+    globalThis.nostalgist = nostalgist
   })
 }

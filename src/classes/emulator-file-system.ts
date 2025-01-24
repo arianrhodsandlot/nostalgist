@@ -1,6 +1,7 @@
-import { blobToBuffer, checkIsAborted, delay, textEncoder } from '../libs/utils.ts'
+import { checkIsAborted, delay } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
+import { ResolvableFile } from './resolvable-file.ts'
 
 const { ini, path } = vendors
 
@@ -15,19 +16,6 @@ const shaderDirectory = path.join(bundleDirectory, 'shaders', 'shaders_glsl')
 
 const configPath = path.join(userdataDirectory, 'retroarch.cfg')
 const coreConfigPath = path.join(userdataDirectory, 'retroarch-core-options.cfg')
-
-async function normalizeFileContent(fileContent: ArrayBuffer | Blob | string | Uint8Array) {
-  if (typeof fileContent === 'string') {
-    return textEncoder.encode(fileContent)
-  }
-  if (fileContent instanceof Blob) {
-    return await blobToBuffer(fileContent)
-  }
-  if (fileContent instanceof ArrayBuffer) {
-    return new Uint8Array(fileContent)
-  }
-  return fileContent
-}
 
 export class EmulatorFileSystem {
   static readonly bundleDirectory = bundleDirectory
@@ -105,11 +93,12 @@ export class EmulatorFileSystem {
     return buffer
   }
 
-  async writeFile(filePath: string, fileContent: ArrayBuffer | Blob | string | Uint8Array) {
+  async writeFile(filePath: string, fileContent: ArrayBuffer | Blob | ResolvableFile | string | Uint8Array) {
     const { FS } = this
     const directory = path.dirname(filePath)
     const fileName = path.basename(filePath)
-    const buffer = await normalizeFileContent(fileContent)
+    const resolvable = await ResolvableFile.create(fileContent)
+    const buffer = await resolvable.getUint8Array()
     FS.createDataFile('/', fileName, buffer, true, false)
     const encoding = 'binary'
     const data = this.readFile(fileName, encoding)
