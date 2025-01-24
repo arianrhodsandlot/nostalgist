@@ -1,20 +1,13 @@
 import { coreInfoMap } from '../constants/core-info.ts'
 import { keyboardCodeMap } from '../constants/keyboard-code-map.ts'
 import { getEmscriptenModuleOverrides } from '../libs/emscripten.ts'
-import {
-  blobToBuffer,
-  checkIsAborted,
-  delay,
-  importCoreJsAsESM,
-  padZero,
-  textEncoder,
-  updateStyle,
-} from '../libs/utils.ts'
+import { checkIsAborted, delay, importCoreJsAsESM, padZero, textEncoder, updateStyle } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
 import type { RetroArchCommand } from '../types/retroarch-command.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
 import { EmulatorFileSystem } from './emulator-file-system.ts'
 import type { EmulatorOptions } from './emulator-options'
+import type { ResolvableFile } from './resolvable-file.ts'
 
 const { ini, path } = vendors
 
@@ -60,9 +53,9 @@ export class Emulator {
 
   private get romBaseName() {
     const {
-      rom: [{ fileName }],
+      rom: [{ baseName }],
     } = this.options
-    return fileName.slice(0, fileName.lastIndexOf('.'))
+    return baseName
   }
 
   private get sramFileDirectory() {
@@ -157,10 +150,9 @@ export class Emulator {
     }
   }
 
-  async loadState(blob: Blob) {
+  async loadState(state: ResolvableFile) {
     this.clearStateFile()
-    const buffer = await blobToBuffer(blob)
-    await this.fs.writeFile(this.stateFilePath, buffer)
+    await this.fs.writeFile(this.stateFilePath, state)
     await this.fs.waitForFile(this.stateFilePath)
     this.sendCommand('LOAD_STATE')
   }
@@ -367,8 +359,8 @@ export class Emulator {
     const { arguments: raArgs = [] } = Module
     const { rom, signal } = this.options
     if (!Module.arguments && rom.length > 0) {
-      const [{ fileName }] = rom
-      raArgs.push(path.join(EmulatorFileSystem.contentDirectory, fileName))
+      const [{ name }] = rom
+      raArgs.push(path.join(EmulatorFileSystem.contentDirectory, name))
     }
 
     Module.callMain(raArgs)
@@ -387,7 +379,7 @@ export class Emulator {
 
     const { core, element, emscriptenModule } = this.options
     const { wasm } = core
-    const moduleOptions = { canvas: element, preRun: [], wasmBinary: wasm, ...emscriptenModule }
+    const moduleOptions = { canvas: element, preRun: [], wasmBinary: await wasm.getArrayBuffer(), ...emscriptenModule }
     const initialModule = getEmscriptenModuleOverrides(moduleOptions)
     initialModule.preRun?.push(() => initialModule.FS.init(() => this.stdin()))
 
@@ -415,12 +407,8 @@ export class Emulator {
 
     const filePromises: Promise<void>[] = []
     filePromises.push(
-      ...rom.map((file) =>
-        this.fs.writeFile(path.join(EmulatorFileSystem.contentDirectory, file.fileName), file.fileContent),
-      ),
-      ...bios.map((file) =>
-        this.fs.writeFile(path.join(EmulatorFileSystem.systemDirectory, file.fileName), file.fileContent),
-      ),
+      ...rom.map((file) => this.fs.writeFile(path.join(EmulatorFileSystem.contentDirectory, file.name), file)),
+      ...bios.map((file) => this.fs.writeFile(path.join(EmulatorFileSystem.systemDirectory, file.name), file)),
     )
     if (state) {
       filePromises.push(this.fs.writeFile(`${this.stateFilePath}.auto`, state))
@@ -446,23 +434,23 @@ export class Emulator {
     if (shader.length === 0) {
       return
     }
-    const glslpFiles = shader.filter((file) => file.fileName.endsWith('.glslp'))
+    const glslpFiles = shader.filter((file) => file.name.endsWith('.glslp'))
     if (glslpFiles.length === 0) {
       return
     }
     const globalGlslpContent = glslpFiles
-      .map((file) => `#reference "${path.join(EmulatorFileSystem.shaderDirectory, file.fileName)}"`)
+      .map((file) => `#reference "${path.join(EmulatorFileSystem.shaderDirectory, file.name)}"`)
       .join('\n')
 
     await this.fs.writeFile(path.join(EmulatorFileSystem.configDirectory, 'global.glslp'), globalGlslpContent)
 
     await Promise.all(
-      shader.map(async ({ fileContent, fileName }) => {
+      shader.map(async (resolvable) => {
         const directory =
-          path.extname(fileName) === '.glslp'
+          resolvable.extension === '.glslp'
             ? EmulatorFileSystem.shaderDirectory
             : path.join(EmulatorFileSystem.shaderDirectory, 'shaders')
-        await this.fs.writeFile(path.join(directory, fileName), fileContent)
+        await this.fs.writeFile(path.join(directory, resolvable.name), resolvable)
       }),
     )
   }

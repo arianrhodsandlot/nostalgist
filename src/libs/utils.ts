@@ -1,3 +1,4 @@
+import { ResolvableFile } from '../classes/resolvable-file.ts'
 import { vendors } from './vendors.ts'
 
 const { path } = vendors
@@ -17,6 +18,16 @@ export function urlBaseName(url: string) {
   }
 }
 
+let i = 0
+function id() {
+  i += 1
+  return i
+}
+
+export function extractValidFileName(url: string) {
+  return urlBaseName(url).replaceAll(/["%*/:<>?\\|]/g, '-') || `data${id()}.bin`
+}
+
 export function isAbsoluteUrl(string: string) {
   if (!string) {
     return false
@@ -26,11 +37,6 @@ export function isAbsoluteUrl(string: string) {
   }
   const absolutePrefixes = ['http://', 'https://', '//', 'data:', 'blob:']
   return absolutePrefixes.some((absolutePrefix) => string.startsWith(absolutePrefix))
-}
-
-export async function blobToBuffer(blob: Blob) {
-  const arrayBuffer = await blob.arrayBuffer()
-  return new Uint8Array(arrayBuffer)
 }
 
 export function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclaration>) {
@@ -58,10 +64,10 @@ function isEsmScript(js: string) {
   return js.includes('import.meta.url')
 }
 
-function patchCoreJs({ js, name }: { js: string; name: string }) {
-  let jsContent = js
+async function patchCoreJs({ js, name }: { js: ResolvableFile; name: string }) {
+  let jsContent = await js.getText()
 
-  if (isGlobalScript(js)) {
+  if (isGlobalScript(jsContent)) {
     jsContent = `export function getEmscripten({ Module }) {
         ${js};
         Module.FS = FS;
@@ -75,8 +81,8 @@ function patchCoreJs({ js, name }: { js: string; name: string }) {
           exit: _emscripten_force_exit
          }
       }`
-  } else if (isEsmScript(js)) {
-    jsContent = `${js.replace(
+  } else if (isEsmScript(jsContent)) {
+    jsContent = `${jsContent.replace(
       'readyPromiseResolve(Module)',
       `readyPromiseResolve({
         AL: typeof AL === 'undefined' ? null: AL,
@@ -94,25 +100,22 @@ function patchCoreJs({ js, name }: { js: string; name: string }) {
   return jsContent
 }
 
-export async function importCoreJsAsESM({ js, name }: { js: string; name: string }) {
-  const jsContent = patchCoreJs({ js, name })
-  const jsBlob = new Blob([jsContent], { type: 'application/javascript' })
-  const jsBlobUrl = URL.createObjectURL(jsBlob)
-  if (!jsBlobUrl) {
-    throw new Error('invalid jsBlob')
-  }
+export async function importCoreJsAsESM({ js, name }: { js: ResolvableFile; name: string }) {
+  const jsContent = await patchCoreJs({ js, name })
+  const jsResolvable = await ResolvableFile.create({ blobType: 'application/javascript', raw: jsContent })
+  const jsObjectUrl = jsResolvable.getObjectUrl()
 
   try {
-    return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsBlobUrl)
+    return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsObjectUrl)
   } catch {
     // a dirty hack for using with SystemJS, for example, in StackBlitz
-    return await new Function('return import(jsBlobUrl)')()
+    return await new Function('return import(jsObjectUrl)')()
   } finally {
-    URL.revokeObjectURL(jsBlobUrl)
+    jsResolvable.dispose()
   }
 }
 
-function isNil(obj: unknown) {
+export function isNil(obj: unknown): obj is null | undefined {
   return obj === undefined || obj === null
 }
 
@@ -161,7 +164,7 @@ export function padZero(number: number) {
   return (number < 10 ? '0' : '') + number
 }
 
-export async function getResult(value: ((...args: unknown[]) => unknown) | Promise<unknown> | unknown) {
+export async function getResult<T = any>(value: ((...args: unknown[]) => T) | Promise<T> | T): Promise<T> {
   if (!value) {
     return value
   }
@@ -172,8 +175,20 @@ export async function getResult(value: ((...args: unknown[]) => unknown) | Promi
   }
 
   if (typeof value === 'function') {
+    // @ts-expect-error it's safe here
     return getResult(value())
   }
 
   return value
+}
+
+export function isResolvableFileInput(value: any) {
+  if (typeof value === 'string') {
+    return true
+  }
+  if ('fileContent' in value) {
+    return true
+  }
+  const classes = [globalThis.Response, globalThis.Uint8Array, globalThis.URL, globalThis.Request, globalThis.Response]
+  return classes.some((clazz) => clazz && value instanceof clazz)
 }

@@ -1,11 +1,11 @@
 import type { Nostalgist } from '..'
+import type { ResolvableFileInput } from '../classes/resolvable-file'
 import type { RetroArchConfig } from './retroarch-config'
 import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
 type MaybePromise<T> = Promise<T> | T
 
-export type NostalgistOptionsFile = { fileContent: Blob; fileName: string } | Blob | string
-type NostalgistOptionsFiles = NostalgistOptionsFile | NostalgistOptionsFile[]
+type NostalgistOptionsFiles = ResolvableFileInput | ResolvableFileInput[]
 
 export interface NostalgistCoreDict {
   /** the name of core */
@@ -147,12 +147,12 @@ export interface NostalgistOptions {
   /**
    * The initial state to be loaded after launching.
    */
-  state?: Blob
+  state?: ResolvableFileInput
 
   /**
    * The initial SRAM to be loaded after launching.
    */
-  sram?: Blob
+  sram?: ResolvableFileInput
 
   respondToGlobalEvents?: boolean
 

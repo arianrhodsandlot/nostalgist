@@ -1,17 +1,17 @@
 import { systemCoreMap } from '../constants/system.ts'
 import { getGlobalOptions, resetGlobalOptions, updateGlobalOptions } from '../libs/options.ts'
-import { checkIsAborted, merge } from '../libs/utils.ts'
+import { checkIsAborted, getResult, isResolvableFileInput, merge } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
 import type {
   NostalgistLaunchOptions,
   NostalgistLaunchRomOptions,
   NostalgistOptions,
-  NostalgistOptionsFile,
   NostalgistOptionsPartial,
 } from '../types/nostalgist-options'
 import type { RetroArchCommand } from '../types/retroarch-command'
 import { EmulatorOptions } from './emulator-options.ts'
 import { Emulator } from './emulator.ts'
+import { ResolvableFile, type ResolvableFileInput } from './resolvable-file.ts'
 
 export class Nostalgist {
   static readonly Nostalgist = Nostalgist
@@ -55,7 +55,7 @@ export class Nostalgist {
    *
    * @see {@link https://nostalgist.js.org/apis/gb/}
    */
-  static async gb(options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
+  static async gb(options: NostalgistLaunchRomOptions | ResolvableFileInput) {
     return await Nostalgist.launchSystem('gb', options)
   }
 
@@ -66,7 +66,7 @@ export class Nostalgist {
    *
    * @see {@link https://nostalgist.js.org/apis/gba/}
    */
-  static async gba(options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
+  static async gba(options: NostalgistLaunchRomOptions | ResolvableFileInput) {
     return await Nostalgist.launchSystem('gba', options)
   }
 
@@ -77,7 +77,7 @@ export class Nostalgist {
    *
    * @see {@link https://nostalgist.js.org/apis/gbc/}
    */
-  static async gbc(options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
+  static async gbc(options: NostalgistLaunchRomOptions | ResolvableFileInput) {
     return await Nostalgist.launchSystem('gbc', options)
   }
 
@@ -136,7 +136,7 @@ export class Nostalgist {
    *
    * @see {@link https://nostalgist.js.org/apis/megadrive/}
    */
-  static async megadrive(options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
+  static async megadrive(options: NostalgistLaunchRomOptions | ResolvableFileInput) {
     return await Nostalgist.launchSystem('megadrive', options)
   }
 
@@ -147,7 +147,7 @@ export class Nostalgist {
    *
    * @see {@link https://nostalgist.js.org/apis/nes/}
    */
-  static async nes(options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
+  static async nes(options: NostalgistLaunchRomOptions | ResolvableFileInput) {
     return await Nostalgist.launchSystem('nes', options)
   }
 
@@ -167,15 +167,13 @@ export class Nostalgist {
    *
    * @see {@link https://nostalgist.js.org/apis/snes/}
    */
-  static async snes(options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
+  static async snes(options: NostalgistLaunchRomOptions | ResolvableFileInput) {
     return await Nostalgist.launchSystem('snes', options)
   }
 
-  private static async launchSystem(system: string, options: NostalgistLaunchRomOptions | NostalgistOptionsFile) {
-    const launchOptions =
-      typeof options === 'string' || options instanceof Blob || ('fileName' in options && 'fileContent' in options)
-        ? { rom: options }
-        : options
+  private static async launchSystem(system: string, options: NostalgistLaunchRomOptions | ResolvableFileInput) {
+    const optionsResult = await getResult(options as any)
+    const launchOptions = isResolvableFileInput(optionsResult) ? { rom: optionsResult } : optionsResult
     return await Nostalgist.launch({ ...launchOptions, core: systemCoreMap[system] })
   }
 
@@ -300,7 +298,8 @@ export class Nostalgist {
    * ```
    */
   async loadState(state: Blob) {
-    await this.getEmulator().loadState(state)
+    const resolvable = await ResolvableFile.create(state)
+    await this.getEmulator().loadState(resolvable)
   }
 
   /**
