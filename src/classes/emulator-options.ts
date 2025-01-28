@@ -178,6 +178,8 @@ export class EmulatorOptions {
     const { core, resolveCoreJs, resolveCoreWasm } = this.nostalgistOptions
 
     if (typeof core === 'object' && 'js' in core && 'name' in core && 'wasm' in core) {
+      const [js, wasm] = await Promise.all([ResolvableFile.create(core.js), ResolvableFile.create(core.wasm)])
+      this.core = { js, name: core.name, wasm }
       return core
     }
 

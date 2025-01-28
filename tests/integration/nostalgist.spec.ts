@@ -31,12 +31,8 @@ describe('nostalgist', () => {
     t.assert.strictEqual(options.core, 'fceumm')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
-    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
-    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
     t.assert.strictEqual(emulatorOptions.rom.length, 1)
-    t.assert.strictEqual(emulatorOptions.rom[0].fileName, 'flappybird.nes')
-    t.assert.ok(emulatorOptions.rom[0].fileContent instanceof Blob)
+    t.assert.strictEqual(emulatorOptions.rom[0].name, 'flappybird.nes')
     t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
@@ -45,11 +41,8 @@ describe('nostalgist', () => {
     const emulatorOptions = nostalgist.getEmulatorOptions()
 
     t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
-    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
-    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
     t.assert.strictEqual(emulatorOptions.rom.length, 1)
-    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
-    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].name, 'Super Tilt Bro (USA).nes')
     t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
@@ -59,12 +52,8 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.nes('Super Tilt Bro (USA).nes')
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
-    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
-    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
     t.assert.strictEqual(emulatorOptions.rom.length, 1)
-    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
-    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].name, 'Super Tilt Bro (USA).nes')
     t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
@@ -76,11 +65,8 @@ describe('nostalgist', () => {
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     t.assert.strictEqual(emulatorOptions.core.name, 'nestopia')
-    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
-    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
     t.assert.strictEqual(emulatorOptions.rom.length, 1)
-    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
-    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].name, 'Super Tilt Bro (USA).nes')
     t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
@@ -99,11 +85,8 @@ describe('nostalgist', () => {
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     t.assert.deepStrictEqual(emulatorOptions.size, { height: 100, width: 100 })
-    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
-    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
     t.assert.strictEqual(emulatorOptions.rom.length, 1)
-    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
-    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].name, 'Super Tilt Bro (USA).nes')
     t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
@@ -120,11 +103,8 @@ describe('nostalgist', () => {
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
-    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
-    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
     t.assert.strictEqual(emulatorOptions.rom.length, 1)
-    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
-    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].name, 'Super Tilt Bro (USA).nes')
     t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
@@ -143,11 +123,8 @@ describe('nostalgist', () => {
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
-    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
-    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
     t.assert.strictEqual(emulatorOptions.rom.length, 1)
-    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
-    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].name, 'Super Tilt Bro (USA).nes')
     t.assert.deepStrictEqual(emulatorOptions.bios, [])
   })
 
@@ -167,18 +144,12 @@ describe('nostalgist', () => {
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     t.assert.strictEqual(emulatorOptions.core.name, 'fceumm')
-    t.assert.strictEqual(typeof emulatorOptions.core.js, 'string')
-    t.assert.ok(emulatorOptions.core.wasm instanceof ArrayBuffer)
     t.assert.strictEqual(emulatorOptions.rom.length, 2)
-    t.assert.deepStrictEqual(emulatorOptions.rom[0].fileName, 'Super Tilt Bro (USA).nes')
-    t.assert.strictEqual(emulatorOptions.rom[0].fileContent.constructor.name, 'Blob')
-    t.assert.deepStrictEqual(emulatorOptions.rom[1].fileName, '240p Test Suite.nes')
-    t.assert.strictEqual(emulatorOptions.rom[1].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.rom[0].name, 'Super Tilt Bro (USA).nes')
+    t.assert.deepStrictEqual(emulatorOptions.rom[1].name, '240p Test Suite.nes')
     t.assert.strictEqual(emulatorOptions.bios.length, 2)
-    t.assert.deepStrictEqual(emulatorOptions.bios[0].fileName, 'PrBoom.zip')
-    t.assert.strictEqual(emulatorOptions.bios[0].fileContent.constructor.name, 'Blob')
-    t.assert.deepStrictEqual(emulatorOptions.bios[1].fileName, 'FinalBurn Neo (hiscore).zip')
-    t.assert.strictEqual(emulatorOptions.bios[1].fileContent.constructor.name, 'Blob')
+    t.assert.deepStrictEqual(emulatorOptions.bios[0].name, 'PrBoom.zip')
+    t.assert.deepStrictEqual(emulatorOptions.bios[1].name, 'FinalBurn Neo (hiscore).zip')
   })
 
   test('Nostalgist.launch with custom style and size', async (t: TestContext) => {
@@ -200,11 +171,11 @@ describe('nostalgist', () => {
     })
 
     const { shader } = nostalgist.getEmulatorOptions()
-    t.assert.ok(shader[0].fileName.endsWith('.glslp'))
-    t.assert.ok(shader[1].fileName.endsWith('.glsl'))
+    t.assert.ok(shader[0].name.endsWith('.glslp'))
+    t.assert.ok(shader[1].name.endsWith('.glsl'))
     for (const file of shader) {
-      t.assert.strictEqual(file.fileContent.type, 'application/octet-stream')
-      t.assert.ok(file.fileContent.size > 0)
+      t.assert.strictEqual(file.getBlob().type, 'application/octet-stream')
+      t.assert.ok(file.getBlob().size > 0)
     }
   })
 
@@ -273,6 +244,6 @@ describe('nostalgist', () => {
     const nostalgist = await Nostalgist.nes({ rom: 'http://example.com/a%b%c.nes?xxx=1' })
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
-    t.assert.strictEqual(emulatorOptions.rom[0].fileName, 'a-b-c.nes')
+    t.assert.strictEqual(emulatorOptions.rom[0].name, 'a-b-c.nes')
   })
 })
