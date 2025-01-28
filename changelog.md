@@ -13,9 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for saving and importing SRAM
 - Update default retroarch-emscripten-build version to v1.20.0
 ### Fixed
-- Fix legacy script patching
-- Fix the core parameter casting
-- Fix type errors
 - Fix the exit method not working
 
 ## [0.11.0] - 2024-08-16
