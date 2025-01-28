@@ -1,5 +1,5 @@
-import { extractValidFileName, getResult, isNil } from '../libs/utils'
-import { vendors } from '../libs/vendors'
+import { extractValidFileName, getResult, isNil } from '../libs/utils.ts'
+import { vendors } from '../libs/vendors.ts'
 
 const { path } = vendors
 
