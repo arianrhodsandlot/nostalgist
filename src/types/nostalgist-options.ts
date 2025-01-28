@@ -78,7 +78,7 @@ export interface NostalgistOptions {
    * ```
    *
    * @example
-   * If it's a normal string, it will be passed to `options.resolveRom`, another function option that should return a url string or a `Blob`.
+   * If it's a normal string, it will be passed to `options.resolveRom`, another function option that should return a [resolvable file](https://nostalgist.js.org/apis/resolvable-file).
    * ```js
    * const nostalgist = await Nostalgist.launch({
    *   rom: 'contra.nes',

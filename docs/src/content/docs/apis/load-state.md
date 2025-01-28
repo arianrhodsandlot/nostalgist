@@ -18,6 +18,9 @@ await nostalgist.loadState(state)
 ## Arguments
 + ### `state`
 
-  **type:** `Blob`
+  **type:**
+  <code>
+    [resolvable file](/apis/resolvable-file)
+  </code>
 
   The state file to be loaded.
