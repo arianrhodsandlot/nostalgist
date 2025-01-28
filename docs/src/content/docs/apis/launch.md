@@ -73,7 +73,10 @@ const nostalgist = await Nostalgist.launch({
 
   + #### `core`
 
-    **type:** `string | { name: string, js: string, wasm: string | ArrayBuffer }`
+    **type:**
+    <code>
+      string | { name: string, js: [resolvable file](/apis/resolvable-file), wasm: [resolvable file](/apis/resolvable-file) }
+    </code>
 
     The core represent the emulator we are going to use. Since we are using RetroArch compiled by Emscripten under the hood, we need to pass the compiled js file and wasm file here.
 
@@ -99,11 +102,14 @@ const nostalgist = await Nostalgist.launch({
       rom: 'https://example.com/roms/super-metriod.sfc',
     })
     ```
-    The `core.wasm` option can be an `ArrayBuffer` as well.
+    The `core.js` and `core.wasm` options can be an [resolvable file](/apis/resolvable-file) as well.
 
   + #### `rom`
 
-    **type:** `string | Blob | { fileName: string; fileContent: Blob } | Array`
+    **type:**
+    <code>
+      [resolvable file](/apis/resolvable-file) | Array
+    </code>
 
     The game ROM file.
 
@@ -139,13 +145,19 @@ const nostalgist = await Nostalgist.launch({
 
   + #### `bios`
 
-    **type:** `string | File | { fileName: string; fileContent: Blob } | Array`
+    **type:**
+    <code>
+      [resolvable file](/apis/resolvable-file) | Array
+    </code>
 
     Basically it's the same as the `rom` option. Files passed here will be written to RetroArch's `system` directory.
 
   + #### `state`
 
-    **type:** `Blob`
+    **type:**
+    <code>
+      [resolvable file](/apis/resolvable-file)
+    </code>
 
     **since:** `0.9.0`
 
@@ -153,7 +165,10 @@ const nostalgist = await Nostalgist.launch({
 
   + #### `sram`
 
-    **type:** `Blob`
+    **type:**
+    <code>
+      [resolvable file](/apis/resolvable-file)
+    </code>
 
     **since:** `0.12.0`
 
@@ -174,7 +189,31 @@ const nostalgist = await Nostalgist.launch({
 
     If you want to load a shader which does not match this pattern, you might need to customize it by implementing the `resolveShader` function.
 
-    This parameter is used for simple shaders only. For some complicated cases, you might need to use the [`beforeLaunch`](#beforelaunch) parameter to write the shader files into the file system.
+    This parameter is used for simple shaders only. For some complicated cases, you might need to use the [`beforeLaunch`](#beforelaunch) parameter to write the shader files into the file system. Here is a sample snippet about how to load the crt-easymode shader by writing shader files:
+
+    ```js
+    await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+
+      async beforeLaunch(nostalgist) {
+        const FS = nostalgist.getEmscriptenFS()
+
+        const glslp = await fetch('https://cdn.jsdelivr.net/gh/libretro/glsl-shaders/crt/crt-easymode.glslp')
+        const glsl = await fetch('https://cdn.jsdelivr.net/gh/libretro/glsl-shaders/crt/shaders/crt-easymode.glsl')
+
+        // Put all shader files into shaders/shaders_glsl directory
+        FS.writeFile('/home/web_user/retroarch/bundle/shaders/shaders_glsl/crt-easymode.glslp', await glslp.text())
+        FS.writeFile('/home/web_user/retroarch/bundle/shaders/shaders_glsl/shaders/crt-easymode.glsl', await glsl.text())
+
+        // Enable the shader in the global shader config file config/global.glslp
+        FS.writeFile(
+          '/home/web_user/retroarch/userdata/config/global.glslp',
+          '#reference /home/web_user/retroarch/bundle/shaders/shaders_glsl/crt-easymode.glslp',
+        )
+      },
+    })
+    ```
 
   + #### `style`
 
@@ -303,7 +342,7 @@ const nostalgist = await Nostalgist.launch({
   + #### `resolveCoreJs`
     **type:** `Function`
 
-    A custom function used for resolving a RetroArch core. The return value of this function can be a URL string, like `'https://example.com/core-name.js'`.
+    A custom function used for resolving a RetroArch core. The return value of this function should be a [resolvable file](/apis/resolvable-file).
 
     The function can also be asynchronous and returning a `Promise` of URL string.
 
@@ -330,9 +369,7 @@ const nostalgist = await Nostalgist.launch({
   + #### `resolveCoreWasm`
     **type:** `Function`
 
-    A custom function used for resolving a RetroArch core. The return value of this function can be a URL string or `ArrayBuffer`.
-
-    The function can also be asynchronous and returning a `Promise` of URL string or `ArrayBuffer`.
+    A custom function used for resolving a RetroArch core. The return value of this function should be a [resolvable file](/apis/resolvable-file).
 
     Here is an example,
     ```js
@@ -355,19 +392,19 @@ const nostalgist = await Nostalgist.launch({
   + #### `resolveRom`
     **type:** `Function`
 
-    A custom function used for resolving a ROM. The return value of this function can be a `string | File | { fileName: string; fileContent: Blob } | Array` or a `Promise` of above.
+    A custom function used for resolving a ROM. The return value of this function should be a [resolvable file](/apis/resolvable-file) or an Array of [resolvable file](/apis/resolvable-file).
 
   + #### `resolveBios`
     **type:** `Function`
 
-    A custom function used for resolving a BIOS. The return value of this function can be a `string | File | { fileName: string; fileContent: Blob } | Array` or a `Promise` of above.
+    A custom function used for resolving a BIOS. The return value of this function should be a [resolvable file](/apis/resolvable-file) or an Array of [resolvable file](/apis/resolvable-file).
 
   + #### `resolveShader`
     **type:** `Function`
 
     **since:** `0.7.0`
 
-    A custom function used for resolving shader files. The return value of this function can be a `string | File | { fileName: string; fileContent: Blob } | Array` or a `Promise` of above. The files should be some `glslp` and `glsl` files. At least one `glslp` file should be returned to make the shader to be applied.
+    A custom function used for resolving shader files. The return value of this function should be a [resolvable file](/apis/resolvable-file) or an Array of [resolvable file](/apis/resolvable-file). The files should be some `glslp` and `glsl` files. At least one `glslp` file should be returned to make the shader to be applied.
 
   + #### `beforeLaunch`
 

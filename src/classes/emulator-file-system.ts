@@ -13,6 +13,7 @@ const systemDirectory = path.join(userdataDirectory, 'system')
 const configDirectory = path.join(userdataDirectory, 'config')
 const screenshotsDirectory = path.join(userdataDirectory, 'screenshots')
 const shaderDirectory = path.join(bundleDirectory, 'shaders', 'shaders_glsl')
+const shaderAssetsDirectory = path.join(shaderDirectory, 'shaders')
 
 const configPath = path.join(userdataDirectory, 'retroarch.cfg')
 const coreConfigPath = path.join(userdataDirectory, 'retroarch-core-options.cfg')
@@ -121,7 +122,7 @@ export class EmulatorFileSystem {
   }
 
   private async prepare() {
-    const directories = [configDirectory, contentDirectory, shaderDirectory, systemDirectory]
+    const directories = [configDirectory, contentDirectory, shaderDirectory, shaderAssetsDirectory, systemDirectory]
     for (const directory of directories) {
       this.mkdirTree(directory)
     }
