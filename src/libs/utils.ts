@@ -69,7 +69,7 @@ async function patchCoreJs({ js, name }: { js: ResolvableFile; name: string }) {
 
   if (isGlobalScript(jsContent)) {
     jsContent = `export function getEmscripten({ Module }) {
-        ${js};
+        ${jsContent};
         Module.FS = FS;
         Module.PATH = PATH;
         Module.ERRNO_CODES = ERRNO_CODES;
@@ -109,7 +109,7 @@ export async function importCoreJsAsESM({ js, name }: { js: ResolvableFile; name
     return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsObjectUrl)
   } catch {
     // a dirty hack for using with SystemJS, for example, in StackBlitz
-    return await new Function('return import(jsObjectUrl)')()
+    return await new Function(`return import('${jsObjectUrl}')`)()
   } finally {
     jsResolvable.dispose()
   }
