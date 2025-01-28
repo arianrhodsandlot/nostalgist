@@ -1,3 +1,5 @@
+permissions:
+  contents: write
 name: release
 on:
   push:
@@ -11,14 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v3
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-
-  publish:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
       - uses: actions/setup-node@v4
@@ -27,7 +21,15 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org/'
       - run: pnpm i
-      - run: pnpm build
+      - run: node --run build
+
+      - run: pnpm rk release-note --version ${{ github.ref_name }}
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          body_path: ./release-note.md
+
+      - run: pnpm version from-git --no-git-tag-version
       - run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
