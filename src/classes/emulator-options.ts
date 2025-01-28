@@ -165,17 +165,21 @@ export class EmulatorOptions {
     const biosFiles = Array.isArray(bios) ? bios : [bios]
     this.bios = await Promise.all(
       biosFiles.map((raw) =>
-        ResolvableFile.create({
-          raw,
-          signal: this.signal,
-          urlResolver: () => resolveBios(raw, this.nostalgistOptions),
-        }),
+        ResolvableFile.create(
+          typeof raw === 'string'
+            ? { raw, signal: this.signal, urlResolver: () => resolveBios(raw, this.nostalgistOptions) }
+            : { raw, signal: this.signal },
+        ),
       ),
     )
   }
 
   private async updateCore() {
     const { core, resolveCoreJs, resolveCoreWasm } = this.nostalgistOptions
+
+    if (typeof core === 'object' && 'js' in core && 'name' in core && 'wasm' in core) {
+      return core
+    }
 
     const [coreResolvable, coreWasmResolvable] = await Promise.all(
       [resolveCoreJs, resolveCoreWasm].map((resolver) =>
@@ -201,11 +205,11 @@ export class EmulatorOptions {
 
     this.rom = await Promise.all(
       romFiles.map((romFile) =>
-        ResolvableFile.create({
-          raw: romFile,
-          signal: this.signal,
-          urlResolver: () => resolveRom(romFile, this.nostalgistOptions),
-        }),
+        ResolvableFile.create(
+          typeof romFile === 'string'
+            ? { raw: romFile, signal: this.signal, urlResolver: () => resolveRom(romFile, this.nostalgistOptions) }
+            : { raw: romFile, signal: this.signal },
+        ),
       ),
     )
   }
@@ -215,7 +219,12 @@ export class EmulatorOptions {
     if (!shader) {
       return []
     }
+
     const rawShaderFile = await resolveShader(shader, this.nostalgistOptions)
+    if (!rawShaderFile) {
+      return []
+    }
+
     const rawShaderFiles = Array.isArray(rawShaderFile) ? rawShaderFile : [rawShaderFile]
     this.shader = await Promise.all(
       rawShaderFiles.map((rawShaderFile) => ResolvableFile.create({ raw: rawShaderFile, signal: this.signal })),

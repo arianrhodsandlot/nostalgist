@@ -11,11 +11,11 @@ export interface NostalgistCoreDict {
   /** the name of core */
   name: string
 
-  /** the url of core's js file */
-  js: string
+  /** the resolvable file of core's js file */
+  js: ResolvableFileInput
 
-  /** the url or array buffer of core's js file */
-  wasm: ArrayBuffer | string
+  /** the resolvable file of core's wasm file */
+  wasm: ResolvableFileInput
 }
 
 export type NostalgistResolveFileFunction = (
