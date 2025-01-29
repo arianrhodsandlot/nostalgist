@@ -6,6 +6,13 @@ let nostalgist: Nostalgist_
 let state: { state: Blob }
 let sram: Blob
 
+const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
+const useLegacyCore = location.search.includes('legacy')
+const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
+const nesRomRepo = 'retrobrews/nes-games'
+const coreVersion = useLegacyCore ? 'v1.16.0' : 'v1.20.0'
+const coreDirectory = 'retroarch'
+
 const handlers = {
   static: {
     async nes() {
@@ -72,6 +79,63 @@ const handlers = {
     async launchROMSupportsSRAM() {
       nostalgist = await Nostalgist.nes({ rom: testSRAMRomUrl })
     },
+
+    async launchURLStrings() {
+      nostalgist = await Nostalgist.launch({
+        core: 'fceumm',
+        resolveCoreJs: (core) => `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`,
+        resolveCoreWasm: (core) => `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`,
+        resolveRom: (rom) => `${cdnBaseUrl}/${nesRomRepo}@master/${rom}`,
+        rom: 'pong1k.nes',
+      })
+    },
+
+    async launchURLs() {
+      nostalgist = await Nostalgist.launch({
+        core: 'fceumm',
+        resolveCoreJs: (core) =>
+          new URL(`${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`),
+        resolveCoreWasm: (core) =>
+          new URL(`${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`),
+        resolveRom: (rom) => new URL(`${cdnBaseUrl}/${nesRomRepo}@master/${rom}`),
+        rom: 'pong1k.nes',
+      })
+    },
+
+    async launchRequests() {
+      nostalgist = await Nostalgist.launch({
+        core: 'fceumm',
+        resolveCoreJs: (core) =>
+          new Request(new URL(`${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`)),
+        resolveCoreWasm: (core) =>
+          new Request(new URL(`${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`)),
+        resolveRom: (rom) => new Request(new URL(`${cdnBaseUrl}/${nesRomRepo}@master/${rom}`)),
+        rom: 'pong1k.nes',
+      })
+    },
+
+    async launchResponses() {
+      nostalgist = await Nostalgist.launch({
+        core: 'fceumm',
+        resolveCoreJs: (core) => fetch(`${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`),
+        resolveCoreWasm: (core) =>
+          fetch(`${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`),
+        resolveRom: (rom) => fetch(`${cdnBaseUrl}/${nesRomRepo}@master/${rom}`),
+        rom: 'pong1k.nes',
+      })
+    },
+
+    async launchArrayBuffers() {
+      nostalgist = await Nostalgist.launch({
+        core: 'fceumm',
+        resolveCoreJs: (core) =>
+          fetchArrayBuffer(`${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`),
+        resolveCoreWasm: (core) =>
+          fetchArrayBuffer(`${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`),
+        resolveRom: (rom) => fetchArrayBuffer(`${cdnBaseUrl}/${nesRomRepo}@master/${rom}`),
+        rom: 'pong1k.nes',
+      })
+    },
   },
 
   instance: {
@@ -135,6 +199,11 @@ const handlers = {
   },
 }
 
+async function fetchArrayBuffer(input) {
+  const response = await fetch(input)
+  return await response.arrayBuffer()
+}
+
 function renderButtons() {
   const [staticTitle, instanceTitle] = document.querySelectorAll('h3')
   staticTitle.insertAdjacentHTML(
@@ -165,12 +234,6 @@ export function activate(mod: typeof Nostalgist_) {
   }
 
   if (location.search.includes('legacy')) {
-    const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
-
-    const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
-    const coreVersion = 'v1.16.0'
-    const coreDirectory = 'retroarch'
-
     Object.assign(nostalgistConfig, {
       resolveCoreJs(core) {
         return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`
