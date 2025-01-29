@@ -79,4 +79,4 @@ Each resolvable file has an internal `name` property, which will be inferred aut
 + If it's a `File` object, the `name` property will be inferred as the `name` of the resolvable file.
 + If it's an object with a `fileName` property and a `fileContent` property is passed as the resolvable file, the `fileName` property will be used as its name.
 
-This property is required when using the file as a [`rom`](/apis/launch#rom) or [`bios`](/apis/launch#bios) passed to [`Nostalgist.launch`](/apis/launch).
+This property is required when using the file as a [`bios`](/apis/launch#bios) passed to [`Nostalgist.launch`](/apis/launch) or files returned by [`resolveBios`](/apis/launch#resolvebios) and [`resolveShader`](/apis/launch#resolveshader).

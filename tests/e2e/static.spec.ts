@@ -94,6 +94,22 @@ function tests() {
     await page.waitForTimeout(500)
     await expect(canvas).toHaveScreenshot('launch-sram.png')
   })
+
+  test('launch with resolvable files', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    const buttons = ['launchURLStrings', 'launchURLs', 'launchRequests', 'launchResponses', 'launchArrayBuffers']
+    for (const button of buttons) {
+      await page.getByText(button, { exact: true }).click()
+      await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(1000)
+      await expect(canvas).toHaveScreenshot('launch-nes.png')
+
+      await page.getByText('exit', { exact: true }).click()
+      await expect(canvas).not.toBeAttached()
+    }
+  })
 }
 
 test.describe('static methods with retroarch esm', () => {
