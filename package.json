@@ -48,7 +48,7 @@
     "test:integration": "node --test tests/integration/**/*.spec.ts"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
+    "pre-commit": "pnpm lint-staged && node --run=build"
   },
   "lint-staged": {
     "*.?(m|c)@(j|t)s?(x)": "node --run=eslint -- --fix",

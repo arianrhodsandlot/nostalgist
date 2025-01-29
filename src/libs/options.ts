@@ -102,11 +102,11 @@ export function getDefaultOptions() {
         return `${cdnBaseUrl}/${romRepo}@master/${encodedFile}`
       }
 
-      return file || []
+      return file
     },
 
     resolveBios(file) {
-      return file || []
+      return file
     },
 
     resolveShader(name) {
