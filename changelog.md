@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.1] - 2025-01-29
+### Fixed
+- Fix types of resolvable files are not correctly detected
+- Fix type declarations of resolvers in the parameter of `Nostalgist.launch`
+
 ## [0.12.0] - 2025-01-28
 ### Added
 - Support loading resolvable files from parameters
@@ -131,7 +136,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - fix core loading ([9790327](https://github.com/arianrhodsandlot/nostalgist/commit/97903270c39788b3d05b7f7d0700ccdf32503a9e))
 
-[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.12.1...HEAD
+[0.12.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/arianrhodsandlot/nostalgist/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/arianrhodsandlot/nostalgist/compare/v0.9.2...v0.10.0
