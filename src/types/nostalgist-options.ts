@@ -3,8 +3,6 @@ import type { ResolvableFileInput } from '../classes/resolvable-file'
 import type { RetroArchConfig } from './retroarch-config'
 import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
 
-type MaybePromise<T> = Promise<T> | T
-
 type NostalgistOptionsFiles = ResolvableFileInput | ResolvableFileInput[]
 
 export interface NostalgistCoreDict {
@@ -18,10 +16,7 @@ export interface NostalgistCoreDict {
   wasm: ResolvableFileInput
 }
 
-export type NostalgistResolveFileFunction = (
-  file: string,
-  options: NostalgistOptions,
-) => MaybePromise<NostalgistOptionsFiles | undefined>
+export type NostalgistResolveFileFunction = (file: string, options: NostalgistOptions) => ResolvableFileInput
 
 export interface NostalgistOptions {
   /**
@@ -190,13 +185,13 @@ export interface NostalgistOptions {
   beforeLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
   onLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
   resolveBios: NostalgistResolveFileFunction
-  resolveCoreJs: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<string>
-  resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => MaybePromise<ArrayBuffer | string>
+  resolveCoreJs: (core: NostalgistOptions['core'], options: NostalgistOptions) => ResolvableFileInput
+  resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => ResolvableFileInput
   resolveRom: NostalgistResolveFileFunction
   resolveShader: (
     shader: NostalgistOptions['shader'],
     options: NostalgistOptions,
-  ) => MaybePromise<NostalgistOptionsFiles | undefined>
+  ) => ResolvableFileInput | ResolvableFileInput[]
   waitForInteraction?: (params: { done: () => void }) => void
 }
 
