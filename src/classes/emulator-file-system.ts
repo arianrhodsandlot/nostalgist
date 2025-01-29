@@ -94,7 +94,7 @@ export class EmulatorFileSystem {
     return buffer
   }
 
-  async writeFile(filePath: string, fileContent: ArrayBuffer | Blob | ResolvableFile | string | Uint8Array) {
+  async writeFile(filePath: string, fileContent: Parameters<typeof ResolvableFile.create>[0]) {
     const { FS } = this
     const directory = path.dirname(filePath)
     const fileName = path.basename(filePath)

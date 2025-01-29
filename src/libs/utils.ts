@@ -24,8 +24,12 @@ function id() {
   return i
 }
 
+export function generateValidFileName() {
+  return `data${id()}.bin`
+}
+
 export function extractValidFileName(url: string) {
-  return urlBaseName(url).replaceAll(/["%*/:<>?\\|]/g, '-') || `data${id()}.bin`
+  return urlBaseName(url).replaceAll(/["%*/:<>?\\|]/g, '-') || generateValidFileName()
 }
 
 export function isAbsoluteUrl(string: string) {
