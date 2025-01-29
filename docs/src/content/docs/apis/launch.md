@@ -392,12 +392,12 @@ const nostalgist = await Nostalgist.launch({
   + #### `resolveRom`
     **type:** `Function`
 
-    A custom function used for resolving a ROM. The return value of this function should be a [resolvable file](/apis/resolvable-file) or an Array of [resolvable file](/apis/resolvable-file).
+    A custom function used for resolving a ROM. The return value of this function should be a [resolvable file](/apis/resolvable-file).
 
   + #### `resolveBios`
     **type:** `Function`
 
-    A custom function used for resolving a BIOS. The return value of this function should be a [resolvable file](/apis/resolvable-file) or an Array of [resolvable file](/apis/resolvable-file).
+    A custom function used for resolving a BIOS. The return value of this function should be a [resolvable file](/apis/resolvable-file).
 
   + #### `resolveShader`
     **type:** `Function`
