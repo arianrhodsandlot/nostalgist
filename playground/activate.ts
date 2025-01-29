@@ -151,8 +151,9 @@ function renderButtons() {
   )
 }
 
+type NostalgistOptionsPartial = Parameters<typeof Nostalgist.configure>[0]
 export function activate(mod: typeof Nostalgist_) {
-  const nostalgistConfig = {
+  const nostalgistConfig: NostalgistOptionsPartial = {
     style: {
       backgroundColor: 'transparent',
       display: 'block',
@@ -163,7 +164,7 @@ export function activate(mod: typeof Nostalgist_) {
     },
   }
 
-  if (location.search.includes('e2e-legacy')) {
+  if (location.search.includes('legacy')) {
     const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
 
     const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
@@ -177,7 +178,7 @@ export function activate(mod: typeof Nostalgist_) {
       resolveCoreWasm(core) {
         return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`
       },
-    })
+    } satisfies NostalgistOptionsPartial)
   }
 
   Nostalgist = mod

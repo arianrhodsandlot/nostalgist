@@ -1,5 +1,5 @@
 import { getGlobalOptions } from '../libs/options.ts'
-import { merge } from '../libs/utils.ts'
+import { generateValidFileName, merge } from '../libs/utils.ts'
 import type { NostalgistOptions } from '../types/nostalgist-options.ts'
 import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten.ts'
 import { ResolvableFile } from './resolvable-file.ts'
@@ -214,6 +214,9 @@ export class EmulatorOptions {
         ),
       ),
     )
+    for (const resolvable of this.rom) {
+      resolvable.name ||= generateValidFileName()
+    }
   }
 
   private async updateShader() {

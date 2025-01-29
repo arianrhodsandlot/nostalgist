@@ -3,24 +3,37 @@ import { vendors } from '../libs/vendors.ts'
 
 const { path } = vendors
 
+function isURLStringLike(value: unknown): value is string {
+  if (typeof value !== 'string') {
+    return false
+  }
+  const prefixes = ['http://', 'https://', 'data:', 'blob:', './', '../']
+  if (prefixes.some((absolutePrefix) => value.startsWith(absolutePrefix))) {
+    return true
+  }
+  if (['#', '{'].some((char) => value.startsWith(char))) {
+    return false
+  }
+  if (value.includes('\n')) {
+    return false
+  }
+  return value.split(/[?/#]/).every((segment) => segment.length < 100)
+}
+
 function isURL(value: unknown): value is URL {
-  return typeof globalThis.URL === 'object' && value instanceof globalThis.URL
+  return typeof globalThis.URL === 'function' && value instanceof globalThis.URL
 }
 
 function isRequest(value: unknown): value is Request {
-  return typeof globalThis.Request === 'object' && value instanceof globalThis.Request
+  return typeof globalThis.Request === 'function' && value instanceof globalThis.Request
 }
 
 function isResponse(value: unknown): value is Response {
-  return typeof globalThis.Response === 'object' && value instanceof globalThis.Response
+  return typeof globalThis.Response === 'function' && value instanceof globalThis.Response
 }
 
 function isFetchable(value: unknown): value is Request | string | URL {
-  if (typeof value === 'string') {
-    const prefixes = ['http://', 'https://', 'data:', 'blob:']
-    return prefixes.some((absolutePrefix) => value.startsWith(absolutePrefix))
-  }
-  return isURL(value) || isRequest(value)
+  return isURLStringLike(value) || isURL(value) || isRequest(value)
 }
 
 type ResolvablePrimitive = ArrayBuffer | Blob | Request | Response | string | Uint8Array | URL
@@ -152,7 +165,7 @@ export class ResolvableFile {
     } else if (typeof result === 'string') {
       this.loadPlainText(result)
     } else if ([Blob, ArrayBuffer, Uint8Array].some((clazz) => (result as any)?.fileContent instanceof clazz)) {
-      this.loadObject(result as any)
+      await this.loadObject(result as any)
     } else if (result instanceof Blob) {
       this.loadBlob(result)
     } else if (result instanceof ArrayBuffer) {
@@ -160,7 +173,7 @@ export class ResolvableFile {
     } else if (result instanceof Uint8Array) {
       this.loadUint8Array(result)
     } else if (result instanceof Response) {
-      this.loadResponse(result)
+      await this.loadResponse(result)
     }
   }
 
@@ -189,7 +202,7 @@ export class ResolvableFile {
     this.blob = await response.blob()
   }
 
-  private loadObject(object: ArrayBuffer | Blob | Response | Uint8Array) {
+  private async loadObject(object: ArrayBuffer | Blob | Response | Uint8Array) {
     const { fileContent, fileName } = object as any
     this.name = extractValidFileName(fileName)
     if (fileContent instanceof Blob) {
@@ -199,7 +212,7 @@ export class ResolvableFile {
     } else if (fileContent instanceof Uint8Array) {
       this.loadUint8Array(fileContent)
     } else if (isResponse(fileContent)) {
-      this.loadResponse(fileContent)
+      await this.loadResponse(fileContent)
     }
   }
 
