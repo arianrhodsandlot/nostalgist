@@ -1,15 +1,7 @@
 import { coreInfoMap } from '../constants/core-info.ts'
 import { keyboardCodeMap } from '../constants/keyboard-code-map.ts'
 import { getEmscriptenModuleOverrides } from '../libs/emscripten.ts'
-import {
-  checkIsAborted,
-  delay,
-  extractValidFileName,
-  importCoreJsAsESM,
-  padZero,
-  textEncoder,
-  updateStyle,
-} from '../libs/utils.ts'
+import { checkIsAborted, delay, importCoreJsAsESM, padZero, textEncoder, updateStyle } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
 import type { RetroArchCommand } from '../types/retroarch-command.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
