@@ -15,23 +15,15 @@ title: API reference
 
 ## Instance methods
 + [`saveState`](/apis/save-state)
-
 + [`loadState`](/apis/load-state)
-
++ [`saveSRAM`](/apis/save-sram)
 + [`restart`](/apis/restart)
-
 + [`pause`](/apis/pause)
-
 + [`resume`](/apis/resume)
-
 + [`exit`](/apis/exit)
-
 + [`resize`](/apis/resize)
-
 + [`press`](/apis/press)
-
 + [`screenshot`](/apis/screenshot)
-
 + [`getCanvas`](/apis/get-canvas) (advanced)
 + [`getEmscripten`](/apis/get-emscripten) (advanced)
 + [`getEmscriptenAL`](/apis/get-emscripten-al) (advanced)

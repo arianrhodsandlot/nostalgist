@@ -22,7 +22,7 @@ await nostalgist.nes({
 ```
 
 ## Returns
-+ ### `state`
++ ### `sram`
 
   **type:** `Blob`
 

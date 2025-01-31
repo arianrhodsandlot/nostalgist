@@ -84,21 +84,14 @@ gtag('config', 'G-E6387HS8V0');
             {
               items: [
                 { label: 'saveState', link: '/apis/save-state' },
-
                 { label: 'loadState', link: '/apis/load-state' },
-
+                { label: 'saveSRAM', link: '/apis/save-sram' },
                 { label: 'restart', link: '/apis/restart' },
-
                 { label: 'pause', link: '/apis/pause' },
-
                 { label: 'resume', link: '/apis/resume' },
-
                 { label: 'exit', link: '/apis/exit' },
-
                 { label: 'resize', link: '/apis/resize' },
-
                 { label: 'press', link: '/apis/press' },
-
                 { label: 'screenshot', link: '/apis/screenshot' },
 
                 { badge, label: 'getCanvas', link: '/apis/get-canvas' },
