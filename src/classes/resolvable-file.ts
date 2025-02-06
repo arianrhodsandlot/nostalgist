@@ -3,6 +3,7 @@ import { vendors } from '../libs/vendors.ts'
 
 const { path } = vendors
 
+const urlSegmentSeparator = /[?/#]/
 function isURLStringLike(value: unknown): value is string {
   if (typeof value !== 'string') {
     return false
@@ -17,7 +18,7 @@ function isURLStringLike(value: unknown): value is string {
   if (value.includes('\n')) {
     return false
   }
-  return value.split(/[?/#]/).every((segment) => segment.length < 100)
+  return value.split(urlSegmentSeparator).every((segment) => segment.length < 100)
 }
 
 function isURL(value: unknown): value is URL {
@@ -40,8 +41,8 @@ type ResolvablePrimitive = ArrayBuffer | Blob | Request | Response | string | Ui
 type ResolvableObjects = { fileContent: ResolvablePrimitive; fileName: string } | ResolvablePrimitive
 type ResolvableWrapped = ((...args: unknown[]) => ResolvableObjects) | Promise<ResolvableObjects>
 export type ResolvableFileInput =
-  | ((...args: unknown[]) => ResolvableWrapped)
-  | Promise<ResolvableWrapped>
+  | ((...args: unknown[]) => ResolvableFileInput)
+  | Promise<ResolvableFileInput>
   | ResolvableObjects
   | ResolvableWrapped
 
