@@ -165,7 +165,9 @@ export class ResolvableFile {
       await this.loadFetchable(result)
     } else if (typeof result === 'string') {
       this.loadPlainText(result)
-    } else if ([Blob, ArrayBuffer, Uint8Array].some((clazz) => (result as any)?.fileContent instanceof clazz)) {
+    } else if (
+      [Blob, ArrayBuffer, Uint8Array, Response].some((clazz) => (result as any)?.fileContent instanceof clazz)
+    ) {
       await this.loadObject(result as any)
     } else if (result instanceof Blob) {
       this.loadBlob(result)
@@ -175,6 +177,8 @@ export class ResolvableFile {
       this.loadUint8Array(result)
     } else if (result instanceof Response) {
       await this.loadResponse(result)
+    } else {
+      throw new TypeError('failed to resolve the file')
     }
   }
 
