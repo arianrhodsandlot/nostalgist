@@ -151,6 +151,12 @@ export class Nostalgist {
     return await Nostalgist.launchSystem('nes', options)
   }
 
+  static async prepare(options: NostalgistLaunchOptions) {
+    const nostalgist = new Nostalgist({ ...options, runEmulatorManually: true })
+    await nostalgist.load()
+    return nostalgist
+  }
+
   /**
    * Reset the global configuation set by `Nostalgist.configure` to default.
    *
@@ -278,7 +284,7 @@ export class Nostalgist {
    * @see {@link https://nostalgist.js.org/apis/launch-emulator/}
    */
   async launchEmulator() {
-    return await this.getEmulator().launch()
+    return await this.start()
   }
 
   /**
@@ -507,23 +513,33 @@ export class Nostalgist {
   }
 
   /**
+   * Launch the emulator, if it's not launched, because of the launch option `runEmulatorManually` being set to `true`.
+   *
+   * @see {@link https://nostalgist.js.org/apis/launch-emulator/}
+   */
+  async start() {
+    return await this.getEmulator().launch()
+  }
+
+  /**
    * Load options and then launch corresponding emulator if should
    */
   private async load(): Promise<void> {
     this.emulatorOptions = await EmulatorOptions.create(this.options)
     checkIsAborted(this.options.signal)
-    this.loadEmulator()
+    this.setupEmulator()
 
     if (!this.options.runEmulatorManually) {
-      await this.launchEmulator()
+      await this.start()
     }
   }
 
-  private loadEmulator() {
+  private async setupEmulator() {
     const emulatorOptions = this.getEmulatorOptions()
     this.emulator = new Emulator(emulatorOptions)
     this.emulator
       .on('onLaunch', () => this.options.onLaunch?.(this))
       .on('beforeLaunch', () => this.options.beforeLaunch?.(this))
+    await this.emulator.setup()
   }
 }

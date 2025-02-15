@@ -108,9 +108,6 @@ export class Emulator {
   }
 
   async launch() {
-    await this.setupEmscripten()
-    await this.setupFileSystem()
-
     const { element, respondToGlobalEvents, signal, style, waitForInteraction } = this.options
     updateStyle(element, style)
 
@@ -250,6 +247,11 @@ export class Emulator {
   sendCommand(msg: RetroArchCommand) {
     const bytes = textEncoder.encode(`${msg}\n`)
     this.messageQueue.push([bytes, 0])
+  }
+
+  async setup() {
+    await this.setupEmscripten()
+    await this.setupFileSystem()
   }
 
   private clearStateFile() {

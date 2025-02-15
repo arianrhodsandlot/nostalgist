@@ -191,20 +191,8 @@ export class ResolvableFile {
   }
 
   private async loadFetchable(fetchable: Request | string | URL) {
-    if (!this.name) {
-      let fetchableUrl: string
-      if (isURL(fetchable)) {
-        fetchableUrl = fetchable.href
-      } else if (isRequest(fetchable)) {
-        fetchableUrl = fetchable.url
-      } else {
-        fetchableUrl = `${fetchable}`
-      }
-      this.name ||= extractValidFileName(fetchableUrl)
-    }
-
     const response = await fetch(fetchable, { signal: this.signal || null })
-    this.blob = await response.blob()
+    return await this.loadResponse(response)
   }
 
   private async loadObject(object: ArrayBuffer | Blob | Response | Uint8Array) {
@@ -226,6 +214,13 @@ export class ResolvableFile {
   }
 
   private async loadResponse(response: Response) {
+    const header = response.headers.get('Content-Disposition')
+    if (header) {
+      const extracted = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(header)?.[1]?.replace(/['"]/g, '')
+      if (extracted) {
+        this.name ||= extractValidFileName(extracted)
+      }
+    }
     this.name ||= extractValidFileName(response.url)
     this.blob = await response.blob()
   }
