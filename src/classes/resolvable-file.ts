@@ -200,7 +200,7 @@ export class ResolvableFile {
       } else {
         fetchableUrl = `${fetchable}`
       }
-      this.name = extractValidFileName(fetchableUrl)
+      this.name ||= extractValidFileName(fetchableUrl)
     }
 
     const response = await fetch(fetchable, { signal: this.signal || null })
@@ -209,7 +209,7 @@ export class ResolvableFile {
 
   private async loadObject(object: ArrayBuffer | Blob | Response | Uint8Array) {
     const { fileContent, fileName } = object as any
-    this.name = extractValidFileName(fileName)
+    this.name ||= extractValidFileName(fileName)
     if (fileContent instanceof Blob) {
       this.loadBlob(fileContent)
     } else if (fileContent instanceof ArrayBuffer) {
@@ -226,7 +226,7 @@ export class ResolvableFile {
   }
 
   private async loadResponse(response: Response) {
-    this.name = extractValidFileName(response.url)
+    this.name ||= extractValidFileName(response.url)
     this.blob = await response.blob()
   }
 
