@@ -527,7 +527,7 @@ export class Nostalgist {
   private async load(): Promise<void> {
     this.emulatorOptions = await EmulatorOptions.create(this.options)
     checkIsAborted(this.options.signal)
-    this.setupEmulator()
+    await this.setupEmulator()
 
     if (!this.options.runEmulatorManually) {
       await this.start()
