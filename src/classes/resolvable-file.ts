@@ -1,7 +1,9 @@
-import { extractValidFileName, getResult, isNil } from '../libs/utils.ts'
+import { extractValidFileName, getResult, isNil, isZip } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
 
 const { path } = vendors
+
+const fileNameHeaderRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
 
 const urlSegmentSeparator = /[?/#]/
 function isURLStringLike(value: unknown): value is string {
@@ -216,13 +218,15 @@ export class ResolvableFile {
   private async loadResponse(response: Response) {
     const header = response.headers.get('Content-Disposition')
     if (header) {
-      const extracted = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(header)?.[1]?.replace(/['"]/g, '')
+      const extracted = fileNameHeaderRegex.exec(header)?.[1]?.replace(/['"]/g, '')
       if (extracted) {
         this.name ||= extractValidFileName(extracted)
       }
     }
-    this.name ||= extractValidFileName(response.url)
     this.blob = await response.blob()
+    const uint8Array = await this.getUint8Array()
+    const extention = isZip(uint8Array) ? 'zip' : 'bin'
+    this.name ||= extractValidFileName(response.url, extention)
   }
 
   private loadUint8Array(uint8Array: Uint8Array) {

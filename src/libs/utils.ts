@@ -24,12 +24,18 @@ function id() {
   return i
 }
 
-export function generateValidFileName() {
-  return `data${id()}.bin`
+export function generateValidFileName(extension = 'bin') {
+  return `data${id()}.${extension}`
 }
 
-export function extractValidFileName(url: string) {
-  return urlBaseName(url).replaceAll(/["%*/:<>?\\|]/g, '-') || generateValidFileName()
+export function extractValidFileName(url: string, extention = 'bin') {
+  let baseName = urlBaseName(url) || ''
+  baseName = baseName.replaceAll(/["%*/:<>?\\|]/g, '-')
+  const extractedExtension = path.parse(baseName).ext
+  if (extractedExtension) {
+    return baseName || generateValidFileName(extractedExtension)
+  }
+  return generateValidFileName(extention)
 }
 
 export function isAbsoluteUrl(string: string) {
@@ -195,4 +201,14 @@ export function isResolvableFileInput(value: any) {
   }
   const classes = [globalThis.Response, globalThis.Uint8Array, globalThis.URL, globalThis.Request, globalThis.Response]
   return classes.some((clazz) => clazz && value instanceof clazz)
+}
+
+export function isZip(uint8Array: Uint8Array) {
+  return (
+    uint8Array[0] === 0x50 &&
+    // eslint-disable-next-line unicorn/number-literal-case
+    uint8Array[1] === 0x4b &&
+    (uint8Array[2] === 0x03 || uint8Array[2] === 0x05 || uint8Array[2] === 0x07) &&
+    (uint8Array[3] === 0x04 || uint8Array[3] === 0x06 || uint8Array[3] === 0x08)
+  )
 }
