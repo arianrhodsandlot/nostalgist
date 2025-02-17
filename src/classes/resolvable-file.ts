@@ -1,4 +1,11 @@
-import { extractValidFileName, getResult, isNil, isZip } from '../libs/utils.ts'
+import {
+  extractValidFileName,
+  getResult,
+  isNil,
+  isResolvableFileContent,
+  isZip,
+  type Resolvable,
+} from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
 
 const { path } = vendors
@@ -35,18 +42,39 @@ function isResponse(value: unknown): value is Response {
   return typeof globalThis.Response === 'function' && value instanceof globalThis.Response
 }
 
+function isArrayBuffer(value: unknown): value is ArrayBuffer {
+  return typeof globalThis.ArrayBuffer === 'function' && value instanceof globalThis.ArrayBuffer
+}
+
+function isUint8Array(value: unknown): value is Uint8Array {
+  return typeof globalThis.Uint8Array === 'function' && value instanceof globalThis.Uint8Array
+}
+
+function isBlob(value: unknown): value is Blob {
+  return typeof globalThis.Blob === 'function' && value instanceof globalThis.Blob
+}
+
+function isFileSystemFileHandle(value: unknown): value is FileSystemFileHandle {
+  return typeof globalThis.FileSystemFileHandle === 'function' && value instanceof globalThis.FileSystemFileHandle
+}
+
 function isFetchable(value: unknown): value is Request | string | URL {
   return isURLStringLike(value) || isURL(value) || isRequest(value)
 }
 
-type ResolvablePrimitive = ArrayBuffer | Blob | Request | Response | string | Uint8Array | URL
-type ResolvableObjects = { fileContent: ResolvablePrimitive; fileName: string } | ResolvablePrimitive
-type ResolvableWrapped = ((...args: unknown[]) => ResolvableObjects) | Promise<ResolvableObjects>
-export type ResolvableFileInput =
-  | ((...args: unknown[]) => ResolvableFileInput)
-  | Promise<ResolvableFileInput>
-  | ResolvableObjects
-  | ResolvableWrapped
+type ResolvableFilePrimitive =
+  | ArrayBuffer
+  | Blob
+  | FileSystemFileHandle
+  | Request
+  | Response
+  | string
+  | Uint8Array
+  | URL
+type ResolvableFileObjects =
+  | { fileContent: Resolvable<ResolvableFilePrimitive>; fileName: Resolvable<File> }
+  | ResolvableFilePrimitive
+export type ResolvableFileInput = Resolvable<ResolvableFilePrimitive> | ResolvableFileObjects
 
 interface ResolvableFileConstructorParameters {
   blobType?: string
@@ -163,33 +191,34 @@ export class ResolvableFile {
 
   private async load() {
     const result = await getResult(this.urlResolver ? this.urlResolver(this) : this.raw)
-    if (isFetchable(result)) {
-      await this.loadFetchable(result)
-    } else if (typeof result === 'string') {
-      this.loadPlainText(result)
-    } else if (
-      [Blob, ArrayBuffer, Uint8Array, Response].some((clazz) => (result as any)?.fileContent instanceof clazz)
-    ) {
-      await this.loadObject(result as any)
-    } else if (result instanceof Blob) {
-      this.loadBlob(result)
-    } else if (result instanceof ArrayBuffer) {
-      this.loadArrayBuffer(result)
-    } else if (result instanceof Uint8Array) {
-      this.loadUint8Array(result)
-    } else if (result instanceof Response) {
-      await this.loadResponse(result)
-    } else {
-      throw new TypeError('failed to resolve the file')
-    }
+    await this.loadContent(result)
   }
 
   private loadArrayBuffer(arrayBuffer: ArrayBuffer) {
     this.arrayBuffer = arrayBuffer
     this.blob = new Blob([arrayBuffer], { type: this.blobType })
   }
-  private loadBlob(blob: Blob) {
-    this.blob = blob
+
+  private async loadContent(content: any) {
+    if (isBlob(content)) {
+      this.blob = content
+    } else if (isFetchable(content)) {
+      await this.loadFetchable(content)
+    } else if (typeof content === 'string') {
+      this.loadPlainText(content)
+    } else if (isResolvableFileContent(content?.fileContent)) {
+      await this.loadObject(content as any)
+    } else if (isArrayBuffer(content)) {
+      this.loadArrayBuffer(content)
+    } else if (isUint8Array(content)) {
+      this.loadUint8Array(content)
+    } else if (isResponse(content)) {
+      await this.loadResponse(content)
+    } else if (isFileSystemFileHandle(content)) {
+      await this.loadFileSystemFileHandle(content)
+    } else {
+      throw new TypeError('failed to resolve the file')
+    }
   }
 
   private async loadFetchable(fetchable: Request | string | URL) {
@@ -197,18 +226,16 @@ export class ResolvableFile {
     return await this.loadResponse(response)
   }
 
-  private async loadObject(object: ArrayBuffer | Blob | Response | Uint8Array) {
-    const { fileContent, fileName } = object as any
+  private async loadFileSystemFileHandle(fileSystemFileHandle: FileSystemFileHandle) {
+    this.blob = await fileSystemFileHandle.getFile()
+  }
+
+  private async loadObject(object: any) {
+    let { fileContent, fileName } = object
+    ;[fileName, fileContent] = await Promise.all([getResult(fileName), getResult(fileContent)])
+
     this.name ||= extractValidFileName(fileName)
-    if (fileContent instanceof Blob) {
-      this.loadBlob(fileContent)
-    } else if (fileContent instanceof ArrayBuffer) {
-      this.loadArrayBuffer(fileContent)
-    } else if (fileContent instanceof Uint8Array) {
-      this.loadUint8Array(fileContent)
-    } else if (isResponse(fileContent)) {
-      await this.loadResponse(fileContent)
-    }
+    await this.loadContent(fileContent)
   }
 
   private loadPlainText(text: string) {

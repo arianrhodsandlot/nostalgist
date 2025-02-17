@@ -174,7 +174,9 @@ export function padZero(number: number) {
   return (number < 10 ? '0' : '') + number
 }
 
-export async function getResult<T = any>(value: ((...args: unknown[]) => T) | Promise<T> | T): Promise<T> {
+type ResolvableWrapped<T> = ((...args: unknown[]) => T) | Promise<T>
+export type Resolvable<T> = ResolvableWrapped<ResolvableWrapped<T>> | ResolvableWrapped<T> | T
+export async function getResult<T = any>(value: Resolvable<T>): Promise<T> {
   if (!value) {
     return value
   }
@@ -189,7 +191,20 @@ export async function getResult<T = any>(value: ((...args: unknown[]) => T) | Pr
     return getResult(value())
   }
 
-  return value
+  return value as T
+}
+
+const resolvableClasses = [
+  globalThis.Response,
+  globalThis.Uint8Array,
+  globalThis.URL,
+  globalThis.Request,
+  globalThis.Response,
+  globalThis.FileSystemFileHandle,
+]
+
+export function isResolvableFileContent(value: any) {
+  return resolvableClasses.some((clazz) => clazz && value instanceof clazz)
 }
 
 export function isResolvableFileInput(value: any) {
@@ -199,8 +214,7 @@ export function isResolvableFileInput(value: any) {
   if ('fileContent' in value) {
     return true
   }
-  const classes = [globalThis.Response, globalThis.Uint8Array, globalThis.URL, globalThis.Request, globalThis.Response]
-  return classes.some((clazz) => clazz && value instanceof clazz)
+  return isResolvableFileContent(value)
 }
 
 export function isZip(uint8Array: Uint8Array) {
