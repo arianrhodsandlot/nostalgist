@@ -71,6 +71,7 @@ gtag('config', 'G-E6387HS8V0');
               items: [
                 { label: 'launch', link: '/apis/launch' },
                 { label: 'configure', link: '/apis/configure' },
+                { label: 'prepare', link: '/apis/prepare' },
                 { label: 'nes', link: '/apis/nes' },
                 { label: 'snes', link: '/apis/snes' },
                 { label: 'megadrive', link: '/apis/megadrive' },
@@ -86,6 +87,7 @@ gtag('config', 'G-E6387HS8V0');
                 { label: 'saveState', link: '/apis/save-state' },
                 { label: 'loadState', link: '/apis/load-state' },
                 { label: 'saveSRAM', link: '/apis/save-sram' },
+                { label: 'start', link: '/apis/start' },
                 { label: 'restart', link: '/apis/restart' },
                 { label: 'pause', link: '/apis/pause' },
                 { label: 'resume', link: '/apis/resume' },

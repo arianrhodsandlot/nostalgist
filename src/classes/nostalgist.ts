@@ -280,7 +280,7 @@ export class Nostalgist {
 
   /**
    * Launch the emulator, if it's not launched, because of the launch option `runEmulatorManually` being set to `true`.
-   *
+   * @deprecated Use the `start` method instead.
    * @see {@link https://nostalgist.js.org/apis/launch-emulator/}
    */
   async launchEmulator() {
@@ -513,9 +513,9 @@ export class Nostalgist {
   }
 
   /**
-   * Launch the emulator, if it's not launched, because of the launch option `runEmulatorManually` being set to `true`.
+   * Start the emulator if it's not started because of the instance is returned by `Nostalgist.prepare` rather than `Nostalgist.launch`, or the option `runEmulatorManually` for `Nostalgist.launch` being set to `true`.
    *
-   * @see {@link https://nostalgist.js.org/apis/launch-emulator/}
+   * @see {@link https://nostalgist.js.org/apis/start/}
    */
   async start() {
     return await this.getEmulator().launch()

@@ -5,6 +5,7 @@ title: API reference
 ## Static methods
 + [`launch`](/apis/launch)
 + [`configure`](/apis/configure)
++ [`prepare`](/apis/prepare)
 + [`nes`](/apis/nes)
 + [`snes`](/apis/snes)
 + [`megadrive`](/apis/megadrive)
@@ -17,6 +18,7 @@ title: API reference
 + [`saveState`](/apis/save-state)
 + [`loadState`](/apis/load-state)
 + [`saveSRAM`](/apis/save-sram)
++ [`start`](/apis/start)
 + [`restart`](/apis/restart)
 + [`pause`](/apis/pause)
 + [`resume`](/apis/resume)

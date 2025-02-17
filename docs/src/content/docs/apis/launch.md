@@ -4,6 +4,10 @@ title: launch
 
 Launch an emulator and return a `Promise` of the instance of the emulator.
 
+:::tip
+Consider using [`Nostalgist.prepare`](/apis/prepare/) and [`<instance>.start`](/apis/start/) instead of this method if you need to load files through network.
+:::
+
 ## Usage
 Here is an example of its basic usage:
 ```js
