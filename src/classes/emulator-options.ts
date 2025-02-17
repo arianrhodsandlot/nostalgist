@@ -1,5 +1,5 @@
 import { getGlobalOptions } from '../libs/options.ts'
-import { generateValidFileName, merge } from '../libs/utils.ts'
+import { generateValidFileName, getResult, merge } from '../libs/utils.ts'
 import type { NostalgistOptions } from '../types/nostalgist-options.ts'
 import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten.ts'
 import { ResolvableFile } from './resolvable-file.ts'
@@ -158,10 +158,15 @@ export class EmulatorOptions {
   }
 
   private async updateBios() {
-    const { bios, resolveBios } = this.nostalgistOptions
+    let { bios, resolveBios } = this.nostalgistOptions
     if (!bios) {
       return []
     }
+    bios = await getResult(bios)
+    if (!bios) {
+      return []
+    }
+
     const biosFiles = Array.isArray(bios) ? bios : [bios]
     this.bios = await Promise.all(
       biosFiles.map((raw) =>
@@ -199,10 +204,15 @@ export class EmulatorOptions {
   }
 
   private async updateRom() {
-    const { resolveRom, rom } = this.nostalgistOptions
+    let { resolveRom, rom } = this.nostalgistOptions
     if (!rom) {
       return []
     }
+    rom = await getResult(rom)
+    if (!rom) {
+      return []
+    }
+
     const romFiles = Array.isArray(rom) ? rom : [rom]
 
     this.rom = await Promise.all(
@@ -220,12 +230,20 @@ export class EmulatorOptions {
   }
 
   private async updateShader() {
-    const { resolveShader, shader } = this.nostalgistOptions
+    let { resolveShader, shader } = this.nostalgistOptions
+    if (!shader) {
+      return []
+    }
+    shader = await getResult(shader)
     if (!shader) {
       return []
     }
 
-    const rawShaderFile = await resolveShader(shader, this.nostalgistOptions)
+    let rawShaderFile = await resolveShader(shader, this.nostalgistOptions)
+    if (!rawShaderFile) {
+      return []
+    }
+    rawShaderFile = await getResult(rawShaderFile)
     if (!rawShaderFile) {
       return []
     }

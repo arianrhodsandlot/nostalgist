@@ -1,9 +1,7 @@
 import type { Nostalgist } from '..'
-import type { ResolvableFileInput } from '../classes/resolvable-file'
+import type { ResolvableFileInput, ResolvableFileInputs } from '../classes/resolvable-file'
 import type { RetroArchConfig } from './retroarch-config'
 import type { RetroArchEmscriptenModuleOptions } from './retroarch-emscripten'
-
-type NostalgistOptionsFiles = ResolvableFileInput | ResolvableFileInput[]
 
 export interface NostalgistCoreDict {
   /** the name of core */
@@ -120,7 +118,7 @@ export interface NostalgistOptions {
    * })
    * ```
    */
-  rom?: NostalgistOptionsFiles
+  rom?: ResolvableFileInput | ResolvableFileInputs
 
   /**
    * The name of the shader to be used.
@@ -137,7 +135,7 @@ export interface NostalgistOptions {
    * + an object, with a fileName property and a fileContent property. for example: `{ filename: 'xx.nes', fileContent: someBlob }`
    * + an array of above
    */
-  bios?: NostalgistOptionsFiles
+  bios?: ResolvableFileInput | ResolvableFileInputs
 
   /**
    * The initial state to be loaded after launching.
@@ -162,6 +160,12 @@ export interface NostalgistOptions {
    * Not all options can make effects in browser.
    */
   retroarchCoreConfig: Record<string, string>
+
+  /**
+   * DO NOT use this option. It's for CI testing purposes only.
+   * @internal
+   */
+  setupEmulatorManually: boolean
 
   /**
    * If this is set to true, emulator will not run automatically.
@@ -191,13 +195,14 @@ export interface NostalgistOptions {
   resolveShader: (
     shader: NostalgistOptions['shader'],
     options: NostalgistOptions,
-  ) => ResolvableFileInput | ResolvableFileInput[]
+  ) => ResolvableFileInput | ResolvableFileInputs
   waitForInteraction?: (params: { done: () => void }) => void
 }
 
 export type NostalgistOptionsPartial = Partial<NostalgistOptions>
 
 export type NostalgistLaunchOptions = NostalgistOptionsPartial & Pick<NostalgistOptions, 'core'>
-export interface NostalgistLaunchRomOptions extends Omit<NostalgistOptionsPartial, 'core'> {
-  rom: NostalgistOptionsFiles
+interface NostalgistLaunchRomObjectOptions extends Omit<NostalgistOptionsPartial, 'core'> {
+  rom: ResolvableFileInput | ResolvableFileInputs
 }
+export type NostalgistLaunchRomOptions = NostalgistLaunchRomObjectOptions | ResolvableFileInput | ResolvableFileInputs

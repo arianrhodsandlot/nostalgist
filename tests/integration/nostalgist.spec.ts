@@ -17,7 +17,7 @@ GlobalRegistrator.register({ settings: { fetch: { disableSameOriginPolicy: true 
 
 describe('nostalgist', () => {
   beforeEach(() => {
-    Nostalgist.configure({ runEmulatorManually: true })
+    Nostalgist.configure({ setupEmulatorManually: true })
   })
 
   afterEach(() => {

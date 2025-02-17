@@ -1,5 +1,6 @@
 import {
   extractValidFileName,
+  generateValidFileName,
   getResult,
   isNil,
   isResolvableFileContent,
@@ -72,9 +73,10 @@ type ResolvableFilePrimitive =
   | Uint8Array
   | URL
 type ResolvableFileObjects =
-  | { fileContent: Resolvable<ResolvableFilePrimitive>; fileName: Resolvable<File> }
+  | { fileContent: Resolvable<ResolvableFilePrimitive>; fileName: Resolvable<string> }
   | ResolvableFilePrimitive
 export type ResolvableFileInput = Resolvable<ResolvableFilePrimitive> | ResolvableFileObjects
+export type ResolvableFileInputs = Resolvable<ResolvableFileInput[]>
 
 interface ResolvableFileConstructorParameters {
   blobType?: string
@@ -217,17 +219,31 @@ export class ResolvableFile {
     } else if (isFileSystemFileHandle(content)) {
       await this.loadFileSystemFileHandle(content)
     } else {
-      throw new TypeError('failed to resolve the file')
+      throw new TypeError('failed to resolve the file, file content:', content)
     }
+
+    const uint8Array = await this.getUint8Array()
+    const extention = isZip(uint8Array) ? 'zip' : 'bin'
+    this.name ||= generateValidFileName(extention)
   }
 
   private async loadFetchable(fetchable: Request | string | URL) {
+    if (isRequest(fetchable)) {
+      this.name ||= extractValidFileName(fetchable.url)
+    } else if (isURL(fetchable)) {
+      this.name ||= extractValidFileName(fetchable.href)
+    } else {
+      this.name ||= extractValidFileName(fetchable)
+    }
+
     const response = await fetch(fetchable, { signal: this.signal || null })
-    return await this.loadResponse(response)
+    await this.loadResponse(response)
   }
 
   private async loadFileSystemFileHandle(fileSystemFileHandle: FileSystemFileHandle) {
-    this.blob = await fileSystemFileHandle.getFile()
+    const file = await fileSystemFileHandle.getFile()
+    this.blob = file
+    this.name = extractValidFileName(file.name)
   }
 
   private async loadObject(object: any) {
@@ -251,9 +267,7 @@ export class ResolvableFile {
       }
     }
     this.blob = await response.blob()
-    const uint8Array = await this.getUint8Array()
-    const extention = isZip(uint8Array) ? 'zip' : 'bin'
-    this.name ||= extractValidFileName(response.url, extention)
+    this.name ||= extractValidFileName(response.url)
   }
 
   private loadUint8Array(uint8Array: Uint8Array) {

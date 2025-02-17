@@ -28,14 +28,14 @@ export function generateValidFileName(extension = 'bin') {
   return `data${id()}.${extension}`
 }
 
-export function extractValidFileName(url: string, extention = 'bin') {
+export function extractValidFileName(url: string) {
   let baseName = urlBaseName(url) || ''
   baseName = baseName.replaceAll(/["%*/:<>?\\|]/g, '-')
   const extractedExtension = path.parse(baseName).ext
   if (extractedExtension) {
-    return baseName || generateValidFileName(extractedExtension)
+    return baseName
   }
-  return generateValidFileName(extention)
+  return ''
 }
 
 export function isAbsoluteUrl(string: string) {
@@ -174,7 +174,7 @@ export function padZero(number: number) {
   return (number < 10 ? '0' : '') + number
 }
 
-type ResolvableWrapped<T> = ((...args: unknown[]) => T) | Promise<T>
+type ResolvableWrapped<T> = ((...args: any[]) => T) | Promise<T>
 export type Resolvable<T> = ResolvableWrapped<ResolvableWrapped<T>> | ResolvableWrapped<T> | T
 export async function getResult<T = any>(value: Resolvable<T>): Promise<T> {
   if (!value) {
@@ -207,12 +207,15 @@ export function isResolvableFileContent(value: any) {
   return resolvableClasses.some((clazz) => clazz && value instanceof clazz)
 }
 
-export function isResolvableFileInput(value: any) {
+export function isResolvableFileInput(value: any): boolean {
   if (typeof value === 'string') {
     return true
   }
   if ('fileContent' in value) {
     return true
+  }
+  if (Array.isArray(value)) {
+    return value.every((item) => isResolvableFileInput(item))
   }
   return isResolvableFileContent(value)
 }
