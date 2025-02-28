@@ -84,10 +84,10 @@ gtag('config', 'G-E6387HS8V0');
             },
             {
               items: [
+                { label: 'start', link: '/apis/start' },
                 { label: 'saveState', link: '/apis/save-state' },
                 { label: 'loadState', link: '/apis/load-state' },
                 { label: 'saveSRAM', link: '/apis/save-sram' },
-                { label: 'start', link: '/apis/start' },
                 { label: 'restart', link: '/apis/restart' },
                 { label: 'pause', link: '/apis/pause' },
                 { label: 'resume', link: '/apis/resume' },

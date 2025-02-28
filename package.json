@@ -60,22 +60,27 @@
     "@types/path-browserify": "1.0.3"
   },
   "devDependencies": {
-    "@arianrhodsandlot/eslint-config": "0.17.1",
+    "@arianrhodsandlot/eslint-config": "0.18.4",
     "@arianrhodsandlot/release-kit": "0.1.6",
-    "@astrojs/starlight": "0.32.0",
-    "@happy-dom/global-registrator": "17.1.1",
+    "@astrojs/starlight": "0.32.2",
+    "@happy-dom/global-registrator": "17.1.8",
     "@playwright/test": "1.50.1",
     "@types/is-ci": "3.0.4",
-    "@types/node": "22.13.4",
+    "@types/node": "22.13.5",
     "@types/wicg-file-system-access": "2023.10.5",
-    "astro": "5.3.0",
-    "eslint": "9.20.1",
+    "astro": "5.4.0",
+    "eslint": "9.21.0",
     "ini": "5.0.0",
     "lint-staged": "15.4.3",
     "path-browserify": "1.0.1",
     "simple-git-hooks": "2.11.1",
     "typescript": "5.7.3",
-    "vite": "6.1.1"
+    "vite": "6.2.0"
   },
-  "packageManager": "pnpm@10.4.1"
+  "packageManager": "pnpm@10.5.2",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
 }
