@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2025-02-28
+### Added
+- Support resolving multiple files wrapped by functions or promises
+- Add support for loading FileSystemFileHandle directly, close #52
+- Better name detecting strategy for files, fix #53
+- Add a new static method
+### Fixed
+- Add the missing await to avoid launching failures
+- Do not overwrite passed file name unexpectedly
+- Fix Response inside an object not being loaded
+- Improve types for resolvable files
+
 ## [0.12.1] - 2025-01-29
 ### Fixed
 - Fix types of resolvable files are not correctly detected
@@ -136,7 +148,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - fix core loading ([9790327](https://github.com/arianrhodsandlot/nostalgist/commit/97903270c39788b3d05b7f7d0700ccdf32503a9e))
 
-[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.12.1...HEAD
+[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/arianrhodsandlot/nostalgist/compare/v0.10.0...v0.10.1
