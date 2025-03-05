@@ -198,4 +198,26 @@ function tests() {
     await pressAndWait('Enter')
     await expect(canvas).toHaveScreenshot('save-sram.png')
   })
+
+  test('get status', async ({ page }) => {
+    await page.getByText('nes', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(500)
+
+    for (const button of ['', 'pause', 'pause', 'resume', 'exit']) {
+      if (button) {
+        await page.getByText(button, { exact: true }).click()
+      }
+      await page.getByText('printStatus', { exact: true }).click()
+      const msg = await page.waitForEvent('console')
+      expect(msg.text()).toBe(
+        {
+          '': 'running',
+          exit: 'terminated',
+          pause: 'paused',
+          resume: 'running',
+        }[button],
+      )
+    }
+  })
 }

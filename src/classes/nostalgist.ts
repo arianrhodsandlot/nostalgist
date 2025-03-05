@@ -279,6 +279,31 @@ export class Nostalgist {
   }
 
   /**
+   * Get the status of current emulation.
+   *
+   * @see {@link https://nostalgist.js.org/apis/get-status/}
+   *
+   * @returns One of 'initial' | 'paused' | 'running' | 'terminated'
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.prepare('flappybird.nes')
+   * console.log(nostalgist.getStatus()) // 'initial'
+
+   * await nostalgist.launch()
+   * console.log(nostalgist.getStatus()) // 'running'
+
+   * await nostalgist.pause()
+   * console.log(nostalgist.getStatus()) // 'paused'
+
+   * nostalgist.exit()
+   * console.log(nostalgist.getStatus()) // 'terminated'
+   * ```
+   */
+  getStatus() {
+    return this.getEmulator().getStatus()
+  }
+
+  /**
    * Launch the emulator, if it's not launched, because of the launch option `runEmulatorManually` being set to `true`.
    * @deprecated Use the `start` method instead.
    * @see {@link https://nostalgist.js.org/apis/launch-emulator/}

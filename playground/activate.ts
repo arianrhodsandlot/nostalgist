@@ -136,6 +136,12 @@ const handlers = {
         rom: 'pong1k.nes',
       })
     },
+
+    printStatus() {
+      setTimeout(() => {
+        console.info(nostalgist?.getStatus())
+      }, 100)
+    },
   },
 
   instance: {

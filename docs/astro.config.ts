@@ -95,6 +95,7 @@ gtag('config', 'G-E6387HS8V0');
                 { label: 'resize', link: '/apis/resize' },
                 { label: 'press', link: '/apis/press' },
                 { label: 'screenshot', link: '/apis/screenshot' },
+                { label: 'getStatus', link: '/apis/get-status' },
 
                 { badge, label: 'getCanvas', link: '/apis/get-canvas' },
                 { badge, label: 'getEmscripten', link: '/apis/get-emscripten' },

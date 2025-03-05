@@ -11,7 +11,7 @@ import type { ResolvableFile } from './resolvable-file.ts'
 
 const { ini, path } = vendors
 
-type GameStatus = 'initial' | 'paused' | 'running'
+type GameStatus = 'initial' | 'paused' | 'running' | 'terminated'
 type EmulatorEvent = 'beforeLaunch' | 'onLaunch'
 
 interface EmulatorEmscripten {
@@ -94,6 +94,7 @@ export class Emulator {
       exit(statusCode)
       JSEvents.removeAllEventListeners()
     } catch {}
+    this.gameStatus = 'terminated'
   }
 
   getEmscripten() {
@@ -105,6 +106,10 @@ export class Emulator {
 
   getOptions() {
     return this.options
+  }
+
+  getStatus() {
+    return this.gameStatus
   }
 
   async launch() {

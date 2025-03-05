@@ -26,6 +26,7 @@ title: API reference
 + [`resize`](/apis/resize)
 + [`press`](/apis/press)
 + [`screenshot`](/apis/screenshot)
++ [`getStatus`](/apis/get-status)
 + [`getCanvas`](/apis/get-canvas) (advanced)
 + [`getEmscripten`](/apis/get-emscripten) (advanced)
 + [`getEmscriptenAL`](/apis/get-emscripten-al) (advanced)
