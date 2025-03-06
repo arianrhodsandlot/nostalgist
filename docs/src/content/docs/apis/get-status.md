@@ -4,6 +4,9 @@ title: getStatus
 
 Get the status of current emulation.
 
+## Since
+`0.14.0`
+
 ## Usage
 ```js
 const nostalgist = await Nostalgist.prepare('flappybird.nes')

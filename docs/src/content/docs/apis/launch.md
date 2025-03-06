@@ -275,6 +275,24 @@ const nostalgist = await Nostalgist.launch({
       signal: abortController.signal,
     })
     ```
+  + #### `cache`
+
+    **type:** `boolean` | `{ bios: boolean, core: boolean, rom: boolean, shader: boolean }` **default:** `false`
+
+    **since:** `0.14.0`
+
+    Whether to cache the loaded files for next time usage when using the same parameters. Set to `true` or `false` to enable or disable all caches, or set to an object to specify which part should be cached.
+
+    Example:
+    ```js
+    // This may take some time as files are loaded through network...
+    const nostalgist1 = await Nosgalgist.launch({ cache: true, core: 'fceumm', rom: 'flappybird.nes' })
+
+    nostalgist1.exit()
+
+    // Will be launched instantly!
+    const nostalgist2 = await Nosgalgist.launch({ cache: true, core: 'fceumm', rom: 'flappybird' })
+    ```
 
   + #### `retroarchConfig`
     **type:** `Object`

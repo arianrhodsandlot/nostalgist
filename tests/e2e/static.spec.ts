@@ -110,6 +110,21 @@ function tests() {
       await expect(canvas).not.toBeAttached()
     }
   })
+
+  test('launch with cache', async ({ page }) => {
+    const canvas = page.locator('#canvas')
+    await expect(canvas).not.toBeAttached()
+
+    await page.getByText('launchWithCache', { exact: true }).click()
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(500)
+    await expect(canvas).toHaveScreenshot('launch-nes.png')
+    await page.getByText('exit', { exact: true }).click()
+
+    await page.getByText('launchWithCache', { exact: true }).click()
+    await page.waitForTimeout(800)
+    await expect(canvas).toHaveScreenshot('launch-nes.png')
+  })
 }
 
 test.describe('static methods with retroarch esm', () => {

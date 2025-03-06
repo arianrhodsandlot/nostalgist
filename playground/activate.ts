@@ -137,10 +137,12 @@ const handlers = {
       })
     },
 
-    printStatus() {
-      setTimeout(() => {
-        console.info(nostalgist?.getStatus())
-      }, 100)
+    async launchWithCache() {
+      nostalgist = await Nostalgist.launch({
+        cache: true,
+        core: 'fceumm',
+        rom: 'pong1k.nes',
+      })
     },
   },
 
@@ -201,6 +203,12 @@ const handlers = {
 
     exitWithoutRemovingCanvas() {
       nostalgist.exit({ removeCanvas: false })
+    },
+
+    printStatus() {
+      setTimeout(() => {
+        console.info(nostalgist?.getStatus())
+      }, 100)
     },
   },
 }

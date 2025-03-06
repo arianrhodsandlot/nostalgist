@@ -27,6 +27,10 @@ export class Nostalgist {
     this.options = mergedOptions
   }
 
+  static clearCache() {
+    EmulatorOptions.resetCacheStore()
+  }
+
   /**
    * Update the global options for `Nostalgist`, so everytime the `Nostalgist.launch` method or shortcuts like `Nostalgist.nes` is called, the default options specified here will be used.
    *

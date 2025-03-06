@@ -28,7 +28,11 @@ function isURLStringLike(value: unknown): value is string {
   if (value.includes('\n')) {
     return false
   }
-  return value.split(urlSegmentSeparator).every((segment) => segment.length < 100)
+  const segments = value.split(urlSegmentSeparator)
+  if (segments.length < 2) {
+    return false
+  }
+  return segments.every((segment) => segment.length < 100)
 }
 
 function isURL(value: unknown): value is URL {

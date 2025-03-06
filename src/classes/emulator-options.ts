@@ -4,9 +4,38 @@ import type { NostalgistOptions } from '../types/nostalgist-options.ts'
 import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten.ts'
 import { ResolvableFile } from './resolvable-file.ts'
 
+// Copied from https://github.com/sindresorhus/is-plain-obj/blob/main/index.js
+function isPlainObject(value: unknown) {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+
+  const prototype = Object.getPrototypeOf(value)
+  return (
+    (prototype === null || prototype === Object.prototype || Object.getPrototypeOf(prototype) === null) &&
+    !(Symbol.toStringTag in value) &&
+    !(Symbol.iterator in value)
+  )
+}
+
+function isValidCacheKey(cacheKey: unknown) {
+  return typeof cacheKey === 'string' || isPlainObject(cacheKey)
+}
+
+function getCacheStore() {
+  return {
+    bios: new Map<NonNullable<NostalgistOptions['bios']>, EmulatorOptions['bios']>(),
+    core: new Map<NonNullable<NostalgistOptions['core']>, EmulatorOptions['core']>(),
+    rom: new Map<NonNullable<NostalgistOptions['rom']>, EmulatorOptions['rom']>(),
+    shader: new Map<NonNullable<NostalgistOptions['shader']>, EmulatorOptions['shader']>(),
+  }
+}
+
 export class EmulatorOptions {
+  static readonly cacheStorage = getCacheStore()
   beforeLaunch?: (() => Promise<void> | void) | undefined
   bios: ResolvableFile[] = []
+  cache = { bios: false, core: false, rom: false, shader: false }
   core: {
     /** the name of core */
     name: string
@@ -24,13 +53,10 @@ export class EmulatorOptions {
    * This is a low level option and not well tested, so use it at your own risk.
    */
   emscriptenModule: RetroArchEmscriptenModuleOptions
-
   respondToGlobalEvents: boolean
   rom: ResolvableFile[] = []
   shader: ResolvableFile[] = []
-
   signal?: AbortSignal | undefined
-
   /**
    *
    * The size of the canvas element.
@@ -88,6 +114,8 @@ export class EmulatorOptions {
     return defaultLayoutStyle
   }
 
+  private loadPromises: Promise<void>[] = []
+
   private nostalgistOptions: NostalgistOptions
 
   private constructor(options: NostalgistOptions) {
@@ -99,6 +127,14 @@ export class EmulatorOptions {
     this.size = options.size ?? 'auto'
     this.waitForInteraction = options.waitForInteraction
     this.element = this.getElement()
+
+    if (typeof options.cache === 'boolean') {
+      for (const key in this.cache) {
+        this.cache[key as keyof typeof this.cache] = options.cache
+      }
+    } else {
+      Object.assign(this.cache, options.cache)
+    }
   }
 
   static async create(options: NostalgistOptions) {
@@ -107,15 +143,56 @@ export class EmulatorOptions {
     return emulatorOptions
   }
 
+  static resetCacheStore() {
+    Object.assign(EmulatorOptions.cacheStorage, getCacheStore())
+  }
+
   async load() {
-    await Promise.all([
-      this.updateCore(),
-      this.updateRom(),
-      this.updateBios(),
-      this.updateShader(),
-      this.updateState(),
-      this.updateSRAM(),
-    ])
+    this.loadFromCache()
+    await Promise.all(this.loadPromises)
+    this.saveToCache()
+  }
+
+  loadFromCache() {
+    const loadPromises: Promise<void>[] = []
+    const loadMethodMap = {
+      bios: this.updateBios,
+      core: this.updateCore,
+      rom: this.updateRom,
+      shader: this.updateShader,
+    }
+    for (const key in this.cache) {
+      const field = key as keyof typeof this.cache
+      if (this.cache[field]) {
+        const cache = EmulatorOptions.cacheStorage[field]
+        const cacheKey: any = this.nostalgistOptions[field]
+        if (isValidCacheKey(cacheKey)) {
+          const cacheValue = cache.get(cacheKey)
+          if (cacheValue) {
+            this[field] = cacheValue as any
+            continue
+          }
+        }
+      }
+      const method = loadMethodMap[field]
+      const promise = method.call(this)
+      loadPromises.push(promise)
+    }
+    this.loadPromises = loadPromises
+  }
+
+  saveToCache() {
+    for (const key in this.cache) {
+      const field = key as keyof typeof this.cache
+      if (this.cache[field]) {
+        const cache = EmulatorOptions.cacheStorage[field]
+        const cacheKey: any = this.nostalgistOptions[field]
+        const cacheValue: any = this[field]
+        if (isValidCacheKey(cacheKey) && cacheValue) {
+          cache.set(cacheKey, cacheValue)
+        }
+      }
+    }
   }
 
   async updateSRAM() {
@@ -160,11 +237,11 @@ export class EmulatorOptions {
   private async updateBios() {
     let { bios, resolveBios } = this.nostalgistOptions
     if (!bios) {
-      return []
+      return
     }
     bios = await getResult(bios)
     if (!bios) {
-      return []
+      return
     }
 
     const biosFiles = Array.isArray(bios) ? bios : [bios]
@@ -185,7 +262,7 @@ export class EmulatorOptions {
     if (typeof core === 'object' && 'js' in core && 'name' in core && 'wasm' in core) {
       const [js, wasm] = await Promise.all([ResolvableFile.create(core.js), ResolvableFile.create(core.wasm)])
       this.core = { js, name: core.name, wasm }
-      return core
+      return
     }
 
     const [coreResolvable, coreWasmResolvable] = await Promise.all(
@@ -206,11 +283,11 @@ export class EmulatorOptions {
   private async updateRom() {
     let { resolveRom, rom } = this.nostalgistOptions
     if (!rom) {
-      return []
+      return
     }
     rom = await getResult(rom)
     if (!rom) {
-      return []
+      return
     }
 
     const romFiles = Array.isArray(rom) ? rom : [rom]
@@ -232,20 +309,20 @@ export class EmulatorOptions {
   private async updateShader() {
     let { resolveShader, shader } = this.nostalgistOptions
     if (!shader) {
-      return []
+      return
     }
     shader = await getResult(shader)
     if (!shader) {
-      return []
+      return
     }
 
     let rawShaderFile = await resolveShader(shader, this.nostalgistOptions)
     if (!rawShaderFile) {
-      return []
+      return
     }
     rawShaderFile = await getResult(rawShaderFile)
     if (!rawShaderFile) {
-      return []
+      return
     }
 
     const rawShaderFiles = Array.isArray(rawShaderFile) ? rawShaderFile : [rawShaderFile]

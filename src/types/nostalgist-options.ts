@@ -186,6 +186,8 @@ export interface NostalgistOptions {
    */
   signal?: AbortSignal
 
+  cache?: { bios?: boolean; core?: boolean; rom?: boolean; shader?: boolean; sram?: boolean; state?: boolean } | boolean
+
   beforeLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
   onLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
   resolveBios: NostalgistResolveFileFunction
@@ -196,6 +198,10 @@ export interface NostalgistOptions {
     shader: NostalgistOptions['shader'],
     options: NostalgistOptions,
   ) => ResolvableFileInput | ResolvableFileInputs
+
+  /**
+   * @deprecated Use `Nostalgist.prepare` instead.
+   */
   waitForInteraction?: (params: { done: () => void }) => void
 }
 
