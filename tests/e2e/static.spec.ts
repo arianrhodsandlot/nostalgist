@@ -118,12 +118,12 @@ function tests() {
     await page.getByText('launchWithCache', { exact: true }).click()
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(500)
-    await expect(canvas).toHaveScreenshot('launch-nes.png')
+    await expect(canvas).toHaveScreenshot('launch-with-cache.png')
     await page.getByText('exit', { exact: true }).click()
 
     await page.getByText('launchWithCache', { exact: true }).click()
     await page.waitForTimeout(800)
-    await expect(canvas).toHaveScreenshot('launch-nes.png')
+    await expect(canvas).toHaveScreenshot('launch-with-cache.png')
   })
 }
 
