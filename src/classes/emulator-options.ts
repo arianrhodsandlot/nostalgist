@@ -149,7 +149,7 @@ export class EmulatorOptions {
 
   async load() {
     this.loadFromCache()
-    await Promise.all(this.loadPromises)
+    await Promise.all([...this.loadPromises, this.updateState(), this.updateSRAM()])
     this.saveToCache()
   }
 

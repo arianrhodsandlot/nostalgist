@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@arianrhodsandlot/eslint-config": "0.18.4",
-    "@arianrhodsandlot/release-kit": "0.1.6",
+    "@arianrhodsandlot/release-kit": "0.1.7",
     "@astrojs/starlight": "0.32.2",
     "@happy-dom/global-registrator": "17.2.2",
     "@playwright/test": "1.50.1",
