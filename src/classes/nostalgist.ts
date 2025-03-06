@@ -11,7 +11,7 @@ import type {
 import type { RetroArchCommand } from '../types/retroarch-command'
 import { EmulatorOptions } from './emulator-options.ts'
 import { Emulator } from './emulator.ts'
-import { ResolvableFile } from './resolvable-file.ts'
+import { ResolvableFile, type ResolvableFileInput } from './resolvable-file.ts'
 
 export class Nostalgist {
   static readonly Nostalgist = Nostalgist
@@ -328,7 +328,7 @@ export class Nostalgist {
    * await nostalgist.loadState(state)
    * ```
    */
-  async loadState(state: Blob) {
+  async loadState(state: ResolvableFileInput) {
     const resolvable = await ResolvableFile.create(state)
     await this.getEmulator().loadState(resolvable)
   }
