@@ -1,9 +1,12 @@
 import starlight from '@astrojs/starlight'
-import { defineConfig } from 'astro/config'
+import { defineConfig, passthroughImageService } from 'astro/config'
 
 const badge = { text: 'advanced' } as const
 
 export default defineConfig({
+  image: {
+    service: passthroughImageService(),
+  },
   integrations: [
     starlight({
       components: {
