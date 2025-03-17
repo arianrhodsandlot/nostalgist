@@ -196,8 +196,13 @@ export class ResolvableFile {
   }
 
   private async load() {
-    const result = await getResult(this.urlResolver ? this.urlResolver(this) : this.raw)
-    await this.loadContent(result)
+    const result: any = await getResult(this.urlResolver ? this.urlResolver(this) : this.raw)
+    if (typeof result === 'object' && 'fileContent' in result && 'fileName' in result) {
+      const [fileName, fileContent] = await Promise.all([getResult(result.fileName), getResult(result.fileContent)])
+      await this.loadContent({ fileContent, fileName })
+    } else {
+      await this.loadContent(result)
+    }
   }
 
   private loadArrayBuffer(arrayBuffer: ArrayBuffer) {

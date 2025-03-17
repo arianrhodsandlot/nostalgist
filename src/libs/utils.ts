@@ -204,6 +204,9 @@ const resolvableClasses = [
 ]
 
 export function isResolvableFileContent(value: any) {
+  if (typeof value === 'string') {
+    return true
+  }
   return resolvableClasses.some((clazz) => clazz && value instanceof clazz)
 }
 
