@@ -122,7 +122,7 @@ gtag('config', 'G-E6387HS8V0');
       tableOfContents: {
         maxHeadingLevel: 6,
       },
-      title: 'Nostialgist.js',
+      title: 'Nostalgist.js',
     }),
   ],
 })

@@ -2,9 +2,9 @@
 title: getEmscriptenModule
 ---
 
-Get the Emscripten Module object of the current running emulator.
+Get the Emscripten Module object of the currently running emulator.
 
-See [Module object](https://emscripten.org/docs/api_reference/module.html) for more information.
+See [Module object](https://emscripten.org/docs/api_reference/module.html) in the Emscripten documentation for more information.
 
 ## Usage
 ```js

@@ -2,13 +2,14 @@
 title: resize
 ---
 
-Resize the canvas element of the emulator.
+Resize the canvas element used by the emulator.
 
 ## Usage
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
-nostalgist.resize({ height: 800, width: 1000 })
+// Resize to 800x600
+await nostalgist.resize({ height: 600, width: 800 })
 ```
 
 ## Arguments
@@ -16,4 +17,4 @@ nostalgist.resize({ height: 800, width: 1000 })
 
   **type:** `{ width: number, height: number }`
 
-  `width` and `height` represent the size of the canvas element, in pixel.
+  The new size to set for the canvas.

@@ -2,16 +2,16 @@
 title: saveState
 ---
 
-Save the state of the current running game.
+Save the current state of the running game.
 
 ## Usage
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
-// save the state
+// Save the state
 const { state } = await nostalgist.saveState()
 
-// load the state
+// Load the state
 await nostalgist.loadState(state)
 ```
 
@@ -22,4 +22,4 @@ await nostalgist.loadState(state)
 
   The state of the current running game.
 
-  If RetroArch is launched with the option `savestate_thumbnail_enable` set to `true`, which is the default value inside Nostalgist.js, then the `thumbnail` will be a `Blob`. Otherwise the `thumbnail` will be `undefined`.
+  If RetroArch is launched with `savestate_thumbnail_enable` set to `true` (which is the default in Nostalgist.js), then `thumbnail` will be a `Blob`. Otherwise, `thumbnail` will be `undefined`.

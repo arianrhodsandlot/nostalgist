@@ -2,14 +2,14 @@
 title: getEmscriptenFS
 ---
 
-Get the Emscripten `FS` object of the current running emulator.
+Get the Emscripten FS object of the currently running emulator to access its virtual file system.
 
-See [FS object](https://emscripten.org/docs/api_reference/Filesystem-API.html#id2) for more information.
+See [Emscripten File System API](https://emscripten.org/docs/api_reference/Filesystem-API.html) for more information.
 
 ## Usage
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
 const FS = nostalgist.getEmscriptenFS()
-FS.readdir('/')
+const files = FS.readdir('/home/web_user/retroarch/userdata')
 ```

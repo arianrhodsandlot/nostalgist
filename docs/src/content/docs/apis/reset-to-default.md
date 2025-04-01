@@ -2,15 +2,22 @@
 title: resetToDefault
 ---
 
-Reset the default global options for [`Nostalgist.launch`](/apis/launch) set by [`Nostalgist.configure`](/apis/configure).
+Reset all configurations to their default values. This will undo any changes made by [`configure`](/apis/configure).
 
 ## Usage
 ```js
-// update global options
 Nostalgist.configure({
-  element: '.emulator-canvas',
+  style: {
+    position: 'static',
+  },
 })
 
-// global options are being reset to default
+// The canvas element will have position: static
+await Nostalgist.nes('flappybird.nes')
+
+// Reset all configurations to default
 Nostalgist.resetToDefault()
+
+// The canvas element will use the default position: fixed
+await Nostalgist.nes('flappybird.nes')
 ```

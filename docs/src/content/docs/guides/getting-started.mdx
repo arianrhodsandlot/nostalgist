@@ -3,21 +3,23 @@ title: Getting Started
 ---
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 
-## Try it in Devtools of your browser in this website
-You can open the Devtools here(maybe <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>J</kbd> on Windows/Linux and <kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>J</kbd> on macOS) and try Nostalgist.js with global variable `Nostalgist`. No extra setup is required.
+## Try it in the DevTools of your browser in this website
+You can open the DevTools here (maybe <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>J</kbd> on Windows/Linux and <kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>J</kbd> on macOS) and try Nostalgist.js with a global variable `Nostalgist`. No extra setup is required.
 
 ```js
-// launch an NES game
+// Launch an NES game
 await Nostalgist.nes('flappybird.nes')
 
-// launch a Sega Genesis game
+// Launch a Sega Genesis game
 await Nostalgist.megadrive('30yearsofnintendont.bin')
 
-// launch a GBA game
+// Launch a GBA game
 await Nostalgist.gba('eliminator.gba')
 
-// or choose a ROM file from your disk
-await Nostalgist.nes(await showOpenFilePicker().then(([fileHandle]) => fileHandle.getFile()))
+// Or choose a ROM file from your disk
+await Nostalgist.nes(
+  await showOpenFilePicker().then(([fileHandle]) => fileHandle.getFile())
+)
 ```
 
 :::tip
@@ -40,7 +42,7 @@ You can try Nostalgist.js in [Stackblitz](https://stackblitz.com/edit/js-phxocr)
 <iframe class="playground-iframe" src="https://stackblitz.com/edit/js-phxocr?embed=1&file=index.js&hideNavigation=1&view=preview" style="aspect-ratio: 4/3;"></iframe>
 
 ## Build something more complex
-If you want to use Nostialgist.js to build something cool, here are some choices to import it into your project.
+If you want to use Nostalgist.js to build something cool, here are some choices to import it into your project.
 
 ### Use a package manager
 If you are building a modern frontend project, you can use npm or its alternatives to install it to your project.
@@ -75,7 +77,7 @@ await Nostalgist.nes('flappybird')
 ```
 
 ### Use a CDN
-Simplely add a script tag with a CDN link to your HTML.
+Simply add a script tag with a CDN link to your HTML.
 <Tabs>
   <TabItem label="unpkg">
   ```html

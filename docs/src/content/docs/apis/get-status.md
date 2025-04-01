@@ -2,7 +2,7 @@
 title: getStatus
 ---
 
-Get the status of current emulation.
+Get the current status of the emulator instance.
 
 ## Since
 `0.14.0`
@@ -22,12 +22,9 @@ nostalgist.exit()
 console.log(nostalgist.getStatus()) // 'terminated'
 ```
 
-## Arguments
-+ ### `options`
-
-  **type:** `{ removeCanvas: boolean }`
-
-  #### `removeCanvas`
-  **type:** `boolean` **default:** `true`
-
-  If it is `true`, the canvas element will be removed. Otherwise it will be preserved.
+## Returns
+A string representing the current status of the emulator instance. Can be one of:
++ `'initial'` - The emulator has been prepared but not yet started
++ `'running'` - The emulator is running normally
++ `'paused'` - The emulator is currently paused
++ `'terminated'` - The emulator has been exited

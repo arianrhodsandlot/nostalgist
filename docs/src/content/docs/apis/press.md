@@ -4,7 +4,7 @@ title: press
 
 Press a button and then release it programmatically. This is a shortcut for a combination of [`pressDown`](/apis/press-down) and [`pressUp`](/apis/press-up).
 
-Analog Joysticks are not supported by now.
+Analog joysticks are not supported at this time.
 
 ## Since
 `0.4.0`
@@ -28,15 +28,15 @@ await nostalgist.press({ button: 'a', player: 2, time: 200 }) // press the butto
 
   **type:** `string | { button: string, player?: number, time?: number }`
 
-  if it's a string, then it's the same as `{ button: <options> }`
+  If it's a string, then it's the same as `{ button: <options> }`.
 
-  if it's an object, please see below.
+  If it's an object, please see below.
 
   + #### `button`
     **type:** `string`
-    The button you want to press. Can be: `up`,`down`,`left`,`right`,`select`,`start`,`a`,`b`,`x`,`y`,`l`,`l2`,`l3`,`r`,`r2`,`r3`.
+    The button you want to press. Can be: `up`, `down`, `left`, `right`, `select`, `start`, `a`, `b`, `x`, `y`, `l`, `l2`, `l3`, `r`, `r2`, `r3`.
 
-    The 'a', 'b', 'x', 'y' buttons here are using the SNES layout:
+    The 'a', 'b', 'x', 'y' buttons here use the SNES layout:
     > <pre><code> x<br>y a<br> b</code></pre>
 
   + #### `player`
@@ -44,7 +44,7 @@ await nostalgist.press({ button: 'a', player: 2, time: 200 }) // press the butto
 
     The player you want to control.
 
-    If you want to control the player other than `1`, make sure you have set a key binding for that player in [`retroarchConfig`](/apis/launch#retroarchconfig) option while launching.
+    If you want to control a player other than `1`, make sure you have set a key binding for that player in the [`retroarchConfig`](/apis/launch#retroarchconfig) option while launching.
     For example:
     ```js
     await Nostalgist.launch({
@@ -64,4 +64,4 @@ await nostalgist.press({ button: 'a', player: 2, time: 200 }) // press the butto
   + #### `time`
     **type:** `number` **default:** `100`
 
-    How long you would press the button.
+    How long to press the button in milliseconds.

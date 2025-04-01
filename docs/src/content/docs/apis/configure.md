@@ -2,28 +2,31 @@
 title: configure
 ---
 
-Update the global options for `Nostalgist`, so everytime the `Nostalgist.launch` method or shortcuts like `Nostalgist.nes` is called, the default options specified here will be used.
+Configure default options for Nostalgist.js. These options will be applied to all following emulator launches.
 
 ## Usage
 ```js
-// set global options
 Nostalgist.configure({
-  element: '.emulator-canvas',
-  resolveRom(rom) {
-    return `https://example.com/roms/${rom}`
+  style: {
+    position: 'static',
   },
 })
 
-// emulator will use `document.querySelector('.emulator-canvas')` as the default DOM element for emulating
-// and will load the ROM from `https://example.com/roms/my-nes-game.nes`
-await Nostalgist.launch({
-  core: 'fceumm',
-  rom: 'my-nes-game.nes',
-})
+// The canvas element will have position: static
+await Nostalgist.nes('flappybird.nes')
+
+// The canvas element will have position: static too
+await Nostalgist.nes('flappybird.nes')
+
+// Reset all configurations to default
+Nostalgist.resetToDefault()
 ```
 
 ## Arguments
 + ### `options`
-  The options argument here is the same as the `options` argument for `Nostalgist.launch`.
+
+  **type:** `Object`
+
+  The options here are the same as the `options` argument for `Nostalgist.launch`.
 
   Please refer to [launch#options](/apis/launch/#options).
