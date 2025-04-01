@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2025-04-01
+### Fixed
+- Fix files may be not resolved when inside a object's fileContent field
+
 ## [0.14.0] - 2025-03-06
 ### Added
 - Add a new launch option `cache` for caching loaded resources
@@ -154,7 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - fix core loading ([9790327](https://github.com/arianrhodsandlot/nostalgist/commit/97903270c39788b3d05b7f7d0700ccdf32503a9e))
 
-[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.14.1...HEAD
+[0.14.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.14.0...v0.14.1
 [0.14.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.14.0...v0.14.0
 [0.14.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.12.1...v0.13.0
