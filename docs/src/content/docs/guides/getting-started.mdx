@@ -17,9 +17,7 @@ await Nostalgist.megadrive('30yearsofnintendont.bin')
 await Nostalgist.gba('eliminator.gba')
 
 // Or choose a ROM file from your disk
-await Nostalgist.nes(
-  await showOpenFilePicker().then(([fileHandle]) => fileHandle.getFile())
-)
+await Nostalgist.nes(showOpenFilePicker)
 ```
 
 :::tip
