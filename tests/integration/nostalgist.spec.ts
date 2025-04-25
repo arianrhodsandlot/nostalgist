@@ -197,7 +197,6 @@ describe('nostalgist', () => {
     })
 
     const options = nostalgist.getOptions()
-    // @ts-expect-error this method is still not typed. see https://nodejs.org/api/assert.html#assertpartialdeepstrictequalactual-expected-message
     t.assert.partialDeepStrictEqual(options.retroarchConfig, {
       input_audio_mute: 'b',
       input_max_users: 4,
@@ -245,5 +244,11 @@ describe('nostalgist', () => {
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     t.assert.strictEqual(emulatorOptions.rom[0].name, 'a-b-c.nes')
+  })
+
+  test('Nostalgist[shortcut] with blob', async (t: TestContext) => {
+    const nostalgist = await Nostalgist.nes(new Blob())
+    const emulatorOptions = nostalgist.getEmulatorOptions()
+    t.assert.strictEqual(emulatorOptions.rom.length, 1)
   })
 })
