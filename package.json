@@ -55,29 +55,29 @@
     "package.json": "pnpm dlx sort-package-json"
   },
   "dependencies": {
-    "@types/emscripten": "1.40.0",
+    "@types/emscripten": "1.40.1",
     "@types/ini": "4.1.1",
     "@types/path-browserify": "1.0.3"
   },
   "devDependencies": {
-    "@arianrhodsandlot/eslint-config": "0.18.4",
+    "@arianrhodsandlot/eslint-config": "0.19.0",
     "@arianrhodsandlot/release-kit": "0.1.7",
-    "@astrojs/starlight": "0.32.2",
-    "@happy-dom/global-registrator": "17.2.2",
-    "@playwright/test": "1.50.1",
+    "@astrojs/starlight": "0.34.1",
+    "@happy-dom/global-registrator": "17.4.4",
+    "@playwright/test": "1.52.0",
     "@types/is-ci": "3.0.4",
-    "@types/node": "22.13.9",
-    "@types/wicg-file-system-access": "2023.10.5",
-    "astro": "5.4.2",
-    "eslint": "9.21.0",
+    "@types/node": "22.15.2",
+    "@types/wicg-file-system-access": "2023.10.6",
+    "astro": "5.7.5",
+    "eslint": "9.25.1",
     "ini": "5.0.0",
-    "lint-staged": "15.4.3",
+    "lint-staged": "15.5.1",
     "path-browserify": "1.0.1",
-    "simple-git-hooks": "2.11.1",
-    "typescript": "5.8.2",
-    "vite": "6.2.0"
+    "simple-git-hooks": "2.13.0",
+    "typescript": "5.8.3",
+    "vite": "6.3.3"
   },
-  "packageManager": "pnpm@10.5.2",
+  "packageManager": "pnpm@10.9.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
