@@ -194,19 +194,19 @@ export async function getResult<T = any>(value: Resolvable<T>): Promise<T> {
   return value as T
 }
 
-const resolvableClasses = [
-  globalThis.Response,
-  globalThis.Uint8Array,
-  globalThis.URL,
-  globalThis.Request,
-  globalThis.Response,
-  globalThis.FileSystemFileHandle,
-]
-
 export function isResolvableFileContent(value: any) {
   if (typeof value === 'string') {
     return true
   }
+  const resolvableClasses = [
+    globalThis.Response,
+    globalThis.Uint8Array,
+    globalThis.URL,
+    globalThis.Request,
+    globalThis.Response,
+    globalThis.FileSystemFileHandle,
+    globalThis.Blob,
+  ]
   return resolvableClasses.some((clazz) => clazz && value instanceof clazz)
 }
 
