@@ -116,9 +116,7 @@ gtag('config', 'G-E6387HS8V0');
           label: 'APIs',
         },
       ],
-      social: {
-        github: 'https://github.com/arianrhodsandlot/nostalgist',
-      },
+      social: [{ href: 'https://github.com/arianrhodsandlot/nostalgist', icon: 'github', label: 'GitHub' }],
       tableOfContents: {
         maxHeadingLevel: 6,
       },

@@ -12,6 +12,7 @@ const esBuildOptions = defineConfig({
     },
     minify: false,
   },
+  clearScreen: false,
 })
 
 const umdBuildOptions = defineConfig({
@@ -26,6 +27,7 @@ const umdBuildOptions = defineConfig({
     },
     minify: false,
   },
+  clearScreen: false,
 })
 
 await Promise.all([build(esBuildOptions), build(umdBuildOptions)])
