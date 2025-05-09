@@ -238,7 +238,7 @@ type NostalgistOptionsPartial = Parameters<typeof Nostalgist.configure>[0]
 export function activate(mod: typeof Nostalgist_) {
   const nostalgistConfig: NostalgistOptionsPartial = {
     style: {
-      backgroundColor: 'transparent',
+      backgroundColor: 'black',
       display: 'block',
       height: '600px',
       margin: '1em auto 0 auto',
