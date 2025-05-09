@@ -10,7 +10,7 @@ const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
 const useLegacyCore = location.search.includes('legacy')
 const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
 const nesRomRepo = 'retrobrews/nes-games'
-const coreVersion = useLegacyCore ? 'v1.16.0' : 'v1.20.0'
+const coreVersion = useLegacyCore ? 'v1.16.0' : 'v1.21.0'
 const coreDirectory = 'retroarch'
 
 const handlers = {

@@ -116,6 +116,16 @@ export class Emulator {
     const { element, respondToGlobalEvents, signal, style, waitForInteraction } = this.options
     updateStyle(element, style)
 
+    // a workaround for avoiding width and height to be deleted by these lines:
+    // https://github.com/emscripten-core/emscripten/blob/5b489fcde78f596d0b3a28f655a8d88a9bfde34a/src/lib/libglfw.js#L1262-L1263
+    const removeProperty = element.style.removeProperty.bind(element.style)
+    element.style.removeProperty = (property: string) => {
+      if (property !== 'width' && property !== 'height') {
+        return removeProperty(property)
+      }
+      return element.style[property]
+    }
+
     if (!element.isConnected) {
       document.body.append(element)
       signal?.addEventListener('abort', () => {
