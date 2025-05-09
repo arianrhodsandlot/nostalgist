@@ -380,6 +380,8 @@ export class Emulator {
       raArgs.push(path.join(EmulatorFileSystem.contentDirectory, name))
     }
 
+    raArgs.push('-c', EmulatorFileSystem.configPath)
+
     Module.callMain(raArgs)
     signal?.addEventListener('abort', () => {
       this.exit()
