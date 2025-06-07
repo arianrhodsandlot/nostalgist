@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.1] - 2025-06-07
+### Fixed
+- Handle setImmediate polyfill properly
+
 ## [0.15.0] - 2025-05-09
 ### Added
 - Update default retroarch-emscripten-build version to v1.21.0
@@ -166,7 +170,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - fix core loading ([9790327](https://github.com/arianrhodsandlot/nostalgist/commit/97903270c39788b3d05b7f7d0700ccdf32503a9e))
 
-[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.15.1...HEAD
+[0.15.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.15.1...v0.15.1
+[0.15.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.14.2...v0.15.0
 [0.14.2]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.14.1...v0.14.2
 [0.14.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.14.0...v0.14.1
