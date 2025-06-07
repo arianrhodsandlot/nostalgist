@@ -234,11 +234,9 @@ export function isZip(uint8Array: Uint8Array) {
   )
 }
 
+const originalSetImmediate = globalThis.setImmediate
 function setImmediate(callback: any) {
-  if (globalThis.setImmediate) {
-    return globalThis.setImmediate(callback)
-  }
-  return setTimeout(callback, 0)
+  return originalSetImmediate ? originalSetImmediate(callback) : setTimeout(callback, 0)
 }
 
 export function installSetImmediatePolyfill() {
