@@ -92,7 +92,7 @@ async function patchCoreJs({ js, name }: { js: ResolvableFile; name: string }) {
          }
       }`
   } else if (isEsmScript(jsContent)) {
-    jsContent = `${jsContent.replace(
+    jsContent = `${jsContent.replace('var setImmediate', '').replace(
       'readyPromiseResolve(Module)',
       `readyPromiseResolve({
         AL: typeof AL === 'undefined' ? null: AL,
@@ -166,6 +166,7 @@ export function merge(target: any, ...sources: any[]) {
 
 export function checkIsAborted(signal: AbortSignal | undefined) {
   if (signal?.aborted) {
+    uninstallSetImmediatePolyfill()
     throw new Error('Launch aborted')
   }
 }
@@ -231,4 +232,27 @@ export function isZip(uint8Array: Uint8Array) {
     (uint8Array[2] === 0x03 || uint8Array[2] === 0x05 || uint8Array[2] === 0x07) &&
     (uint8Array[3] === 0x04 || uint8Array[3] === 0x06 || uint8Array[3] === 0x08)
   )
+}
+
+function setImmediate(callback: any) {
+  if (globalThis.setImmediate) {
+    return globalThis.setImmediate(callback)
+  }
+  return setTimeout(callback, 0)
+}
+
+export function installSetImmediatePolyfill() {
+  if (typeof globalThis.setImmediate === 'function') {
+    return
+  }
+  // @ts-expect-error polyfill
+  globalThis.setImmediate = setImmediate
+}
+
+export function uninstallSetImmediatePolyfill() {
+  if (globalThis.setImmediate === setImmediate) {
+    // @ts-expect-error remove polyfill
+    // eslint-disable-next-line biome-x/lint
+    delete globalThis.setImmediate
+  }
 }
