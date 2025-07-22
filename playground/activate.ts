@@ -59,9 +59,11 @@ const handlers = {
     },
 
     async launchState() {
-      const response = await fetch(testStateDataUrl)
-      const state = await response.blob()
-      nostalgist = await Nostalgist.nes({ rom: 'flappybird.nes', state })
+      nostalgist = await Nostalgist.nes({
+        cache: true,
+        rom: 'flappybird.nes',
+        state: testStateDataUrl,
+      })
     },
 
     async launchConstantSRAM() {

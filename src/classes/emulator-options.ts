@@ -28,6 +28,8 @@ function getCacheStore() {
     core: new Map<NonNullable<NostalgistOptions['core']>, EmulatorOptions['core']>(),
     rom: new Map<NonNullable<NostalgistOptions['rom']>, EmulatorOptions['rom']>(),
     shader: new Map<NonNullable<NostalgistOptions['shader']>, EmulatorOptions['shader']>(),
+    sram: new Map<NonNullable<NostalgistOptions['sram']>, EmulatorOptions['sram']>(),
+    state: new Map<NonNullable<NostalgistOptions['state']>, EmulatorOptions['state']>(),
   }
 }
 
@@ -35,7 +37,7 @@ export class EmulatorOptions {
   static readonly cacheStorage = getCacheStore()
   beforeLaunch?: (() => Promise<void> | void) | undefined
   bios: ResolvableFile[] = []
-  cache = { bios: false, core: false, rom: false, shader: false }
+  cache = { bios: false, core: false, rom: false, shader: false, sram: false, state: false }
   core: {
     /** the name of core */
     name: string
@@ -149,7 +151,7 @@ export class EmulatorOptions {
 
   async load() {
     this.loadFromCache()
-    await Promise.all([...this.loadPromises, this.updateState(), this.updateSRAM()])
+    await Promise.all(this.loadPromises)
     this.saveToCache()
   }
 
@@ -160,6 +162,8 @@ export class EmulatorOptions {
       core: this.updateCore,
       rom: this.updateRom,
       shader: this.updateShader,
+      sram: this.updateSRAM,
+      state: this.updateState,
     }
     for (const key in this.cache) {
       const field = key as keyof typeof this.cache
