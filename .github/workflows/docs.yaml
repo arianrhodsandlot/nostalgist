@@ -21,7 +21,7 @@ jobs:
       - uses: pnpm/action-setup@v3
       - uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: 24.3.0
           cache: pnpm
       - id: pages
         uses: actions/configure-pages@v5
