@@ -270,8 +270,20 @@ export class Emulator {
   }
 
   sendCommand(msg: RetroArchCommand) {
-    const bytes = textEncoder.encode(`${msg}\n`)
-    this.messageQueue.push([bytes, 0])
+    const exportedCommand: Partial<Record<RetroArchCommand, string>> = {
+      LOAD_STATE: '_cmd_load_state',
+      PAUSE_TOGGLE: '_cmd_toggle_pause',
+      RESET: '_cmd_reset',
+      SAVE_STATE: '_cmd_save_state',
+      SCREENSHOT: '_cmd_take_screenshot',
+    }
+    const { Module } = this.getEmscripten()
+    if (exportedCommand[msg] && exportedCommand[msg] in Module) {
+      this.callCommand(exportedCommand[msg])
+    } else {
+      const bytes = textEncoder.encode(`${msg}\n`)
+      this.messageQueue.push([bytes, 0])
+    }
   }
 
   async setup() {
