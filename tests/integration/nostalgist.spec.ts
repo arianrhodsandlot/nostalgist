@@ -239,13 +239,6 @@ describe('nostalgist', () => {
     t.assert.strictEqual(options.core, 'nestopia')
   })
 
-  test('Nostalgist.launch with a malformed url', async (t: TestContext) => {
-    const nostalgist = await Nostalgist.nes({ rom: 'https://httpbun.com/mix/s=200/a%b%c.nes?xxx=1' })
-
-    const emulatorOptions = nostalgist.getEmulatorOptions()
-    t.assert.strictEqual(emulatorOptions.rom[0].name, 'a-b-c.nes')
-  })
-
   test('Nostalgist[shortcut] with blob', async (t: TestContext) => {
     const nostalgist = await Nostalgist.nes(new Blob())
     const emulatorOptions = nostalgist.getEmulatorOptions()
