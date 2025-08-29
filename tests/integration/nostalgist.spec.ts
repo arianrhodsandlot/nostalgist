@@ -240,7 +240,7 @@ describe('nostalgist', () => {
   })
 
   test('Nostalgist.launch with a malformed url', async (t: TestContext) => {
-    const nostalgist = await Nostalgist.nes({ rom: 'http://example.com/a%b%c.nes?xxx=1' })
+    const nostalgist = await Nostalgist.nes({ rom: 'https://web.libretro.com/a%b%c.nes?xxx=1', resolveRom(){  return new Blob()} })
 
     const emulatorOptions = nostalgist.getEmulatorOptions()
     t.assert.strictEqual(emulatorOptions.rom[0].name, 'a-b-c.nes')

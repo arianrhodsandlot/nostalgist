@@ -250,7 +250,6 @@ export function installSetImmediatePolyfill() {
 export function uninstallSetImmediatePolyfill() {
   if (globalThis.setImmediate === setImmediate) {
     // @ts-expect-error remove polyfill
-    // eslint-disable-next-line biome-x/lint
     delete globalThis.setImmediate
   }
 }

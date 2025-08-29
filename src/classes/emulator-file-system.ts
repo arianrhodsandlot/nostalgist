@@ -70,7 +70,7 @@ export class EmulatorFileSystem {
 
   async waitForFile(fileName: string) {
     const maxRetries = 30
-    let buffer: Uint8Array | undefined
+    let buffer: ArrayBufferView<ArrayBuffer> | undefined
     let isFinished = false
     let retryTimes = 0
     while (retryTimes <= maxRetries && !isFinished) {

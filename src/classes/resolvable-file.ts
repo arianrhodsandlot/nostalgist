@@ -284,6 +284,7 @@ export class ResolvableFile {
 
   private loadUint8Array(uint8Array: Uint8Array) {
     this.uint8Array = uint8Array
+    // @ts-expect-error this seems due to upgraded typescript
     this.blob = new Blob([uint8Array], { type: this.blobType })
   }
 }
