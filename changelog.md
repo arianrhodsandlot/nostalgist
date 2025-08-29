@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2025-08-29
+### Added
+- Prefer exposed methods over sending messages
+### Fixed
+- Fix test
+- Fix test
+- Fix test
+- Throw an error if response is not ok
+
 ## [0.16.0] - 2025-07-22
 ### Added
 - Add support for caching state and sram
@@ -178,7 +187,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - fix core loading ([9790327](https://github.com/arianrhodsandlot/nostalgist/commit/97903270c39788b3d05b7f7d0700ccdf32503a9e))
 
-[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.15.2...v0.16.0
 [0.15.2]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.15.1...v0.15.2
 [0.15.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.15.1...v0.15.1
