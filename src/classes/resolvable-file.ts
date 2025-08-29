@@ -275,6 +275,9 @@ export class ResolvableFile {
         this.name ||= extractValidFileName(extracted)
       }
     }
+    if (!response.ok) {
+      throw new Error('Failed to load response', { cause: response })
+    }
     this.blob = await response.blob()
     this.name ||= extractValidFileName(response.url)
   }
