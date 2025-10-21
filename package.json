@@ -71,6 +71,7 @@
     "astro": "5.14.6",
     "eslint": "9.38.0",
     "ini": "5.0.0",
+    "jiti": "2.6.1",
     "lint-staged": "16.2.4",
     "path-browserify": "1.0.1",
     "prettier": "3.6.2",
