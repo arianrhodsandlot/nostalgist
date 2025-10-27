@@ -270,7 +270,7 @@ export class ResolvableFile {
   private async loadResponse(response: Response) {
     const header = response.headers.get('Content-Disposition')
     if (header) {
-      const extracted = fileNameHeaderRegex.exec(header)?.[1]?.replace(/['"]/g, '')
+      const extracted = fileNameHeaderRegex.exec(header)?.[1]?.replaceAll(/['"]/g, '')
       if (extracted) {
         this.name ||= extractValidFileName(extracted)
       }

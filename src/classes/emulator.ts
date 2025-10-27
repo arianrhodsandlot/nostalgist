@@ -21,13 +21,13 @@ import type { ResolvableFile } from './resolvable-file.ts'
 const { ini, path } = vendors
 
 const interactableElements = [
-  HTMLAnchorElement,
-  HTMLButtonElement,
-  HTMLDetailsElement,
-  HTMLInputElement,
-  HTMLSelectElement,
-  HTMLTextAreaElement,
-]
+  globalThis.HTMLAnchorElement,
+  globalThis.HTMLButtonElement,
+  globalThis.HTMLDetailsElement,
+  globalThis.HTMLInputElement,
+  globalThis.HTMLSelectElement,
+  globalThis.HTMLTextAreaElement,
+].filter(Boolean)
 
 function isInteractable(element?: EventTarget | null) {
   return element && interactableElements.some((clazz) => element instanceof clazz)
