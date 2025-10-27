@@ -20,6 +20,19 @@ import type { ResolvableFile } from './resolvable-file.ts'
 
 const { ini, path } = vendors
 
+const interactableElements = [
+  HTMLAnchorElement,
+  HTMLButtonElement,
+  HTMLDetailsElement,
+  HTMLInputElement,
+  HTMLSelectElement,
+  HTMLTextAreaElement,
+]
+
+function isInteractable(element?: EventTarget | null) {
+  return element && interactableElements.some((clazz) => element instanceof clazz)
+}
+
 type GameStatus = 'initial' | 'paused' | 'running' | 'terminated'
 type EmulatorEvent = 'beforeLaunch' | 'onLaunch'
 
@@ -40,6 +53,7 @@ export class Emulator {
   }
   private fileSystem: EmulatorFileSystem | undefined
   private gameStatus: GameStatus = 'initial'
+  private globalDOMEventListeners = new Map<EventTarget, Record<string, EventListenerOrEventListenerObject>>()
   private messageQueue: [Uint8Array, number][] = []
 
   private options: EmulatorOptions
@@ -98,11 +112,12 @@ export class Emulator {
   }
 
   exit(statusCode = 0) {
+    const { exit, JSEvents } = this.getEmscripten()
     try {
-      const { exit, JSEvents } = this.getEmscripten()
       exit(statusCode)
-      JSEvents.removeAllEventListeners()
     } catch {}
+    JSEvents.removeAllEventListeners()
+    this.removeGlobalDOMEventListeners()
     uninstallSetImmediatePolyfill()
     this.gameStatus = 'terminated'
   }
@@ -385,6 +400,27 @@ export class Emulator {
     this.updateKeyboardEventHandlers()
   }
 
+  private recordGlobalDOMEventListeners() {
+    for (const eventTarget of [globalThis, document]) {
+      eventTarget.addEventListener = (...args: [string, any]) => {
+        const [type, listener] = args
+        const value = this.globalDOMEventListeners.get(eventTarget) || {}
+        value[type] = listener
+        this.globalDOMEventListeners.set(eventTarget, value)
+        return EventTarget.prototype.addEventListener.apply(eventTarget, args)
+      }
+    }
+  }
+
+  private removeGlobalDOMEventListeners() {
+    for (const [eventTarget, eventListeners] of this.globalDOMEventListeners) {
+      for (const eventType in eventListeners) {
+        const listener = eventListeners[eventType]
+        eventTarget.removeEventListener(eventType, listener)
+      }
+    }
+  }
+
   private async runEventListeners(event: EmulatorEvent) {
     const { [event]: eventListeners } = this.eventListeners
     for (const eventListener of eventListeners) {
@@ -405,7 +441,14 @@ export class Emulator {
     raArgs.push('-c', EmulatorFileSystem.configPath)
 
     installSetImmediatePolyfill()
+
+    this.recordGlobalDOMEventListeners()
     Module.callMain(raArgs)
+    for (const [eventTarget] of this.globalDOMEventListeners) {
+      // @ts-expect-error the `addEventListener` here is the modified one attached in `recordGlobalDOMEventListeners`
+      delete eventTarget.addEventListener
+    }
+
     signal?.addEventListener('abort', () => {
       this.exit()
     })
@@ -550,9 +593,11 @@ export class Emulator {
       JSEvents.registerOrRemoveHandler({ eventTypeString, target })
       JSEvents.registerOrRemoveHandler({
         ...globalKeyboardEventHandler,
-        handlerFunc: (...args: [Event]) => {
+        handlerFunc: (...args: [KeyboardEvent]) => {
           const [event] = args
-          if (respondToGlobalEvents || event?.target === element) {
+          const target = event?.target
+          const isValidEmulatorInput = respondToGlobalEvents ? !isInteractable(target) : target === element
+          if (isValidEmulatorInput) {
             handlerFunc(...args)
           }
         },
