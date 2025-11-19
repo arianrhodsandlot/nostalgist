@@ -1,3 +1,4 @@
+import type * as zip from '@zip.js/zip.js'
 import type { NostalgistOptions, NostalgistOptionsPartial } from '../types/nostalgist-options.ts'
 import type { RetroArchConfig } from '../types/retroarch-config'
 import { isAbsoluteUrl, merge } from './utils.ts'
@@ -56,11 +57,54 @@ function getDefaultRetroarchConfig() {
 const cdnBaseUrl = 'https://cdn.jsdelivr.net/gh'
 
 const coreRepo = 'arianrhodsandlot/retroarch-emscripten-build'
-const coreVersion = 'v1.22.0'
+const coreVersion = 'v1.22.2'
 const coreDirectory = 'retroarch'
 
 const shaderRepo = 'libretro/glsl-shaders'
 const shaderVersion = 'f3dc75a'
+
+const zipjsURL = 'https://cdn.jsdelivr.net/npm/@zip.js/zip.js@2.8.10/+esm'
+
+const extractCache = new Map<string, ReturnType<typeof extractCore>>()
+
+async function extractCore(core: string) {
+  const url = `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.zip`
+  const [{ BlobReader, BlobWriter, ZipReader }, response] = await Promise.all([
+    import(/* @vite-ignore */ /* webpackIgnore: true */ zipjsURL) as Promise<typeof zip>,
+    fetch(url),
+  ])
+  const blob = await response.blob()
+  const zipFileReader = new BlobReader(blob)
+  const zipReader = new ZipReader(zipFileReader)
+  const entries = await zipReader.getEntries()
+  const result: { js?: Blob; wasm?: Blob } = {}
+  await Promise.all(
+    entries.map(async (entry) => {
+      if (entry && !entry.directory) {
+        if (entry.filename.endsWith('.js')) {
+          result.js = await entry.getData?.(new BlobWriter('application/octet-stream'))
+        } else if (entry.filename.endsWith('.wasm')) {
+          result.wasm = await entry.getData?.(new BlobWriter('application/octet-stream'))
+        }
+      }
+    }),
+  )
+  if (!result.js || !result.wasm) {
+    throw new Error(`Failed to extract core files for ${core}`)
+  }
+  return result as { js: Blob; wasm: Blob }
+}
+
+async function extractCoreWithCache(core: string) {
+  if (extractCache.has(core)) {
+    return extractCache.get(core) as ReturnType<typeof extractCore>
+  }
+  const promise = extractCore(core)
+  extractCache.set(core, promise)
+  const result = await promise
+  extractCache.delete(core)
+  return result
+}
 
 export function getDefaultOptions() {
   const defaultOptions: Omit<NostalgistOptions, 'core'> = {
@@ -70,12 +114,26 @@ export function getDefaultOptions() {
     runEmulatorManually: false,
     setupEmulatorManually: false,
 
-    resolveCoreJs(core) {
-      return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.js`
+    async resolveCoreJs(core) {
+      if (typeof core !== 'string') {
+        throw new TypeError('the core name must be a string')
+      }
+      const { js } = await extractCoreWithCache(core)
+      if (!js) {
+        throw new Error(`Failed to load core JS for ${core}`)
+      }
+      return js
     },
 
-    resolveCoreWasm(core) {
-      return `${cdnBaseUrl}/${coreRepo}@${coreVersion}/${coreDirectory}/${core}_libretro.wasm`
+    async resolveCoreWasm(core) {
+      if (typeof core !== 'string') {
+        throw new TypeError('the core name must be a string')
+      }
+      const { wasm } = await extractCoreWithCache(core)
+      if (!wasm) {
+        throw new Error(`failed to load core WASM for ${core}`)
+      }
+      return wasm
     },
 
     resolveRom(file) {
