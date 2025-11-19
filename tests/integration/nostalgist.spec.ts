@@ -17,7 +17,15 @@ GlobalRegistrator.register({ settings: { fetch: { disableSameOriginPolicy: true 
 
 describe('nostalgist', () => {
   beforeEach(() => {
-    Nostalgist.configure({ setupEmulatorManually: true })
+    Nostalgist.configure({
+      resolveCoreJs(core) {
+        return `https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.0/retroarch/${core}_libretro.wasm`
+      },
+      resolveCoreWasm(core) {
+        return `https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.0/retroarch/${core}_libretro.wasm`
+      },
+      setupEmulatorManually: true,
+    })
   })
 
   afterEach(() => {
