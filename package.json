@@ -42,7 +42,7 @@
     "docs:dev": "astro dev --root docs",
     "eslint": "eslint --no-warn-ignored",
     "lint": "node --run=eslint -- src tests",
-    "prepare": "simple-git-hooks",
+    "prepare": "simple-git-hooks && node --run=build",
     "test": "node --run=test:integration && node --run=test:e2e",
     "test:e2e": "playwright test -c tests/e2e",
     "test:integration": "node --test tests/integration/**/*.spec.ts"
