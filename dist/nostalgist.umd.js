@@ -944,9 +944,14 @@
         exit: _emscripten_force_exit
       })`
       )};
-      export function getEmscripten({ Module }) {
-        return (${name} || libretro_${name})(Module)
-      }
+    export function getEmscripten({ Module }) {
+      const fnA = (typeof libretro_${name} === "function") ? libretro_${name} : null;
+      const fnB = (typeof ${name} === "function") ? ${name} : null;
+
+      const factory = fnA || fnB;
+
+      return factory ? factory(Module) : null;
+    }
     `;
     }
     return jsContent;
