@@ -103,7 +103,7 @@ async function patchCoreJs({ js, name }: { js: ResolvableFile; name: string }) {
       })`,
     )};
       export function getEmscripten({ Module }) {
-        return (libretro_${name} || ${name})(Module)
+        return (${name} || libretro_${name})(Module)
       }
     `
   }

@@ -1,0 +1,25 @@
+import { ResolvableFile } from '../classes/resolvable-file.ts';
+export declare const textEncoder: TextEncoder;
+export declare function urlBaseName(url: string): string;
+export declare function generateValidFileName(extension?: string): string;
+export declare function extractValidFileName(url: string): string;
+export declare function isAbsoluteUrl(string: string): boolean;
+export declare function updateStyle(element: HTMLElement, style: Partial<CSSStyleDeclaration>): void;
+export declare function delay(time: number): Promise<void>;
+export declare function importCoreJsAsESM({ js, name }: {
+    js: ResolvableFile;
+    name: string;
+}): Promise<any>;
+export declare function isNil(obj: unknown): obj is null | undefined;
+export declare function merge(target: any, ...sources: any[]): void;
+export declare function checkIsAborted(signal: AbortSignal | undefined): void;
+export declare function padZero(number: number): string;
+type ResolvableWrapped<T> = ((...args: any[]) => T) | Promise<T>;
+export type Resolvable<T> = ResolvableWrapped<ResolvableWrapped<T>> | ResolvableWrapped<T> | T;
+export declare function getResult<T = any>(value: Resolvable<T>): Promise<T>;
+export declare function isResolvableFileContent(value: any): boolean;
+export declare function isResolvableFileInput(value: any): boolean;
+export declare function isZip(uint8Array: Uint8Array): boolean;
+export declare function installSetImmediatePolyfill(): void;
+export declare function uninstallSetImmediatePolyfill(): void;
+export {};
