@@ -63,7 +63,7 @@ const coreDirectory = 'retroarch'
 const shaderRepo = 'libretro/glsl-shaders'
 const shaderVersion = '468f67b6f6788e2719d1dd28dfb2c9b7c3db3cc7'
 
-const zipjsURL = 'https://cdn.jsdelivr.net/npm/@zip.js/zip.js@2.8.10/+esm'
+const zipjsURL = 'https://cdn.jsdelivr.net/npm/@zip.js/zip.js@2.8.11/+esm'
 
 const extractCache = new Map<string, ReturnType<typeof extractCore>>()
 

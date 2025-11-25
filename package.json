@@ -42,13 +42,13 @@
     "docs:dev": "astro dev --root docs",
     "eslint": "eslint --no-warn-ignored",
     "lint": "node --run=eslint -- src tests",
-    "prepare": "simple-git-hooks",
+    "prepare": "simple-git-hooks && pnpm build",
     "test": "node --run=test:integration && node --run=test:e2e",
     "test:e2e": "playwright test -c tests/e2e",
     "test:integration": "node --test tests/integration/**/*.spec.ts"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged && node --run=build"
+    "pre-commit": "pnpm lint-staged && pnpm build"
   },
   "lint-staged": {
     "*.?(m|c)@(j|t)s?(x)": "node --run=eslint -- --fix",
@@ -68,19 +68,19 @@
     "@types/is-ci": "3.0.4",
     "@types/node": "24.10.1",
     "@types/wicg-file-system-access": "2023.10.7",
-    "@zip.js/zip.js": "2.8.10",
-    "astro": "5.15.9",
+    "@zip.js/zip.js": "2.8.11",
+    "astro": "5.16.0",
     "eslint": "9.39.1",
     "ini": "6.0.0",
     "jiti": "2.6.1",
-    "lint-staged": "16.2.6",
+    "lint-staged": "16.2.7",
     "path-browserify": "1.0.1",
     "prettier": "3.6.2",
     "simple-git-hooks": "2.13.1",
     "typescript": "5.9.3",
-    "vite": "7.2.2"
+    "vite": "7.2.4"
   },
-  "packageManager": "pnpm@10.22.0",
+  "packageManager": "pnpm@10.23.0",
   "engines": {
     "node": ">=24.7.0"
   },
