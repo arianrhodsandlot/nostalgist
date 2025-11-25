@@ -6,6 +6,7 @@ const currentDir = fileURLToPath(import.meta.url)
 
 const esBuildOptions = defineConfig({
   build: {
+    emptyOutDir: false,
     lib: {
       entry: path.resolve(currentDir, '../../src/index.ts'),
       formats: ['es'],
@@ -17,6 +18,7 @@ const esBuildOptions = defineConfig({
 
 const umdBuildOptions = defineConfig({
   build: {
+    emptyOutDir: false,
     lib: {
       entry: path.resolve(currentDir, '../../src/index-umd.ts'),
       fileName(format) {
