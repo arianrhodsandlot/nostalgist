@@ -35,7 +35,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "node scripts/build.ts && tsc",
+    "build": "jiti scripts/build.ts && tsc",
     "dev": "vite playground --open",
     "dev:e2e": "playwright test -c tests/e2e --ui",
     "docs:build": "astro build --root docs",
