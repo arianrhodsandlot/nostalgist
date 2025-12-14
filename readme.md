@@ -123,7 +123,7 @@ Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
 
 + [Koin.js](https://koin.js.org)
 
-The high-performance, preservation-focused netflix style emulation engine powered by Nostalgist.
+  The high-performance, preservation-focused netflix style emulation engine powered by Nostalgist.
 
 
 ### Credits
