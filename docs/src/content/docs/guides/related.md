@@ -44,6 +44,11 @@ title: Related
 
   Famicom and Super Famicom on the web
 
++ [Koin.js](https://koin.js.org)
+
+  The high-performance, preservation-focused netflix style emulation engine powered by Nostalgist.
+
+
 ## Alternatives
 + [EmulatorJS](https://emulatorjs.org/)
 

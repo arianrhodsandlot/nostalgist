@@ -121,6 +121,11 @@ Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
 
   Famicom and Super Famicom on the web
 
++ [Koin.js](https://koin.js.org)
+
+  The high-performance, preservation-focused netflix style emulation engine powered by Nostalgist.
+
+
 ### Credits
 
 + These are the fundamental dependencies of Nostalgist.js.
