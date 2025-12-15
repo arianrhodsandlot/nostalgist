@@ -61,6 +61,15 @@ export class EmulatorFileSystem {
     return FS.readFile(path, { encoding })
   }
 
+  stat(path: string) {
+    const { FS } = this
+    try {
+      return FS.stat(path)
+    } catch {
+      return null
+    }
+  }
+
   unlink(path: string) {
     const { FS } = this
     try {
@@ -69,29 +78,28 @@ export class EmulatorFileSystem {
   }
 
   async waitForFile(fileName: string) {
-    const maxRetries = 30
-    let buffer: ArrayBufferView<ArrayBuffer> | undefined
+    const maxRetries = 120
+    let lastSize = -1
     let isFinished = false
     let retryTimes = 0
     while (retryTimes <= maxRetries && !isFinished) {
-      const delayTime = Math.min(100 * 2 ** retryTimes, 1000)
+      const delayTime = Math.min(50 * 2 ** retryTimes, 500)
       await delay(delayTime)
       checkIsAborted(this.signal)
-      try {
-        const newBuffer = this.readFile(fileName, 'binary').buffer
-        if (buffer) {
-          isFinished = buffer.byteLength > 0 && buffer.byteLength === newBuffer.byteLength
+      const stats = this.stat(fileName)
+      if (stats) {
+        const currentSize = stats.size
+        if (lastSize > 0 && currentSize === lastSize) {
+          isFinished = true
         }
-        buffer = newBuffer
-      } catch (error) {
-        console.warn(error)
+        lastSize = currentSize
       }
       retryTimes += 1
     }
-    if (!(isFinished && buffer)) {
+    if (!isFinished) {
       throw new Error('fs timeout')
     }
-    return buffer
+    return this.readFile(fileName, 'binary').buffer
   }
 
   async writeFile(filePath: string, fileContent: Parameters<typeof ResolvableFile.create>[0]) {
