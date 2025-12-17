@@ -218,7 +218,7 @@ export class ResolvableFile {
     } else if (typeof content === 'string') {
       this.loadPlainText(content)
     } else if (isResolvableFileContent(content?.fileContent)) {
-      await this.loadObject(content as any)
+      await this.loadObject(content)
     } else if (isArrayBuffer(content)) {
       this.loadArrayBuffer(content)
     } else if (isUint8Array(content)) {

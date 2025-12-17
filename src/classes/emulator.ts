@@ -492,11 +492,10 @@ export class Emulator {
       this.fs.mkdirTree(this.sramFileDirectory)
     }
 
-    const filePromises: Promise<void>[] = []
-    filePromises.push(
+    const filePromises: Promise<void>[] = [
       ...rom.map((file) => this.fs.writeFile(path.join(EmulatorFileSystem.contentDirectory, file.name), file)),
       ...bios.map((file) => this.fs.writeFile(path.join(EmulatorFileSystem.systemDirectory, file.name), file)),
-    )
+    ]
     if (state) {
       filePromises.push(this.fs.writeFile(`${this.stateFilePath}.auto`, state))
     }

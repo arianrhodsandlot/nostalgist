@@ -124,6 +124,7 @@ export async function importCoreJsAsESM({ js, name }: { js: ResolvableFile; name
     return await import(/* @vite-ignore */ /* webpackIgnore: true */ jsObjectUrl)
   } catch {
     // a dirty hack for using with SystemJS, for example, in StackBlitz
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
     return await new Function(`return import('${jsObjectUrl}')`)()
   } finally {
     jsResolvable.dispose()
@@ -232,7 +233,6 @@ export function isResolvableFileInput(value: any): boolean {
 export function isZip(uint8Array: Uint8Array) {
   return (
     uint8Array[0] === 0x50 &&
-    // eslint-disable-next-line unicorn/number-literal-case
     uint8Array[1] === 0x4b &&
     (uint8Array[2] === 0x03 || uint8Array[2] === 0x05 || uint8Array[2] === 0x07) &&
     (uint8Array[3] === 0x04 || uint8Array[3] === 0x06 || uint8Array[3] === 0x08)
@@ -241,6 +241,7 @@ export function isZip(uint8Array: Uint8Array) {
 
 const originalSetImmediate = globalThis.setImmediate
 function setImmediate(callback: any) {
+  // eslint-disable-next-line @typescript-eslint/no-implied-eval
   return originalSetImmediate ? originalSetImmediate(callback) : setTimeout(callback, 0)
 }
 

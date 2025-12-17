@@ -10,7 +10,8 @@ import type { RetroArchThemeConfig } from './theme'
 import type { RetroArchVideoConfig } from './video'
 
 interface RetroArchFullConfig
-  extends RetroArchInputConfig,
+  extends
+    RetroArchInputConfig,
     RetroArchInputPlayerConfig,
     RetroArchNotificationConfig,
     RetroArchQuickMenuConfig,

@@ -18,6 +18,5 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext"
-  },
-  "include": ["src"]
+  }
 }

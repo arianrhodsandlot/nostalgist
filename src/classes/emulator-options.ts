@@ -127,6 +127,7 @@ export class EmulatorOptions {
     this.respondToGlobalEvents = options.respondToGlobalEvents ?? true
     this.signal = options.signal
     this.size = options.size ?? 'auto'
+    // eslint-disable-next-line sonarjs/deprecation
     this.waitForInteraction = options.waitForInteraction
     this.element = this.getElement()
 
