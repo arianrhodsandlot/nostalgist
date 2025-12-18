@@ -295,6 +295,8 @@ export class Emulator {
     const { Module } = this.getEmscripten()
     if (exportedCommand[msg] && exportedCommand[msg] in Module) {
       this.callCommand(exportedCommand[msg])
+    } else if ('EmscriptenSendCommand' in Module) {
+      Module.EmscriptenSendCommand(msg)
     } else {
       const bytes = textEncoder.encode(`${msg}\n`)
       this.messageQueue.push([bytes, 0])
