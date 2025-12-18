@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.1] - 2025-12-18
+### Fixed
+- Improve file waiting mechanism in EmulatorFileSystem
+- Prefer built-in `EmscriptenSendCommand` when possible
+
 ## [0.19.0] - 2025-11-19
 ### Added
 - Add support for extracting the default cores; update default retroarch-emscripten-build version to v1.22.2
@@ -199,7 +204,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - fix core loading ([9790327](https://github.com/arianrhodsandlot/nostalgist/commit/97903270c39788b3d05b7f7d0700ccdf32503a9e))
 
-[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.19.1...HEAD
+[0.19.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.17.0...v0.17.1

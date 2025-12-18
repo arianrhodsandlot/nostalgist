@@ -22,14 +22,10 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
       - run: pnpm i
       - run: node --run build
-
       - run: pnpm rk release-note --version ${{ github.ref_name }}
+      - run: pnpm version from-git --no-git-tag-version
+      - run: pnpm publish --no-git-checks
       - uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body_path: ./release-note.md
-
-      - run: pnpm version from-git --no-git-tag-version
-      - run: pnpm publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
