@@ -240,9 +240,34 @@ export function isZip(uint8Array: Uint8Array) {
 }
 
 const originalSetImmediate = globalThis.setImmediate
-function setImmediate(callback: any) {
+let __nostalgist_setImmediate_channel: MessageChannel | null = null
+const __nostalgist_setImmediate_queue: Array<() => void> = []
+
+function setImmediatePolyfill(callback: any) {
+  if (typeof originalSetImmediate === 'function') {
+    return originalSetImmediate(callback)
+  }
+
+  if (typeof MessageChannel !== 'undefined') {
+    if (!__nostalgist_setImmediate_channel) {
+      __nostalgist_setImmediate_channel = new MessageChannel()
+      __nostalgist_setImmediate_channel.port1.onmessage = () => {
+        const fn = __nostalgist_setImmediate_queue.shift()
+        if (fn) {
+          try {
+            fn()
+          } catch {}
+        }
+      }
+    }
+    __nostalgist_setImmediate_queue.push(callback)
+    __nostalgist_setImmediate_channel.port2.postMessage(0)
+    return 0
+  }
+
+  // fallback to setTimeout
   // eslint-disable-next-line @typescript-eslint/no-implied-eval
-  return originalSetImmediate ? originalSetImmediate(callback) : setTimeout(callback, 0)
+  return setTimeout(callback, 0)
 }
 
 export function installSetImmediatePolyfill() {
@@ -250,11 +275,11 @@ export function installSetImmediatePolyfill() {
     return
   }
   // @ts-expect-error polyfill
-  globalThis.setImmediate = setImmediate
+  globalThis.setImmediate = setImmediatePolyfill
 }
 
 export function uninstallSetImmediatePolyfill() {
-  if (globalThis.setImmediate === setImmediate) {
+  if (globalThis.setImmediate === setImmediatePolyfill) {
     // @ts-expect-error remove polyfill
     delete globalThis.setImmediate
   }
