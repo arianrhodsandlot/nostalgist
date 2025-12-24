@@ -1,5 +1,8 @@
 import { ResolvableFile } from '../classes/resolvable-file.ts'
+import { uninstallSetImmediatePolyfill } from './set-immediate-polyfill.ts'
 import { vendors } from './vendors.ts'
+
+export { installSetImmediatePolyfill, uninstallSetImmediatePolyfill } from './set-immediate-polyfill.ts'
 
 const { path } = vendors
 
@@ -237,25 +240,4 @@ export function isZip(uint8Array: Uint8Array) {
     (uint8Array[2] === 0x03 || uint8Array[2] === 0x05 || uint8Array[2] === 0x07) &&
     (uint8Array[3] === 0x04 || uint8Array[3] === 0x06 || uint8Array[3] === 0x08)
   )
-}
-
-const originalSetImmediate = globalThis.setImmediate
-function setImmediate(callback: any) {
-  // eslint-disable-next-line @typescript-eslint/no-implied-eval
-  return originalSetImmediate ? originalSetImmediate(callback) : setTimeout(callback, 0)
-}
-
-export function installSetImmediatePolyfill() {
-  if (typeof globalThis.setImmediate === 'function') {
-    return
-  }
-  // @ts-expect-error polyfill
-  globalThis.setImmediate = setImmediate
-}
-
-export function uninstallSetImmediatePolyfill() {
-  if (globalThis.setImmediate === setImmediate) {
-    // @ts-expect-error remove polyfill
-    delete globalThis.setImmediate
-  }
 }
