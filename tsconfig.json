@@ -3,7 +3,7 @@
     "allowImportingTsExtensions": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "declaration":true,
+    "declaration": true,
     "downlevelIteration": true,
     "emitDeclarationOnly": true,
     "exactOptionalPropertyTypes": true,

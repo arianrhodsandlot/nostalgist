@@ -29,19 +29,22 @@
 
 Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles, like NES and Sega Genesis, within web browsers.
 
->  [!tip]
->  Nostalgist.js is for developers. If you are a player rather than a developer planning to build something, you may want to try another open-source project [RetroAssembly](https://github.com/arianrhodsandlot/retro-assembly).
+> [!tip]
+> Nostalgist.js is for developers. If you are a player rather than a developer planning to build something, you may want to try another open-source project [RetroAssembly](https://github.com/arianrhodsandlot/retro-assembly).
 
 ## A Quick Glance
+
 <p align="center">
   <img src="docs/src/assets/console-demo.gif" alt="console demo" />
 </p>
 
 ## Website
+
 Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online examples and documentation.
 
 ## Features
-+ Launch a retro game with RetroArch emulator in a browser
+
+- Launch a retro game with RetroArch emulator in a browser
 
   ```js
   import { Nostalgist } from 'nostalgist'
@@ -53,7 +56,8 @@ Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online example
   ```
 
   Related API: [`launch`](https://nostalgist.js.org/apis/launch)
-+ Save the state of the game, then load it later
+
+- Save the state of the game, then load it later
 
   ```js
   import { Nostalgist } from 'nostalgist'
@@ -64,7 +68,9 @@ Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online example
   ```
 
   Related APIs: [`saveState`](https://nostalgist.js.org/apis/save-state), [`loadState`](https://nostalgist.js.org/apis/load-state)
-+ Customize any RetroArch config before launching
+
+- Customize any RetroArch config before launching
+
   ```js
   import { Nostalgist } from 'nostalgist'
 
@@ -81,7 +87,8 @@ Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online example
   ```
 
   Related API: [`launch#retroarchConfig`](https://nostalgist.js.org/apis/launch#retroarchconfig)
-+ Access low level APIs of Emscripten
+
+- Access low level APIs of Emscripten
 
   ```js
   import { Nostalgist } from 'nostalgist'
@@ -95,44 +102,48 @@ Checkout [nostalgist.js.org](https://nostalgist.js.org/) for more online example
   Related APIs: [`getEmscriptenModule`](https://nostalgist.js.org/apis/get-emscripten-module), [`getEmscriptenFS`](https://nostalgist.js.org/apis/get-emscripten-fs)
 
 ## Motivation
+
 Nostalgist.js is built on top of RetroArch Emscripten builds. We love RetroArch to run in browsers because that's portable and convenient. Although there is already an official instance, [RetroArch web player](https://web.libretro.com/), and some third-party ones like [webretro](https://binbashbanana.github.io/webretro/), it's still not that easy to launch RetroArch in a browser programmatically.
 
 The purpose of Nostalgist.js is to simplify the process of launching an emulator to play a game, via RetroArch, in browsers. Given a ROM and a core, the game should be launched without any additional configuration.
 
 ## APIs
+
 Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
 
 ## Related
+
 ### Showcases
 
 > [!note]
 > Feel free to add yours by sending a pull request.
 
-| Project | Description |
-| ------- | ----------- |
-| [RetroAssembly](https://github.com/arianrhodsandlot/retroassembly) | The personal retro game collection cabinet in your browser. |
-| [vme](https://github.com/gitGalu/vme) | Virtual Machine / Emulator - multi emulator web app |
-| [ultimate-homebrew-extensions](https://github.com/longjoel/ultimate-homebrew-extensions) | Runs an emulator to test ROMs inside of VS Code |
-| [NextCloud Nostalgist](https://github.com/RobLoach/nextcloud-nostalgist) | Run emulators of retro consoles directly in NextCloud via Nostalgist.js. |
-| [Nostalbit](https://github.com/iDarkSSJ/Nostalbit) | A retro web emulator with Next.js, Tailwind, TypeScript |
-| [AstroEmu](https://github.com/syed-sakeeb-ahmed/AstroEmu) | Famicom and Super Famicom on the web |
-| [Koin.js](https://koin.js.org) | The high-performance, preservation-focused netflix style emulation engine powered by Nostalgist. |
-| [Foxol](https://play.foxol.app) | Foxol is a modern emulator platform with multiplayer, cloud saves, cheats, and deep customization across every device. |
+| Project                                                                                  | Description                                                                                                            |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [RetroAssembly](https://github.com/arianrhodsandlot/retroassembly)                       | The personal retro game collection cabinet in your browser.                                                            |
+| [vme](https://github.com/gitGalu/vme)                                                    | Virtual Machine / Emulator - multi emulator web app                                                                    |
+| [ultimate-homebrew-extensions](https://github.com/longjoel/ultimate-homebrew-extensions) | Runs an emulator to test ROMs inside of VS Code                                                                        |
+| [NextCloud Nostalgist](https://github.com/RobLoach/nextcloud-nostalgist)                 | Run emulators of retro consoles directly in NextCloud via Nostalgist.js.                                               |
+| [Nostalbit](https://github.com/iDarkSSJ/Nostalbit)                                       | A retro web emulator with Next.js, Tailwind, TypeScript                                                                |
+| [AstroEmu](https://github.com/syed-sakeeb-ahmed/AstroEmu)                                | Famicom and Super Famicom on the web                                                                                   |
+| [Koin.js](https://koin.js.org)                                                           | The high-performance, preservation-focused netflix style emulation engine powered by Nostalgist.                       |
+| [Foxol](https://play.foxol.app)                                                          | Foxol is a modern emulator platform with multiplayer, cloud saves, cheats, and deep customization across every device. |
 
 ### Credits
 
-+ These are the fundamental dependencies of Nostalgist.js.
-  + [RetroArch](https://www.retroarch.com/) and its friends(the emulators/cores)
-  + [Emscripten](https://emscripten.org/)
+- These are the fundamental dependencies of Nostalgist.js.
+  - [RetroArch](https://www.retroarch.com/) and its friends(the emulators/cores)
+  - [Emscripten](https://emscripten.org/)
 
-+ We are using ROMs here for the purpose of demonstration.
-  + [retrobrews](https://retrobrews.github.io/) and the authors of the homebrew games.
+- We are using ROMs here for the purpose of demonstration.
+  - [retrobrews](https://retrobrews.github.io/) and the authors of the homebrew games.
 
-+ By default, our ROMs and cores are all loaded from this free CDN service.
-  + [jsDelivr](https://www.jsdelivr.com/)
+- By default, our ROMs and cores are all loaded from this free CDN service.
+  - [jsDelivr](https://www.jsdelivr.com/)
 
 ### Alternatives
-+ [EmulatorJS](https://emulatorjs.org/)
+
+- [EmulatorJS](https://emulatorjs.org/)
 
   Another JavaScript library for emulation inside browsers.
 
@@ -141,9 +152,12 @@ Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
   It's not that friendly towards modern frontend development.
 
 ## Caveat
+
 > [!caution]
-> + Nostalgist.js **DOES NOT** provide any pirated content, like copyrighted ROM files or BIOS files.
-> + And it **DOES NOT** encourage that.
+>
+> - Nostalgist.js **DOES NOT** provide any pirated content, like copyrighted ROM files or BIOS files.
+> - And it **DOES NOT** encourage that.
 
 ## License
+
 [MIT](license)

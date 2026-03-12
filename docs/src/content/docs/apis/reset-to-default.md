@@ -5,6 +5,7 @@ title: resetToDefault
 Reset all configurations to their default values. This will undo any changes made by [`configure`](/apis/configure).
 
 ## Usage
+
 ```js
 Nostalgist.configure({
   style: {

@@ -7,9 +7,11 @@ The commands are listed here: https://docs.libretro.com/development/retroarch/ne
 But not all of them are supported inside a browser.
 
 ## Since
+
 `0.9.0`
 
 ## Usage
+
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
@@ -17,7 +19,8 @@ nostalgist.sendCommand('FAST_FORWARD')
 ```
 
 ## Arguments
-+ ### `command`
+
+- ### `command`
 
   **type:** `string`
 

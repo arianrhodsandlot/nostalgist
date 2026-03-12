@@ -5,6 +5,7 @@ title: saveState
 Save the current state of the running game.
 
 ## Usage
+
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
@@ -16,7 +17,8 @@ await nostalgist.loadState(state)
 ```
 
 ## Returns
-+ ### `state`
+
+- ### `state`
 
   **type:** `{ state: Blob, thumbnail: Blob | undefined }`
 

@@ -5,6 +5,7 @@ title: configure
 Configure default options for Nostalgist.js. These options will be applied to all following emulator launches.
 
 ## Usage
+
 ```js
 Nostalgist.configure({
   style: {
@@ -23,7 +24,8 @@ Nostalgist.resetToDefault()
 ```
 
 ## Arguments
-+ ### `options`
+
+- ### `options`
 
   **type:** `Object`
 

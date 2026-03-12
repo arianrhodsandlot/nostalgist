@@ -7,9 +7,11 @@ Release a button programmatically.
 Analog joysticks are not supported at this time.
 
 ## Since
+
 `0.4.0`
 
 ## Usage
+
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
@@ -22,28 +24,32 @@ nostalgist.pressUp({ button: 'a', player: 2 }) // press the button "a" on player
 ```
 
 ## Arguments
-+ ### `options`
+
+- ### `options`
 
   **type:** `string | { button: string, player?: number }`
 
   If it's a string, then it's the same as `{ button: <options> }`.
 
   If it's an object, please see below.
+  - #### `button`
 
-  + #### `button`
     **type:** `string`
     The button you want to press. Can be: `up`, `down`, `left`, `right`, `select`, `start`, `a`, `b`, `x`, `y`, `l`, `l2`, `l3`, `r`, `r2`, `r3`.
 
     The 'a', 'b', 'x', 'y' buttons here use the SNES layout:
+
     > <pre><code> x<br>y a<br> b</code></pre>
 
-  + #### `player`
+  - #### `player`
+
     **type:** `number` **default:** `1`
 
     The player you want to control.
 
     If you want to control the player other than `1`, make sure you have set a key binding for that player in [`retroarchConfig`](/apis/launch#retroarchconfig) option while launching.
     For example:
+
     ```js
     await Nostalgist.launch({
       retroarchConfig: {
@@ -57,4 +63,5 @@ nostalgist.pressUp({ button: 'a', player: 2 }) // press the button "a" on player
       /* ...other options */
     })
     ```
+
     Because we are using these key bindings to simulate the control.

@@ -1,9 +1,11 @@
 ---
 title: Getting Started
 ---
+
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 
 ## Try it in the DevTools of your browser in this website
+
 You can open the DevTools here (maybe <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>J</kbd> on Windows/Linux and <kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>J</kbd> on macOS) and try Nostalgist.js with a global variable `Nostalgist`. No extra setup is required.
 
 ```js
@@ -21,53 +23,70 @@ await Nostalgist.nes(showOpenFilePicker)
 ```
 
 :::tip
+
 <small>
   Controls:
-  <span style="margin-right: 10px">D-Pad: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></span>
-  <span style="margin-right: 10px"><kbd>Start</kbd>: <kbd>Enter</kbd></span>
-  <span style="margin-right: 10px"><kbd>Select</kbd>: <kbd>Shift</kbd></span>
-  <span style="margin-right: 10px"><kbd>B</kbd>: <kbd>Z</kbd></span>
-  <span style="margin-right: 10px"><kbd>A</kbd>: <kbd>X</kbd></span>
-  <span style="margin-right: 10px"><kbd>Y</kbd>: <kbd>A</kbd></span>
-  <span style="margin-right: 10px"><kbd>X</kbd>: <kbd>S</kbd></span>
+  <span style='margin-right: 10px'>
+    D-Pad: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>
+  </span>
+  <span style='margin-right: 10px'>
+    <kbd>Start</kbd>: <kbd>Enter</kbd>
+  </span>
+  <span style='margin-right: 10px'>
+    <kbd>Select</kbd>: <kbd>Shift</kbd>
+  </span>
+  <span style='margin-right: 10px'>
+    <kbd>B</kbd>: <kbd>Z</kbd>
+  </span>
+  <span style='margin-right: 10px'>
+    <kbd>A</kbd>: <kbd>X</kbd>
+  </span>
+  <span style='margin-right: 10px'>
+    <kbd>Y</kbd>: <kbd>A</kbd>
+  </span>
+  <span style='margin-right: 10px'>
+    <kbd>X</kbd>: <kbd>S</kbd>
+  </span>
 </small>
 :::
 
 ## Try it in online editors
+
 You can also use some online editor to give it a try.
 
 You can try Nostalgist.js in [Stackblitz](https://stackblitz.com/edit/js-phxocr) by hacking this example, a homebrew retro game list.
-<iframe class="playground-iframe" src="https://stackblitz.com/edit/js-phxocr?embed=1&file=index.js&hideNavigation=1&view=preview" style="aspect-ratio: 4/3;"></iframe>
+
+<iframe
+  class='playground-iframe'
+  src='https://stackblitz.com/edit/js-phxocr?embed=1&file=index.js&hideNavigation=1&view=preview'
+  style='aspect-ratio: 4/3;'
+></iframe>
 
 ## Build something more complex
+
 If you want to use Nostalgist.js to build something cool, here are some choices to import it into your project.
 
 ### Use a package manager
+
 If you are building a modern frontend project, you can use npm or its alternatives to install it to your project.
+
 <Tabs>
-  <TabItem label="npm" icon="seti:npm">
-  ```sh
-  npm i nostalgist
-  ```
+  <TabItem label='npm' icon='seti:npm'>
+    ```sh npm i nostalgist ```
   </TabItem>
-  <TabItem label="yarn" icon="seti:yarn">
-  ```sh
-  yarn add nostalgist
-  ```
+  <TabItem label='yarn' icon='seti:yarn'>
+    ```sh yarn add nostalgist ```
   </TabItem>
-  <TabItem label="pnpm" icon="pnpm">
-  ```sh
-  pnpm i nostalgist
-  ```
+  <TabItem label='pnpm' icon='pnpm'>
+    ```sh pnpm i nostalgist ```
   </TabItem>
-  <TabItem label="bun" icon="bun">
-  ```sh
-  bun i nostalgist
-  ```
+  <TabItem label='bun' icon='bun'>
+    ```sh bun i nostalgist ```
   </TabItem>
 </Tabs>
 
 Then you can import it and start hacking.
+
 ```js
 import { Nostalgist } from 'nostalgist'
 
@@ -75,42 +94,43 @@ await Nostalgist.nes('flappybird')
 ```
 
 ### Use a CDN
+
 Simply add a script tag with a CDN link to your HTML.
+
 <Tabs>
-  <TabItem label="unpkg">
-  ```html
-  <script src="https://unpkg.com/nostalgist"></script>
-  ```
+  <TabItem label='unpkg'>
+    ```html
+    <script src='https://unpkg.com/nostalgist'></script>
+    ```
   </TabItem>
-  <TabItem label="jsDelivr">
-  ```html
-  <script src="https://cdn.jsdelivr.net/npm/nostalgist"></script>
-  ```
+  <TabItem label='jsDelivr'>
+    ```html
+    <script src='https://cdn.jsdelivr.net/npm/nostalgist'></script>
+    ```
   </TabItem>
 </Tabs>
 
 Then you can use the global variable `Nostalgist` in your code and start hacking.
+
 ```js
 await Nostalgist.nes('flappybird')
 ```
 
 You can also use the ESM version of Nostalgist.js with CDN.
+
 <Tabs>
-  <TabItem label="esm.run">
-  ```html
-  <script type="module">
-  import { Nostalgist } from 'https://esm.run/nostalgist'
-  </script>
-  ```
+  <TabItem label='esm.run'>
+    ```html
+    <script type='module'>import {Nostalgist} from 'https://esm.run/nostalgist'</script>
+    ```
   </TabItem>
-  <TabItem label="skypack">
-  ```html
-  <script type="module">
-  import { Nostalgist } from 'https://cdn.skypack.dev/nostalgist'
-  </script>
-  ```
+  <TabItem label='skypack'>
+    ```html
+    <script type='module'>import {Nostalgist} from 'https://cdn.skypack.dev/nostalgist'</script>
+    ```
   </TabItem>
 </Tabs>
 
 ### Next steps
+
 You may want to read the [API reference](/apis).

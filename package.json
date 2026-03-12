@@ -2,21 +2,29 @@
   "name": "nostalgist",
   "description": "Nostalgist.js is a JavaScript library that allows you to run emulators of retro consoles within web browsers.",
   "keywords": [
-    "retroarch",
+    "emscripten",
     "emulator",
-    "emscripten"
+    "retroarch"
   ],
   "bugs": {
     "url": "https://github.com/arianrhodsandlot/nostalgist/issues",
     "email": "theguidanceofawhitetower@gmail.com"
   },
-  "repository": "arianrhodsandlot/nostalgist",
   "license": "MIT",
   "author": {
     "name": "arianrhodsandlot",
     "email": "theguidanceofawhitetower@gmail.com"
   },
+  "repository": "arianrhodsandlot/nostalgist",
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "main": "./dist/nostalgist.umd.js",
+  "module": "./dist/nostalgist.js",
+  "browser": "./dist/nostalgist.umd.js",
+  "types": "./dist/types/index.d.ts",
+  "jsdelivr": "./dist/nostalgist.umd.js",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
@@ -24,14 +32,6 @@
       "require": "./dist/nostalgist.umd.js"
     }
   },
-  "main": "./dist/nostalgist.umd.js",
-  "jsdelivr": "./dist/nostalgist.umd.js",
-  "module": "./dist/nostalgist.js",
-  "browser": "./dist/nostalgist.umd.js",
-  "types": "./dist/types/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "jiti scripts/build.ts && tsc -p tsconfig.build.json",
     "dev": "vite playground --open",
@@ -44,41 +44,37 @@
     "test:e2e": "playwright test -c tests/e2e",
     "test:integration": "node --test tests/integration/**/*.spec.ts"
   },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged && pnpm build"
-  },
-  "lint-staged": {
-    "*.?(m|c)@(j|t)s?(x)": "eslint --fix",
-    "package.json": "pnpm dlx sort-package-json"
-  },
   "dependencies": {
     "@types/emscripten": "1.41.5",
     "@types/ini": "4.1.1",
     "@types/path-browserify": "1.0.3"
   },
   "devDependencies": {
-    "@arianrhodsandlot/eslint-config": "0.25.4",
+    "@arianrhodsandlot/oxc-config": "1.1.4",
     "@arianrhodsandlot/release-kit": "0.2.0",
-    "@astrojs/starlight": "0.37.6",
-    "@happy-dom/global-registrator": "20.7.0",
+    "@astrojs/starlight": "0.38.1",
+    "@happy-dom/global-registrator": "20.8.3",
     "@playwright/test": "1.58.2",
     "@tsconfig/recommended": "1.0.13",
     "@types/is-ci": "3.0.4",
-    "@types/node": "25.3.1",
+    "@types/node": "25.4.0",
     "@types/wicg-file-system-access": "2023.10.7",
-    "@zip.js/zip.js": "2.8.21",
-    "astro": "5.18.0",
-    "eslint": "9.39.3",
+    "@zip.js/zip.js": "2.8.23",
+    "astro": "6.0.3",
     "ini": "6.0.0",
     "jiti": "2.6.1",
-    "lint-staged": "16.2.7",
+    "oxfmt": "0.39.0",
+    "oxlint": "1.54.0",
     "path-browserify": "1.0.1",
     "prettier": "3.8.1",
     "simple-git-hooks": "2.13.1",
     "typescript": "5.9.3",
     "vite": "7.3.1"
   },
-  "packageManager": "pnpm@10.30.2",
+  "simple-git-hooks": {
+    "pre-commit": "pnpm oxlint --fix --fix-suggestions && pnpm oxfmt"
+  },
+  "packageManager": "pnpm@10.32.1",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",

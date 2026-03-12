@@ -5,6 +5,7 @@ title: loadState
 Load a state for the current running emulator and game.
 
 ## Usage
+
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
@@ -16,11 +17,12 @@ await nostalgist.loadState(state)
 ```
 
 ## Arguments
-+ ### `state`
+
+- ### `state`
 
   **type:**
   <code>
-    [resolvable file](/apis/resolvable-file)
+  [resolvable file](/apis/resolvable-file)
   </code>
 
   The state file to be loaded.

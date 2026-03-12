@@ -110,14 +110,14 @@ export class ResolvableFile {
 
   private arrayBuffer: ArrayBuffer | undefined
   private blob: Blob | undefined
-  private blobType = 'application/octet-stream'
+  private readonly blobType: string = 'application/octet-stream'
   private objectUrl?: string | undefined
-  private raw: unknown
-  private signal: AbortSignal | undefined
+  private readonly raw: unknown
+  private readonly signal: AbortSignal | undefined
   private text: string | undefined
   private uint8Array: Uint8Array | undefined
 
-  private urlResolver?: ((resolvable: ResolvableFile) => unknown) | undefined
+  private readonly urlResolver?: ((resolvable: ResolvableFile) => unknown) | undefined
 
   constructor({ blobType, name, raw, signal, urlResolver }: ResolvableFileConstructorParameters) {
     this.raw = raw

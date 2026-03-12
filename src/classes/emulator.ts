@@ -1,10 +1,10 @@
 import { coreInfoMap } from '../constants/core-info.ts'
 import { keyboardCodeMap } from '../constants/keyboard-code-map.ts'
 import { getEmscriptenModuleOverrides } from '../libs/emscripten.ts'
+import { importCoreJsAsESM } from '../libs/emulator-utils.ts'
 import {
   checkIsAborted,
   delay,
-  importCoreJsAsESM,
   installSetImmediatePolyfill,
   padZero,
   textEncoder,
@@ -52,17 +52,17 @@ export class Emulator {
   private cachedRetroarchConfigMtime = 0
   private canvasInitialSize = { height: 0, width: 0 }
   private emscripten: EmulatorEmscripten | undefined
-  private eventListeners: Record<EmulatorEvent, ((...args: unknown[]) => unknown)[]> = {
+  private readonly eventListeners: Record<EmulatorEvent, ((...args: unknown[]) => unknown)[]> = {
     beforeLaunch: [],
     onLaunch: [],
   }
   private fileSystem: EmulatorFileSystem | undefined
   private gameStatus: GameStatus = 'initial'
-  private globalDOMEventListeners = new Map<EventTarget, Record<string, EventListenerOrEventListenerObject>>()
+  private readonly globalDOMEventListeners = new Map<EventTarget, Record<string, EventListenerOrEventListenerObject>>()
 
-  private messageQueue: [Uint8Array, number][] = []
+  private readonly messageQueue: [Uint8Array, number][] = []
 
-  private options: EmulatorOptions
+  private readonly options: EmulatorOptions
 
   private get coreFullName() {
     const { core } = this.options
@@ -177,7 +177,7 @@ export class Emulator {
     }
     this.canvasInitialSize = this.getElementSize()
 
-    if (respondToGlobalEvents === false) {
+    if (!respondToGlobalEvents) {
       if (!element.tabIndex || element.tabIndex === -1) {
         element.tabIndex = 0
       }
@@ -392,7 +392,7 @@ export class Emulator {
       return `Key${key.toUpperCase()}`
     }
     // f1, f2, f3...
-    if (key[0] === 'f' && (length === 2 || length === 3)) {
+    if (key.startsWith('f') && (length === 2 || length === 3)) {
       return key.toUpperCase()
     }
     // num1, num2, num3...
@@ -476,7 +476,7 @@ export class Emulator {
   private runMain() {
     checkIsAborted(this.options.signal)
     const { Module } = this.getEmscripten()
-    const { arguments: raArgs = [] } = Module
+    const raArgs = Module.arguments || []
     const { rom, signal } = this.options
     if (!Module.arguments && rom.length > 0) {
       const [{ name }] = rom

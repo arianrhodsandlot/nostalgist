@@ -6,10 +6,10 @@ interface CoreInfo {
 }
 
 export const coreInfoMap: Record<string, CoreInfo> = {
-  '2048': { savestate: true, supportsNoGame: true },
   '3dengine': { corename: '3DEngine' },
   '4do': { corename: '4DO', savestate: true },
   '81': { savestate: true },
+  '2048': { savestate: true, supportsNoGame: true },
   a5200: { savestate: true },
   advanced_tests: { corename: 'Advanced Test', supportsNoGame: true },
   ardens: { corename: 'Ardens', savestate: true },
@@ -235,10 +235,10 @@ export const coreInfoMap: Record<string, CoreInfo> = {
   vbam: { cheats: true, corename: 'VBA-M', savestate: true },
   vecx: { savestate: true },
   vemulator: { corename: 'VeMUlator' },
-  vice_x128: { cheats: true, corename: 'VICE x128', savestate: true, supportsNoGame: true },
   vice_x64: { cheats: true, corename: 'VICE x64', savestate: true, supportsNoGame: true },
   vice_x64dtv: { cheats: true, corename: 'VICE x64dtv', savestate: true, supportsNoGame: true },
   vice_x64sc: { cheats: true, corename: 'VICE x64sc', savestate: true, supportsNoGame: true },
+  vice_x128: { cheats: true, corename: 'VICE x128', savestate: true, supportsNoGame: true },
   vice_xcbm2: { cheats: true, corename: 'VICE xcbm2', savestate: true, supportsNoGame: true },
   vice_xcbm5x0: { cheats: true, corename: 'VICE xcbm5x0', savestate: true, supportsNoGame: true },
   vice_xpet: { cheats: true, corename: 'VICE xpet', savestate: true, supportsNoGame: true },

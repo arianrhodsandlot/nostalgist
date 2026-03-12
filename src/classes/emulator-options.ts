@@ -120,7 +120,7 @@ export class EmulatorOptions {
 
   private loadPromises: Promise<void>[] = []
 
-  private nostalgistOptions: NostalgistOptions
+  private readonly nostalgistOptions: NostalgistOptions
 
   private constructor(options: NostalgistOptions) {
     this.nostalgistOptions = options
@@ -243,7 +243,8 @@ export class EmulatorOptions {
   }
 
   private async updateBios() {
-    let { bios, resolveBios } = this.nostalgistOptions
+    const { resolveBios } = this.nostalgistOptions
+    let { bios } = this.nostalgistOptions
     if (!bios) {
       return
     }
@@ -289,7 +290,8 @@ export class EmulatorOptions {
   }
 
   private async updateRom() {
-    let { resolveRom, rom } = this.nostalgistOptions
+    const { resolveRom } = this.nostalgistOptions
+    let { rom } = this.nostalgistOptions
     if (!rom) {
       return
     }
@@ -315,7 +317,8 @@ export class EmulatorOptions {
   }
 
   private async updateShader() {
-    let { resolveShader, shader } = this.nostalgistOptions
+    const { resolveShader } = this.nostalgistOptions
+    let { shader } = this.nostalgistOptions
     if (!shader) {
       return
     }

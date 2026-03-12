@@ -5,9 +5,11 @@ title: saveSRAM
 Save the SRAM of the current running game.
 
 ## Since
+
 `0.12.0`
 
 ## Usage
+
 ```js
 const nostalgist = await Nostalgist.nes('zelda.nes')
 
@@ -22,7 +24,8 @@ await nostalgist.nes({
 ```
 
 ## Returns
-+ ### `sram`
+
+- ### `sram`
 
   **type:** `Blob`
 

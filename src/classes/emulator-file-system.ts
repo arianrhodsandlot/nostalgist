@@ -29,8 +29,8 @@ export class EmulatorFileSystem {
   static readonly systemDirectory = systemDirectory
   static readonly userdataDirectory = userdataDirectory
 
-  private emscriptenModule: RetroArchEmscriptenModule
-  private signal: AbortSignal | undefined
+  private readonly emscriptenModule: RetroArchEmscriptenModule
+  private readonly signal: AbortSignal | undefined
   private get FS() {
     return this.emscriptenModule.FS
   }

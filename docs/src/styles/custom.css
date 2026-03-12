@@ -45,8 +45,8 @@
 }
 
 .home-button.primary {
-	background-color: var(--sl-color-accent-high);
-	color: var(--sl-color-black)!important;
+  background-color: var(--sl-color-accent-high);
+  color: var(--sl-color-black) !important;
 }
 
 .console-demo-image {
@@ -63,5 +63,5 @@
 }
 
 #canvas {
-  z-index: 11!important;
+  z-index: 11 !important;
 }

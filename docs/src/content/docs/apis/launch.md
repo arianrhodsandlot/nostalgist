@@ -9,7 +9,9 @@ Consider using [`Nostalgist.prepare`](/apis/prepare/) and [`<instance>.start`](/
 :::
 
 ## Usage
+
 Here is an example of its basic usage:
+
 ```js
 const nostalgist = await Nostalgist.launch({
   core: 'fceumm',
@@ -62,12 +64,13 @@ const nostalgist = await Nostalgist.launch({
 ```
 
 ## Arguments
-+ ### `options`
+
+- ### `options`
 
   **type:** `Object`
 
   This argument describes how the emulator and game will be launched.
-  + #### `element`
+  - #### `element`
 
     **type:** `string | HTMLCanvasElement` **default:** an empty string `''`
 
@@ -75,11 +78,11 @@ const nostalgist = await Nostalgist.launch({
 
     If it's an empty string, a canvas element will be created automatically and appended to `document.body`.
 
-  + #### `core`
+  - #### `core`
 
     **type:**
     <code>
-      string | { name: string, js: [resolvable file](/apis/resolvable-file), wasm: [resolvable file](/apis/resolvable-file) }
+    string | { name: string, js: [resolvable file](/apis/resolvable-file), wasm: [resolvable file](/apis/resolvable-file) }
     </code>
 
     The core represents the emulator we are going to use. Since we are using RetroArch compiled by Emscripten under the hood, we need to pass the compiled js file and wasm file here.
@@ -87,15 +90,17 @@ const nostalgist = await Nostalgist.launch({
     If you pass a `string` here, by default, we will look up the corresponding core at this GitHub repository [retroarch-emscripten-build](https://github.com/arianrhodsandlot/retroarch-emscripten-build), which contains the official build cores from [libretro buildbot](https://buildbot.libretro.com/stable/), and then the core will be loaded via jsDelivr, a public free CDN that can load files from GitHub with CORS support.
 
     For example, if you pass `snes9x` here, these 2 files will be loaded:
-    + [snes9x_libretro.js](https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.0/retroarch/snes9x_libretro.js)
-    + [snes9x_libretro.wasm](https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.0/retroarch/snes9x_libretro.wasm)
+    - [snes9x_libretro.js](https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.0/retroarch/snes9x_libretro.js)
+    - [snes9x_libretro.wasm](https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.0/retroarch/snes9x_libretro.wasm)
 
     That's because there is a default `resolveCoreJs` option that can resolve `string`s like `snes9x` to links above. By default, we support these cores from [retroarch-emscripten-build](https://github.com/arianrhodsandlot/retroarch-emscripten-build):
+
     > 2048, arduous, bk, bluemsx, chailove, craft, ecwolf, fbalpha2012_cps1, fbalpha2012_cps2, fbalpha2012, fbalpha2012_neogeo, fceumm, freechaf, galaksija, gambatte, gearboy, gearcoleco, gearsystem, genesis_plus_gx, genesis_plus_gx_wide, gme, gong, gw, handy, jaxe, jumpnbump, lowresnx, lutro, mame2000, mame2003, mame2003_plus, mednafen_lynx, mednafen_ngp, mednafen_pce_fast, mednafen_vb, mednafen_wswan, mgba, minivmac, mrboom, mu, neocd, nestopia, numero, nxengine, o2em, opera, pcsx_rearmed, picodrive, pocketcdg, prboom, quasi88, quicknes, retro8, snes9x2002, snes9x2005, snes9x2010, snes9x, squirreljme, tgbdual, theodore, tic80, tyrquake, uw8, uzem, vaporspec, vba_next, vecx, vice_x128, vice_x64, vice_x64sc, vice_xcbm2, vice_xcbm5x0, vice_xpet, vice_xplus4, vice_xscpu64, vice_xvic, virtualxt, vitaquake2-rogue, vitaquake2-xatrix, vitaquake2-zaero, vitaquake2, wasm4, x1, xrick
 
     If you want to specify how to use your custom cores, you can implement a custom `resolveCoreJs` yourself to achieve this.
 
     You can also pass an `Object` instead of a `string` to load data from custom URLs as the core. Here's an example:
+
     ```js
     await Nostalgist.launch({
       core: {
@@ -106,13 +111,14 @@ const nostalgist = await Nostalgist.launch({
       rom: 'https://example.com/roms/super-metroid.sfc',
     })
     ```
+
     The `core.js` and `core.wasm` options can be a [resolvable file](/apis/resolvable-file) as well.
 
-  + #### `rom`
+  - #### `rom`
 
     **type:**
     <code>
-      [resolvable file](/apis/resolvable-file) | Array
+    [resolvable file](/apis/resolvable-file) | Array
     </code>
 
     The game ROM file.
@@ -121,15 +127,18 @@ const nostalgist = await Nostalgist.launch({
     Otherwise, it will be passed to the `resolveRom` option to load the ROM.
 
     There is a default `resolveRom` mechanism that can load free ROMs from [retrobrews](https://retrobrews.github.io/), a project hosting lots of free homebrew ROMs. For example,
+
     ```js
     await Nostalgist.launch({
       core: 'fceumm',
       rom: 'flappybird.nes',
     })
     ```
+
     This will load `flappybird.nes` from the repository [retrobrews/nes-games](https://github.com/retrobrews/nes-games).
 
     We will use the extension name of the `rom` option to determine which repository to load the ROM from. Here is the related code implementation:
+
     ```js
     const romRepo = {
       '.bin': 'retrobrews/md-games',
@@ -147,44 +156,44 @@ const nostalgist = await Nostalgist.launch({
 
     In some circumstances, you may want to launch multiple ROMs simultaneously, for example, for some arcade games with a "parent" ROM. Then you can pass an Array of any of the above.
 
-  + #### `bios`
+  - #### `bios`
 
     **type:**
     <code>
-      [resolvable file](/apis/resolvable-file) | Array
+    [resolvable file](/apis/resolvable-file) | Array
     </code>
 
     Basically, it's the same as the `rom` option. Files passed here will be written to RetroArch's `system` directory.
 
-  + #### `state`
+  - #### `state`
 
     **type:**
     <code>
-      [resolvable file](/apis/resolvable-file)
+    [resolvable file](/apis/resolvable-file)
     </code>
 
     **since:** `0.9.0`
 
     The initial state to be loaded after launching.
 
-  + #### `sram`
+  - #### `sram`
 
     **type:**
     <code>
-      [resolvable file](/apis/resolvable-file)
+    [resolvable file](/apis/resolvable-file)
     </code>
 
     **since:** `0.12.0`
 
     The initial SRAM to be loaded after launching.
 
-  + #### `sramType`
+  - #### `sramType`
 
     **type:** `srm | sav`
 
     Sets the save file battery type used by Nostalgist internally. Use `'sav'` for cores like melonDS. Defaults to `'srm'`.
 
-  + #### `shader`
+  - #### `shader`
 
     **type:** `string`
 
@@ -193,9 +202,8 @@ const nostalgist = await Nostalgist.launch({
     The name of a shader. By default, shader files will be loaded from [libretro/glsl-shaders](https://github.com/libretro/glsl-shaders) via jsDelivr using a loose matching logic.
 
     For example, if `shader` is `'crt/crt-easymode'`, these two files will be loaded from jsDelivr:
-
-    + [crt/crt-easymode.glslp](https://github.com/libretro/glsl-shaders/blob/master/crt/crt-easymode.glslp)
-    + [crt/shaders/crt-easymode.glsl](https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-easymode.glsl)
+    - [crt/crt-easymode.glslp](https://github.com/libretro/glsl-shaders/blob/master/crt/crt-easymode.glslp)
+    - [crt/shaders/crt-easymode.glsl](https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-easymode.glsl)
 
     If you want to load a shader that does not match this pattern, you might need to customize it by implementing the `resolveShader` function.
 
@@ -214,7 +222,10 @@ const nostalgist = await Nostalgist.launch({
 
         // Put all shader files into shaders/shaders_glsl directory
         FS.writeFile('/home/web_user/retroarch/bundle/shaders/shaders_glsl/crt-easymode.glslp', await glslp.text())
-        FS.writeFile('/home/web_user/retroarch/bundle/shaders/shaders_glsl/shaders/crt-easymode.glsl', await glsl.text())
+        FS.writeFile(
+          '/home/web_user/retroarch/bundle/shaders/shaders_glsl/shaders/crt-easymode.glsl',
+          await glsl.text(),
+        )
 
         // Enable the shader in the global shader config file config/global.glslp
         FS.writeFile(
@@ -225,7 +236,7 @@ const nostalgist = await Nostalgist.launch({
     })
     ```
 
-  + #### `style`
+  - #### `style`
 
     **type:** `Object`
 
@@ -251,7 +262,7 @@ const nostalgist = await Nostalgist.launch({
 
     The values of the CSS rules should be strings, not numbers. For example, `{ width: '800px' }` is valid, but `{ width: 800 }` is not.
 
-  + #### `size`
+  - #### `size`
 
     **type:** `'auto' | { width: number, height: number }` **default:** `'auto'`
 
@@ -260,7 +271,7 @@ const nostalgist = await Nostalgist.launch({
 
     In most cases, it is recommended to specify the size of the element through CSS or the `style` parameter first.
 
-  + #### `signal`
+  - #### `signal`
 
     **type:** `Object`
 
@@ -269,6 +280,7 @@ const nostalgist = await Nostalgist.launch({
     An [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) object used for cancelling a launch.
 
     Here is an example,
+
     ```js
     const abortController = new AbortController()
 
@@ -281,7 +293,8 @@ const nostalgist = await Nostalgist.launch({
       signal: abortController.signal,
     })
     ```
-  + #### `cache`
+
+  - #### `cache`
 
     **type:** `boolean` | `{ bios: boolean, core: boolean, rom: boolean, shader: boolean }` **default:** `false`
 
@@ -290,6 +303,7 @@ const nostalgist = await Nostalgist.launch({
     Whether to cache the loaded files for next time usage when using the same parameters. Set to `true` or `false` to enable or disable all caches, or set to an object to specify which part should be cached.
 
     Example:
+
     ```js
     // This may take some time as files are loaded through network...
     const nostalgist1 = await Nostalgist.launch({ cache: true, core: 'fceumm', rom: 'flappybird.nes' })
@@ -300,19 +314,22 @@ const nostalgist = await Nostalgist.launch({
     const nostalgist2 = await Nostalgist.launch({ cache: true, core: 'fceumm', rom: 'flappybird' })
     ```
 
-  + #### `retroarchConfig`
+  - #### `retroarchConfig`
+
     **type:** `Object`
 
     The content you want to specify in `retroarch.cfg`, custom stuff like key mappings can be set using this option. Refer to [libretro/RetroArch/retroarch.cfg](https://github.com/libretro/RetroArch/blob/master/retroarch.cfg) for more information about how to config RetroArch.
 
     Keep in mind that not all options can take effect since we are launching RetroArch in a browser, not a native environment. And setting `stdin_cmd_enable` to `false` can cause Nostalgist.js saving or loading to break.
 
-  + #### `retroarchCoreConfig`
+  - #### `retroarchCoreConfig`
+
     **type:** `Object`
 
     The content you want to specify in the core option file.
 
     For example,
+
     ```js
     const nostalgist = await Nostalgist.launch({
       core: 'fceumm',
@@ -323,7 +340,8 @@ const nostalgist = await Nostalgist.launch({
     })
     ```
 
-  + #### `runEmulatorManually`
+  - #### `runEmulatorManually`
+
     **type:** `boolean` **default:** `false`
 
     If set to `true`, `Nostalgist.launch(options)` will still return an emulator instance, but will not start it automatically.
@@ -331,6 +349,7 @@ const nostalgist = await Nostalgist.launch({
     The emulator will start only when `<instance>.launchEmulator` is called later.
 
     For example,
+
     ```js
     // will not launch the emulator
     const nostalgist = await Nostalgist.launch({
@@ -343,7 +362,8 @@ const nostalgist = await Nostalgist.launch({
     await nostalgist.launchEmulator()
     ```
 
-  + #### `emscriptenModule`
+  - #### `emscriptenModule`
+
     **type:** `Object` **default:** `{}`
 
     An option to override the `Module` object for Emscripten. See [Module object](https://emscripten.org/docs/api_reference/module.html).
@@ -362,12 +382,14 @@ const nostalgist = await Nostalgist.launch({
     })
     ```
 
-  + #### `respondToGlobalEvents`
+  - #### `respondToGlobalEvents`
+
     **type:** `boolean` **default:** `true`
 
     Should user input events be bound to the global root element or the canvas element.
 
-  + #### `resolveCoreJs`
+  - #### `resolveCoreJs`
+
     **type:** `Function`
 
     A custom function used for resolving a RetroArch core. The return value of this function should be a [resolvable file](/apis/resolvable-file).
@@ -377,6 +399,7 @@ const nostalgist = await Nostalgist.launch({
     The original `core` options and the whole `options` will be passed to the function.
 
     Here is an example,
+
     ```js
     const nostalgist = await Nostalgist.launch({
       core: 'fceumm',
@@ -394,12 +417,14 @@ const nostalgist = await Nostalgist.launch({
     })
     ```
 
-  + #### `resolveCoreWasm`
+  - #### `resolveCoreWasm`
+
     **type:** `Function`
 
     A custom function used for resolving a RetroArch core. The return value of this function should be a [resolvable file](/apis/resolvable-file).
 
     Here is an example,
+
     ```js
     const nostalgist = await Nostalgist.launch({
       core: 'fceumm',
@@ -417,24 +442,27 @@ const nostalgist = await Nostalgist.launch({
     })
     ```
 
-  + #### `resolveRom`
+  - #### `resolveRom`
+
     **type:** `Function`
 
     A custom function used for resolving a ROM. The return value of this function should be a [resolvable file](/apis/resolvable-file).
 
-  + #### `resolveBios`
+  - #### `resolveBios`
+
     **type:** `Function`
 
     A custom function used for resolving a BIOS. The return value of this function should be a [resolvable file](/apis/resolvable-file).
 
-  + #### `resolveShader`
+  - #### `resolveShader`
+
     **type:** `Function`
 
     **since:** `0.7.0`
 
     A custom function used for resolving shader files. The return value of this function should be a [resolvable file](/apis/resolvable-file) or an Array of [resolvable file](/apis/resolvable-file). The files should be some `glslp` and `glsl` files. At least one `glslp` file should be returned to make the shader apply.
 
-  + #### `beforeLaunch`
+  - #### `beforeLaunch`
 
     **type:** `Function`
 
@@ -442,7 +470,7 @@ const nostalgist = await Nostalgist.launch({
 
     A custom function before the emulator is launched. The Nostalgist instance will be passed as its first parameter. You can access the file system with `nostalgist.getEmscriptenFS` and then read or write its content inside this function. If this function returns a `Promise`, the emulator will be launched when that return value is resolved.
 
-  + #### `onLaunch`
+  - #### `onLaunch`
 
     **type:** `Function`
 
@@ -451,4 +479,5 @@ const nostalgist = await Nostalgist.launch({
     A custom function after the emulator is launched. The Nostalgist instance will be passed as its first parameter.
 
 ## Returns
+
 A `Promise` of the instance of the emulator.

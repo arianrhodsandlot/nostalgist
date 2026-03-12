@@ -7,7 +7,9 @@ A shortcut method for `Nostalgist.launch` method, with some additional default o
 It will use `mgba` as the default core for emulation.
 
 ## Usage
+
 Basic usage:
+
 ```js
 await Nostalgist.gb('blastah.gb')
 
@@ -16,7 +18,9 @@ await Nostalgist.launch({ core: 'mgba', rom: 'blastah.gb' })
 ```
 
 ## Arguments
-+ ### `options`
+
+- ### `options`
+
   **type:** `string | Object`
 
   If the `options` is a `string | File | { fileName: string; fileContent: Blob }`, it will be treated as `{ rom: options }` in fact.

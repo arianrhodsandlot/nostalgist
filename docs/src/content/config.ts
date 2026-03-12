@@ -1,5 +1,4 @@
 import { docsSchema, i18nSchema } from '@astrojs/starlight/schema'
-// @ts-expect-error virtual module
 import { defineCollection } from 'astro:content'
 
 export const collections = {

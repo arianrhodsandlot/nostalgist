@@ -7,9 +7,11 @@ Press a button and then release it programmatically. This is a shortcut for a co
 Analog joysticks are not supported at this time.
 
 ## Since
+
 `0.4.0`
 
 ## Usage
+
 ```js
 const nostalgist = await Nostalgist.nes('flappybird.nes')
 
@@ -24,28 +26,32 @@ await nostalgist.press({ button: 'a', player: 2, time: 200 }) // press the butto
 ```
 
 ## Arguments
-+ ### `options`
+
+- ### `options`
 
   **type:** `string | { button: string, player?: number, time?: number }`
 
   If it's a string, then it's the same as `{ button: <options> }`.
 
   If it's an object, please see below.
+  - #### `button`
 
-  + #### `button`
     **type:** `string`
     The button you want to press. Can be: `up`, `down`, `left`, `right`, `select`, `start`, `a`, `b`, `x`, `y`, `l`, `l2`, `l3`, `r`, `r2`, `r3`.
 
     The 'a', 'b', 'x', 'y' buttons here use the SNES layout:
+
     > <pre><code> x<br>y a<br> b</code></pre>
 
-  + #### `player`
+  - #### `player`
+
     **type:** `number` **default:** `1`
 
     The player you want to control.
 
     If you want to control a player other than `1`, make sure you have set a key binding for that player in the [`retroarchConfig`](/apis/launch#retroarchconfig) option while launching.
     For example:
+
     ```js
     await Nostalgist.launch({
       // see https://github.com/libretro/RetroArch/blob/575859e5d76d921cb490f55afcd0bbca90d4a742/retroarch.cfg#L468-L483
@@ -59,9 +65,11 @@ await nostalgist.press({ button: 'a', player: 2, time: 200 }) // press the butto
       /* ...other options */
     })
     ```
+
     Because we are using these key bindings to simulate the control.
 
-  + #### `time`
+  - #### `time`
+
     **type:** `number` **default:** `100`
 
     How long to press the button in milliseconds.
