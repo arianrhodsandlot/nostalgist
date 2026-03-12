@@ -36,6 +36,11 @@
   opacity: 0.3;
 }
 
+.home-button-group {
+  display: flex;
+  justify-content: center;
+}
+
 .home-button {
   text-decoration: none;
   margin: 0 8px;

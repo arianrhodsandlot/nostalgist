@@ -19,8 +19,8 @@ importers:
         version: 1.0.3
     devDependencies:
       '@arianrhodsandlot/oxc-config':
-        specifier: 1.1.4
-        version: 1.1.4(oxfmt@0.39.0)(oxlint@1.54.0(oxlint-tsgolint@0.15.0))
+        specifier: 1.1.6
+        version: 1.1.6(oxfmt@0.39.0)(oxlint@1.54.0(oxlint-tsgolint@0.15.0))
       '@arianrhodsandlot/release-kit':
         specifier: 0.2.0
         version: 0.2.0
@@ -81,8 +81,8 @@ importers:
 
 packages:
 
-  '@arianrhodsandlot/oxc-config@1.1.4':
-    resolution: {integrity: sha512-4CSTuaMF4PNGNc2JD03zYYokhfw25brRvbb5tKlFrjgJMhXNTt/GNdHsaDFvMM03rF/5P8+M8ngQoEmZzUJJ+g==}
+  '@arianrhodsandlot/oxc-config@1.1.6':
+    resolution: {integrity: sha512-BHc9PDy14Cgy5YMkLdv9zquZlbcAeNEmvWTwQs7PERa9oxuVFf+dmAVw+yOZlHTcM+9rdYlGRRmWk+8Q1k9mvA==}
     peerDependencies:
       oxfmt: '*'
       oxlint: '*'
@@ -158,8 +158,8 @@ packages:
     resolution: {integrity: sha512-kzyuwOAQnXJNLS9PSyrk0CWk35nWJW/zl/6KvnTBMFK65gm7U1/Z5BqjxeapjZCIhQcM/DsrEmcbRwDyXyXK4A==}
     engines: {node: '>=14'}
 
-  '@emnapi/runtime@1.8.1':
-    resolution: {integrity: sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg==}
+  '@emnapi/runtime@1.9.0':
+    resolution: {integrity: sha512-QN75eB0IH2ywSpRpNddCRfQIhmJYBCJ1x5Lb3IscKAL8bMnVAKnRg8dCoXbHzVLLH7P38N2Z3mtulB7W0J0FKw==}
 
   '@esbuild/aix-ppc64@0.27.3':
     resolution: {integrity: sha512-9fJMTNFTWZMh5qwrBItuziu834eOCUcEqymSH7pY+zoMVEZg3gcPuBNxH1EvfVYe9h0x/Ptw8KBzv7qxb7l8dg==}
@@ -2362,7 +2362,7 @@ packages:
 
 snapshots:
 
-  '@arianrhodsandlot/oxc-config@1.1.4(oxfmt@0.39.0)(oxlint@1.54.0(oxlint-tsgolint@0.15.0))':
+  '@arianrhodsandlot/oxc-config@1.1.6(oxfmt@0.39.0)(oxlint@1.54.0(oxlint-tsgolint@0.15.0))':
     dependencies:
       oxfmt: 0.39.0
       oxlint: 1.54.0(oxlint-tsgolint@0.15.0)
@@ -2508,7 +2508,7 @@ snapshots:
 
   '@ctrl/tinycolor@4.2.0': {}
 
-  '@emnapi/runtime@1.8.1':
+  '@emnapi/runtime@1.9.0':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -2709,7 +2709,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.34.5':
     dependencies:
-      '@emnapi/runtime': 1.8.1
+      '@emnapi/runtime': 1.9.0
     optional: true
 
   '@img/sharp-win32-arm64@0.34.5':
