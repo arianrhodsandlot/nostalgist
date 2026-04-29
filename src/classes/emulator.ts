@@ -66,7 +66,7 @@ export class Emulator {
 
   private get coreFullName() {
     const { core } = this.options
-    const coreFullName = coreInfoMap[core.name].corename || core.name
+    const coreFullName = coreInfoMap[core.name]?.corename || core.name
     if (!coreFullName) {
       throw new Error(`invalid core name: ${core.name}`)
     }
