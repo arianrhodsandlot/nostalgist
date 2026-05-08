@@ -15,18 +15,12 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v3
-      - uses: actions/setup-node@v4
-        with:
-          node-version: latest
-          cache: pnpm
-          registry-url: 'https://registry.npmjs.org/'
-      - run: pnpm i
-      - run: node --run build
-      - run: pnpm version from-git --no-git-tag-version
-      - run: pnpm publish --no-git-checks
-      - run: pnpm rk release-notes --version ${{ github.ref_name }}
-      - uses: softprops/action-gh-release@v1
+      - uses: voidzero-dev/setup-vp@v1
+      - run: vp run build
+      - run: npm version from-git --no-git-tag-version
+      - run: npm publish --no-git-checks
+      - run: vpx @arianrhodsandlot/release-kit release-notes --version ${{ github.ref_name }}
+      - uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body_path: ./release-notes.md
