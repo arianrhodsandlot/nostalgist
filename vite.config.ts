@@ -1,11 +1,12 @@
 import { createConfig } from '@arianrhodsandlot/vite-plus-config'
+import pkg from './package.json' with { type: 'json' }
 
 export default createConfig({
   pack: {
     fixedExtension: false,
     format: {
-      esm: { entry: { nostalgist: 'src/index.ts' } },
-      umd: { entry: { nostalgist: 'src/index-umd.ts' } },
+      esm: { entry: { [pkg.name]: 'src/index.ts' } },
+      umd: { entry: { [pkg.name]: 'src/index-umd.ts' } },
     },
     globalName: 'Nostalgist',
   },

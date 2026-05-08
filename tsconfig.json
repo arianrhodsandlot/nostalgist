@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/node-ts",
   "compilerOptions": {
+    "module": "preserve",
     "noImplicitAny": false
   }
 }

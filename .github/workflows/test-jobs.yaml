@@ -25,7 +25,7 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright
-      - run: vp run playwright:install chromium
+      - run: vp exec playwright install chromium
       - run: vp run build
       - run: vp run test:e2e
       - uses: actions/upload-artifact@v4
