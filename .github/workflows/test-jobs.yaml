@@ -4,45 +4,30 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.3.0
-          cache: pnpm
-      - run: pnpm i
-      - run: pnpm lint
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+      - run: vp check
 
   test-integration:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.3.0
-          cache: pnpm
-      - run: pnpm i
-      - run: pnpm test:integration
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+      - run: vp run test:integration
 
   test-e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.3.0
-          cache: pnpm
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
       - uses: actions/cache@v4
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright
-      - run: pnpm i
-      - run: pnpm playwright install chromium
-      - run: pnpm build
-      - run: pnpm test:e2e
+      - run: vp run playwright:install chromium
+      - run: vp run build
+      - run: vp run test:e2e
       - uses: actions/upload-artifact@v4
         if: always()
         with:

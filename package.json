@@ -23,23 +23,23 @@
   "main": "./dist/nostalgist.umd.js",
   "module": "./dist/nostalgist.js",
   "browser": "./dist/nostalgist.umd.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/nostalgist.d.ts",
   "jsdelivr": "./dist/nostalgist.umd.js",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
+      "types": "./dist/nostalgist.d.ts",
       "import": "./dist/nostalgist.js",
       "require": "./dist/nostalgist.umd.js"
     }
   },
   "scripts": {
-    "build": "jiti scripts/build.ts && tsc -p tsconfig.build.json",
-    "dev": "vite playground --open",
+    "build": "vp pack",
+    "dev": "vp dev playground --open",
     "dev:e2e": "playwright test -c tests/e2e --ui",
     "docs:build": "astro build --root docs",
     "docs:dev": "astro dev --root docs",
-    "lint": "eslint src tests",
-    "prepare": "simple-git-hooks && pnpm build",
+    "lint": "vp lint src tests",
+    "prepare": "vp config --hooks-dir=.git/hooks",
     "test": "node --run=test:integration && node --run=test:e2e",
     "test:e2e": "playwright test -c tests/e2e",
     "test:integration": "node --test tests/integration/**/*.spec.ts"
@@ -50,39 +50,20 @@
     "@types/path-browserify": "1.0.3"
   },
   "devDependencies": {
-    "@arianrhodsandlot/oxc-config": "1.1.6",
-    "@arianrhodsandlot/release-kit": "0.2.0",
-    "@astrojs/starlight": "0.38.1",
-    "@happy-dom/global-registrator": "20.8.3",
-    "@playwright/test": "1.58.2",
-    "@tsconfig/recommended": "1.0.13",
+    "@arianrhodsandlot/vite-plus-config": "1.1.0",
+    "@astrojs/starlight": "0.39.1",
+    "@happy-dom/global-registrator": "20.9.0",
+    "@playwright/test": "1.59.1",
+    "@tsconfig/node-ts": "23.6.4",
     "@types/is-ci": "3.0.4",
-    "@types/node": "25.4.0",
+    "@types/node": "25.6.2",
     "@types/wicg-file-system-access": "2023.10.7",
-    "@zip.js/zip.js": "2.8.23",
-    "astro": "6.0.3",
+    "@zip.js/zip.js": "2.8.26",
+    "astro": "6.3.1",
     "ini": "6.0.0",
-    "jiti": "2.6.1",
-    "oxfmt": "0.39.0",
-    "oxlint": "1.54.0",
     "path-browserify": "1.0.1",
-    "prettier": "3.8.1",
-    "simple-git-hooks": "2.13.1",
-    "typescript": "5.9.3",
-    "vite": "7.3.1"
+    "typescript": "6.0.3",
+    "vite-plus": "0.1.20"
   },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm oxlint --fix --fix-suggestions && pnpm oxfmt"
-  },
-  "packageManager": "pnpm@10.32.1",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "simple-git-hooks",
-      "unrs-resolver"
-    ],
-    "ignoredBuiltDependencies": [
-      "sharp"
-    ]
-  }
+  "packageManager": "pnpm@11.0.8"
 }

@@ -117,7 +117,6 @@ export class Emulator {
 
   callCommand(command: string) {
     const { Module } = this.getEmscripten()
-    // @ts-expect-error command may be an arbitrary string here
     Module[command]?.()
   }
 
@@ -323,7 +322,7 @@ export class Emulator {
     if (exportedCommand[msg] && exportedCommand[msg] in Module) {
       this.callCommand(exportedCommand[msg])
     } else if ('EmscriptenSendCommand' in Module) {
-      Module.EmscriptenSendCommand(msg)
+      Module.EmscriptenSendCommand?.(msg)
     } else {
       const bytes = textEncoder.encode(`${msg}\n`)
       this.messageQueue.push([bytes, 0])

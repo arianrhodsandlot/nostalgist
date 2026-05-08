@@ -1,22 +1,6 @@
 {
+  "extends": "@tsconfig/node-ts",
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "downlevelIteration": true,
-    "emitDeclarationOnly": true,
-    "exactOptionalPropertyTypes": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react-jsx",
-    "lib": ["DOM", "ESNext"],
-    "module": "esnext",
-    "moduleDetection": "force",
-    "moduleResolution": "bundler",
-    "outDir": "dist/types",
-    "removeComments": false,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "esnext"
+    "noImplicitAny": false
   }
 }

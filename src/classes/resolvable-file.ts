@@ -256,8 +256,7 @@ export class ResolvableFile {
   }
 
   private async loadObject(object: any) {
-    let { fileContent, fileName } = object
-    ;[fileName, fileContent] = await Promise.all([getResult(fileName), getResult(fileContent)])
+    const [fileName, fileContent] = await Promise.all([getResult(object.fileName), getResult(object.fileContent)])
 
     this.name ||= extractValidFileName(fileName)
     await this.loadContent(fileContent)

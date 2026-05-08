@@ -19,7 +19,7 @@ export class Nostalgist {
 
   private emulator: Emulator | undefined
   private emulatorOptions: EmulatorOptions | undefined
-  private options: NostalgistOptions
+  private readonly options: NostalgistOptions
 
   private constructor(options: NostalgistLaunchOptions) {
     const mergedOptions = {} as unknown as NostalgistOptions

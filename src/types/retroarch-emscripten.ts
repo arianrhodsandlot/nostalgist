@@ -1,8 +1,9 @@
+/// <reference types="emscripten" />
+
 export interface RetroArchEmscriptenModule extends EmscriptenModule {
   asm: any
   callMain: (args: string[]) => void
   canvas: HTMLCanvasElement
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   EmscriptenSendCommand?: (command: string) => void
   ERRNO_CODES: any
   FS: any

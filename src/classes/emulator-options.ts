@@ -130,7 +130,7 @@ export class EmulatorOptions {
     this.signal = options.signal
     this.size = options.size ?? 'auto'
     this.sramType = options.sramType ?? 'srm'
-    // eslint-disable-next-line sonarjs/deprecation
+    // oxlint-disable-next-line typescript/no-deprecated
     this.waitForInteraction = options.waitForInteraction
     this.element = this.getElement()
 
