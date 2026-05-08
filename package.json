@@ -39,7 +39,7 @@
     "docs:build": "astro build --root docs",
     "docs:dev": "astro dev --root docs",
     "lint": "vp lint src tests",
-    "prepare": "vp config --hooks-dir=.git/hooks",
+    "prepare": "vp config --hooks-only --hooks-dir=.git/hooks",
     "test": "node --run=test:integration && node --run=test:e2e",
     "test:e2e": "playwright test -c tests/e2e",
     "test:integration": "node --test tests/integration/**/*.spec.ts"
