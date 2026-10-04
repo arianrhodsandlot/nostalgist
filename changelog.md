@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add an `onLog` option for receiving the messages logged by RetroArch and libretro cores
+
+### Changed
+
+- Write the messages logged by RetroArch and libretro cores to the browser console at their own level, instead of writing all of them as errors
+
 ## [0.22.0] - 2026-08-30
 
 ### Added

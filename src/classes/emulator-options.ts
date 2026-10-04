@@ -1,6 +1,6 @@
 import { getGlobalOptions } from '../libs/options.ts'
 import { generateValidFileName, getResult, merge } from '../libs/utils.ts'
-import type { NostalgistOptions } from '../types/nostalgist-options.ts'
+import type { NostalgistLogHandler, NostalgistOptions } from '../types/nostalgist-options.ts'
 import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten.ts'
 import { ResolvableFile, type ResolvableFileInput } from './resolvable-file.ts'
 
@@ -55,6 +55,7 @@ export class EmulatorOptions {
    * This is a low level option and not well tested, so use it at your own risk.
    */
   emscriptenModule: RetroArchEmscriptenModuleOptions
+  onLog?: NostalgistLogHandler | undefined
   respondToGlobalEvents: boolean
   rom: ResolvableFile[] = []
   shader: ResolvableFile[] = []
@@ -132,6 +133,7 @@ export class EmulatorOptions {
     this.nostalgistOptions = options
 
     this.emscriptenModule = options.emscriptenModule ?? {}
+    this.onLog = options.onLog
     this.respondToGlobalEvents = options.respondToGlobalEvents ?? true
     this.signal = options.signal
     this.size = options.size ?? 'auto'
