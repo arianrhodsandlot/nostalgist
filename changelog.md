@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for cheats, through a `cheats` launch option and the `getCheats`, `setCheats`, `addCheat`, `enableCheat`, `disableCheat`, `clearCheats` and `loadCheats` methods
+
 ## [0.22.0] - 2026-08-30
 
 ### Added

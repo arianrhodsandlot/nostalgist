@@ -16,6 +16,32 @@ export interface NostalgistCoreDict {
 
 export type NostalgistResolveFileFunction = (file: string, options: NostalgistOptions) => ResolvableFileInput
 
+export interface NostalgistCheat {
+  /** The cheat code, in whatever format the core expects, like `"SXIOPO"` or `"00AE:41"`. */
+  code: string
+
+  /**
+   * A label for the cheat. It's never sent to RetroArch, which has no way to receive it, but it can be
+   * passed to `enableCheat` and `disableCheat` to avoid having to keep track of indices.
+   */
+  description?: string
+
+  /**
+   * Whether the cheat should be applied.
+   * @defaultValue true
+   */
+  enabled?: boolean
+}
+
+/** A cheat, or just its code. */
+export type NostalgistCheatInput = NostalgistCheat | string
+
+/**
+ * A way to point at one or more of the cheats that have been added.
+ * A number is an index, and a string is matched against descriptions first, then against codes.
+ */
+export type NostalgistCheatTarget = number | string
+
 export interface NostalgistOptions {
   /**
    * The canvas element to use.
@@ -159,6 +185,27 @@ export interface NostalgistOptions {
    * The type of battery save the core generates.
    */
   sramType?: 'sav' | 'srm'
+
+  /**
+   * The cheats to be applied after launching. Each one can be a cheat code, or an object describing a cheat.
+   *
+   * Cheats are only supported by cores built from RetroArch v1.21.0 or later, and only by cores that
+   * implement cheats themselves.
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.launch({
+   *   core: 'fceumm',
+   *   rom: 'contra.nes',
+   *   cheats: [
+   *     'SXIOPO',
+   *     { code: '00AE:41', description: 'Totally Invincible P1' },
+   *     { code: '0033:09', description: 'Infinite Lives P2', enabled: false },
+   *   ],
+   * })
+   * ```
+   */
+  cheats?: NostalgistCheatInput[]
 
   respondToGlobalEvents?: boolean
 

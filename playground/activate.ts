@@ -58,6 +58,13 @@ const handlers = {
       })
     },
 
+    async launchWithCheats() {
+      nostalgist = await Nostalgist.nes({
+        cheats: [{ code: '0033:09', description: 'A cheat' }],
+        rom: 'pong1k.nes',
+      })
+    },
+
     async launchState() {
       nostalgist = await Nostalgist.nes({
         cache: true,
@@ -160,6 +167,16 @@ const handlers = {
 
     async saveSRAM() {
       sram = await nostalgist.saveSRAM()
+    },
+
+    toggleCheat() {
+      const [cheat] = nostalgist.getCheats()
+      if (cheat?.enabled) {
+        nostalgist.disableCheat('A cheat')
+      } else {
+        nostalgist.enableCheat('A cheat')
+      }
+      console.info(nostalgist.getCheats())
     },
 
     pause() {

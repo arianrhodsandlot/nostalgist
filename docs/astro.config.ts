@@ -99,6 +99,13 @@ gtag('config', 'G-E6387HS8V0');
                 { label: 'press', link: '/apis/press' },
                 { label: 'screenshot', link: '/apis/screenshot' },
                 { label: 'getStatus', link: '/apis/get-status' },
+                { label: 'getCheats', link: '/apis/get-cheats' },
+                { label: 'setCheats', link: '/apis/set-cheats' },
+                { label: 'addCheat', link: '/apis/add-cheat' },
+                { label: 'enableCheat', link: '/apis/enable-cheat' },
+                { label: 'disableCheat', link: '/apis/disable-cheat' },
+                { label: 'clearCheats', link: '/apis/clear-cheats' },
+                { label: 'loadCheats', link: '/apis/load-cheats' },
 
                 { badge, label: 'getCanvas', link: '/apis/get-canvas' },
                 { badge, label: 'getEmscripten', link: '/apis/get-emscripten' },

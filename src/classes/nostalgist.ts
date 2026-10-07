@@ -1,8 +1,11 @@
 import { systemCoreMap } from '../constants/system.ts'
+import { parseCheatFile } from '../libs/cheats.ts'
 import { getGlobalOptions, resetGlobalOptions, updateGlobalOptions } from '../libs/options.ts'
 import { checkIsAborted, getResult, isResolvableFileInput, merge } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
 import type {
+  NostalgistCheatInput,
+  NostalgistCheatTarget,
   NostalgistLaunchOptions,
   NostalgistLaunchRomOptions,
   NostalgistOptions,
@@ -188,6 +191,77 @@ export class Nostalgist {
   }
 
   /**
+   * Add a cheat, and apply it if it's enabled.
+   *
+   * @see {@link https://nostalgist.js.org/apis/add-cheat/}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('contra.nes')
+   *
+   * nostalgist.addCheat({ code: '00AE:41', description: 'Totally Invincible P1' })
+   * ```
+   */
+  addCheat(cheat: NostalgistCheatInput) {
+    this.getEmulator().addCheat(cheat)
+  }
+
+  /**
+   * Remove every cheat, and stop applying them.
+   *
+   * @see {@link https://nostalgist.js.org/apis/clear-cheats/}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('contra.nes')
+   *
+   * nostalgist.clearCheats()
+   * ```
+   */
+  clearCheats() {
+    this.getEmulator().clearCheats()
+  }
+
+  /**
+   * Stop applying a cheat, without removing it.
+   *
+   * The cheat can be pointed at by its index, its description, or its code.
+   * If more than one cheat matches, all of them are disabled.
+   *
+   * @see {@link https://nostalgist.js.org/apis/disable-cheat/}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('contra.nes')
+   *
+   * nostalgist.disableCheat('Totally Invincible P1')
+   * ```
+   */
+  disableCheat(target: NostalgistCheatTarget) {
+    this.getEmulator().disableCheat(target)
+  }
+
+  /**
+   * Apply a cheat that has been added but is not enabled.
+   *
+   * The cheat can be pointed at by its index, its description, or its code.
+   * If more than one cheat matches, all of them are enabled.
+   *
+   * @see {@link https://nostalgist.js.org/apis/enable-cheat/}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('contra.nes')
+   *
+   * await nostalgist.loadCheats(cheatFile)
+   * nostalgist.enableCheat('Totally Invincible P1')
+   * ```
+   */
+  enableCheat(target: NostalgistCheatTarget) {
+    this.getEmulator().enableCheat(target)
+  }
+
+  /**
    * Exit the current running game and the emulator. Remove the canvas element used by the emulator if needed.
    *
    * @see {@link https://nostalgist.js.org/apis/exit/}
@@ -219,6 +293,18 @@ export class Nostalgist {
    */
   getCanvas() {
     return this.getEmulatorOptions().element
+  }
+
+  /**
+   * Get the cheats that have been added, in the order they were added.
+   *
+   * The index of a cheat here is the index that `enableCheat` and `disableCheat` accept. It's not related to
+   * the index RetroArch uses internally, which only counts the enabled ones.
+   *
+   * @see {@link https://nostalgist.js.org/apis/get-cheats/}
+   */
+  getCheats() {
+    return this.getEmulator().getCheats()
   }
 
   /**
@@ -314,6 +400,31 @@ export class Nostalgist {
    */
   async launchEmulator() {
     return await this.start()
+  }
+
+  /**
+   * Replace the current cheats with the ones described by a
+   * [RetroArch cheat file](https://github.com/libretro/libretro-database/tree/master/cht).
+   *
+   * The file can be passed as its content, or as anything else that is a
+   * [resolvable file](https://nostalgist.js.org/apis/resolvable-file), like a url or a `File` object.
+   *
+   * Bear in mind that these files tend to mark every cheat as disabled, so `enableCheat` will likely be
+   * needed afterwards.
+   *
+   * @see {@link https://nostalgist.js.org/apis/load-cheats/}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('contra.nes')
+   *
+   * await nostalgist.loadCheats('https://example.com/cheats/Contra (USA).cht')
+   * nostalgist.enableCheat('Infinite Lives P2')
+   * ```
+   */
+  async loadCheats(file: ResolvableFileInput) {
+    const resolvable = await ResolvableFile.create(file)
+    this.setCheats(parseCheatFile(await resolvable.getText()))
   }
 
   /**
@@ -539,6 +650,22 @@ export class Nostalgist {
   sendCommand(command: RetroArchCommand) {
     const emulator = this.getEmulator()
     return emulator.sendCommand(command)
+  }
+
+  /**
+   * Replace every cheat with the given ones, and apply the enabled ones.
+   *
+   * @see {@link https://nostalgist.js.org/apis/set-cheats/}
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.nes('contra.nes')
+   *
+   * nostalgist.setCheats(['SXIOPO', { code: '0033:09', description: 'Infinite Lives P2' }])
+   * ```
+   */
+  setCheats(cheats: NostalgistCheatInput[]) {
+    this.getEmulator().setCheats(cheats)
   }
 
   /**
