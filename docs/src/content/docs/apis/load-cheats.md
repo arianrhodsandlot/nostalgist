@@ -6,7 +6,7 @@ Replace the current cheats with the ones described by a [RetroArch cheat file](h
 
 The file can be passed as its content, or as anything else that is a [resolvable file](/apis/resolvable-file), like a url or a `File` object.
 
-Bear in mind that these files tend to mark every cheat as disabled, so [`enableCheat`](/apis/enable-cheat) will likely be needed afterwards.
+The enabled state of each cheat comes from the file, and these files tend to mark every cheat as disabled, so [`enableCheat`](/apis/enable-cheat) will likely be needed afterwards.
 
 ## Usage
 

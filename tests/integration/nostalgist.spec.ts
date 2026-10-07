@@ -252,4 +252,17 @@ await describe('nostalgist', async () => {
     const emulatorOptions = nostalgist.getEmulatorOptions()
     t.assert.strictEqual(emulatorOptions.rom.length, 1)
   })
+
+  await test('Nostalgist.launch with cheats', async (t: TestContext) => {
+    const nostalgist = await Nostalgist.launch({
+      cheats: ['SXIOPO', { code: '00AE:41', description: 'Totally Invincible P1', enabled: true }],
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+    })
+
+    t.assert.deepStrictEqual(nostalgist.getEmulatorOptions().cheats, [
+      { code: 'SXIOPO', enabled: false },
+      { code: '00AE:41', description: 'Totally Invincible P1', enabled: true },
+    ])
+  })
 })

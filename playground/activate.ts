@@ -60,7 +60,7 @@ const handlers = {
 
     async launchWithCheats() {
       nostalgist = await Nostalgist.nes({
-        cheats: [{ code: '0033:09', description: 'A cheat' }],
+        cheats: [{ code: '0033:09', description: 'A cheat', enabled: true }],
         rom: 'pong1k.nes',
       })
     },

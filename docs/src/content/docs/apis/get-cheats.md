@@ -11,13 +11,13 @@ The index of a cheat here is the index that [`enableCheat`](/apis/enable-cheat) 
 ```js
 const nostalgist = await Nostalgist.nes({
   rom: 'contra.nes',
-  cheats: ['SXIOPO', { code: '0033:09', description: 'Infinite Lives P2', enabled: false }],
+  cheats: ['SXIOPO', { code: '0033:09', description: 'Infinite Lives P2', enabled: true }],
 })
 
 nostalgist.getCheats()
 // [
-//   { code: 'SXIOPO', enabled: true },
-//   { code: '0033:09', description: 'Infinite Lives P2', enabled: false },
+//   { code: 'SXIOPO', enabled: false },
+//   { code: '0033:09', description: 'Infinite Lives P2', enabled: true },
 // ]
 ```
 

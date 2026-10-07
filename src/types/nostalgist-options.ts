@@ -27,8 +27,9 @@ export interface NostalgistCheat {
   description?: string
 
   /**
-   * Whether the cheat should be applied.
-   * @defaultValue true
+   * Whether the cheat should be applied. Cheats are added disabled, so that a whole cheat file can be loaded
+   * and then picked from.
+   * @defaultValue false
    */
   enabled?: boolean
 }
@@ -187,7 +188,10 @@ export interface NostalgistOptions {
   sramType?: 'sav' | 'srm'
 
   /**
-   * The cheats to be applied after launching. Each one can be a cheat code, or an object describing a cheat.
+   * The cheats to be added after launching. Each one can be a cheat code, or an object describing a cheat.
+   *
+   * Cheats are added disabled, so `enabled` needs to be set for a cheat to be applied, or `enableCheat`
+   * needs to be called later.
    *
    * Cheats are only supported by cores built from RetroArch v1.21.0 or later, and only by cores that
    * implement cheats themselves.
@@ -198,9 +202,8 @@ export interface NostalgistOptions {
    *   core: 'fceumm',
    *   rom: 'contra.nes',
    *   cheats: [
-   *     'SXIOPO',
-   *     { code: '00AE:41', description: 'Totally Invincible P1' },
-   *     { code: '0033:09', description: 'Infinite Lives P2', enabled: false },
+   *     { code: '00AE:41', description: 'Totally Invincible P1', enabled: true },
+   *     { code: '0033:09', description: 'Infinite Lives P2' },
    *   ],
    * })
    * ```

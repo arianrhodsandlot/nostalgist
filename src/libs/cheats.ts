@@ -1,4 +1,4 @@
-import type { NostalgistCheat, NostalgistCheatInput } from '../types/nostalgist-options.ts'
+import type { NostalgistCheat, NostalgistCheatInput, NostalgistCheatTarget } from '../types/nostalgist-options.ts'
 import { vendors } from './vendors.ts'
 
 const { ini } = vendors
@@ -10,8 +10,10 @@ const { ini } = vendors
  */
 const retroArchHandledCheat = 1
 
+/** Turns whatever was passed as a cheat into a cheat whose `enabled` is always set. */
 export function normalizeCheat(cheat: NostalgistCheatInput): NostalgistCheat {
-  return typeof cheat === 'string' ? { code: cheat } : cheat
+  const { code, description, enabled } = typeof cheat === 'string' ? { code: cheat } : cheat
+  return { code, ...(description ? { description } : {}), enabled: enabled === true }
 }
 
 /**
@@ -28,15 +30,40 @@ export function parseCheatFile(content: string): NostalgistCheat[] {
   const cheats: NostalgistCheat[] = []
   for (let index = 0; index < Number(parsed.cheats); index += 1) {
     const code = parsed[`cheat${index}_code`]
+    // cheat files do contain entries without a code, which RetroArch would not apply either
     if (!code || Number(parsed[`cheat${index}_handler`]) === retroArchHandledCheat) {
       continue
     }
-    const description = parsed[`cheat${index}_desc`]
-    cheats.push({
-      code,
-      ...(description ? { description } : {}),
-      enabled: parsed[`cheat${index}_enable`] === true,
-    })
+    cheats.push(
+      normalizeCheat({
+        code,
+        description: parsed[`cheat${index}_desc`],
+        enabled: parsed[`cheat${index}_enable`] === true,
+      }),
+    )
   }
   return cheats
+}
+
+/**
+ * Finds the cheats a target points at, which is an index, a description, or a code, in that order.
+ * Every match is returned, because cheat files do contain repeated descriptions.
+ */
+export function resolveCheatTargets(cheats: NostalgistCheat[], target: NostalgistCheatTarget): number[] {
+  if (typeof target === 'number') {
+    if (!Number.isInteger(target) || target < 0 || target >= cheats.length) {
+      throw new RangeError(`there is no cheat at index ${target}`)
+    }
+    return [target]
+  }
+
+  const byDescription = cheats.flatMap((cheat, index) => (cheat.description === target ? [index] : []))
+  if (byDescription.length > 0) {
+    return byDescription
+  }
+  const byCode = cheats.flatMap((cheat, index) => (cheat.code === target ? [index] : []))
+  if (byCode.length > 0) {
+    return byCode
+  }
+  throw new Error(`can not find a cheat with the description or code "${target}"`)
 }

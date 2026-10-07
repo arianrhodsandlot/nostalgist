@@ -1,6 +1,6 @@
 import { coreInfoMap } from '../constants/core-info.ts'
 import { keyboardCodeMap } from '../constants/keyboard-code-map.ts'
-import { normalizeCheat } from '../libs/cheats.ts'
+import { normalizeCheat, resolveCheatTargets } from '../libs/cheats.ts'
 import { getEmscriptenModuleOverrides } from '../libs/emscripten.ts'
 import { importCoreJsAsESM } from '../libs/emulator-utils.ts'
 import {
@@ -13,7 +13,7 @@ import {
   updateStyle,
 } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
-import type { NostalgistCheat, NostalgistCheatInput, NostalgistCheatTarget } from '../types/nostalgist-options.ts'
+import type { NostalgistCheatInput, NostalgistCheatTarget } from '../types/nostalgist-options.ts'
 import type { RetroArchCommand } from '../types/retroarch-command.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
 import { EmulatorFileSystem } from './emulator-file-system.ts'
@@ -33,10 +33,6 @@ const interactableElements = [
 
 function isInteractable(element?: EventTarget | null) {
   return element && interactableElements.some((clazz) => element instanceof clazz)
-}
-
-function findCheatIndexes(cheats: NostalgistCheat[], match: (cheat: NostalgistCheat) => boolean) {
-  return cheats.flatMap((cheat, index) => (match(cheat) ? [index] : []))
 }
 
 type GameStatus = 'initial' | 'paused' | 'running' | 'terminated'
@@ -77,6 +73,10 @@ export class Emulator {
       throw new Error(`invalid core name: ${core.name}`)
     }
     return coreFullName
+  }
+
+  private get enabledCheats() {
+    return this.options.cheats.filter(({ enabled }) => enabled)
   }
 
   private get fs() {
@@ -163,11 +163,7 @@ export class Emulator {
   }
 
   getCheats() {
-    return this.options.cheats.map(({ code, description, enabled }) => ({
-      code,
-      ...(description === undefined ? {} : { description }),
-      enabled: enabled !== false,
-    }))
+    return this.options.cheats.map((cheat) => ({ ...cheat }))
   }
 
   getEmscripten() {
@@ -525,7 +521,7 @@ export class Emulator {
     this.updateKeyboardEventHandlers()
 
     // cheats can only reach the core once it's running
-    if (this.options.cheats.length > 0) {
+    if (this.enabledCheats.length > 0) {
       this.syncCheats()
     }
   }
@@ -549,27 +545,6 @@ export class Emulator {
         eventTarget.removeEventListener(eventType, listener)
       }
     }
-  }
-
-  private resolveCheatTargets(target: NostalgistCheatTarget) {
-    const { cheats } = this.options
-    if (typeof target === 'number') {
-      if (!Number.isInteger(target) || target < 0 || target >= cheats.length) {
-        throw new RangeError(`there is no cheat at index ${target}`)
-      }
-      return [target]
-    }
-
-    // every match is returned, because cheat files do contain repeated descriptions
-    const byDescription = findCheatIndexes(cheats, ({ description }) => description === target)
-    if (byDescription.length > 0) {
-      return byDescription
-    }
-    const byCode = findCheatIndexes(cheats, ({ code }) => code === target)
-    if (byCode.length > 0) {
-      return byCode
-    }
-    throw new Error(`can not find a cheat with the description or code "${target}"`)
   }
 
   private async runEventListeners(event: EmulatorEvent) {
@@ -613,7 +588,7 @@ export class Emulator {
   }
 
   private setCheatsEnabled(target: NostalgistCheatTarget, enabled: boolean) {
-    for (const index of this.resolveCheatTargets(target)) {
+    for (const index of resolveCheatTargets(this.options.cheats, target)) {
       this.options.cheats[index].enabled = enabled
     }
     this.syncCheats()
@@ -779,9 +754,13 @@ export class Emulator {
     if (!('_cmd_cheat_realloc' in Module)) {
       throw new Error('cheats are not supported by this core')
     }
-    const { _cmd_cheat_apply_cheats: applyCheats, _cmd_cheat_realloc: realloc } = Module
-    const { _cmd_cheat_set_code: setCode, _free: free } = Module
-    const enabledCheats = this.options.cheats.filter(({ enabled }) => enabled !== false)
+    const {
+      _cmd_cheat_apply_cheats: applyCheats,
+      _cmd_cheat_realloc: realloc,
+      _cmd_cheat_set_code: setCode,
+      _free: free,
+    } = Module
+    const { enabledCheats } = this
 
     // shrinking keeps the remaining slots, so everything is released first to avoid leaving a stale cheat behind
     realloc(0)

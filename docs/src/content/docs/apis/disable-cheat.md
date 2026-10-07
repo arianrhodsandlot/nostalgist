@@ -11,7 +11,7 @@ The cheat can be pointed at by its index, its description, or its code, in that 
 ```js
 const nostalgist = await Nostalgist.nes({
   rom: 'contra.nes',
-  cheats: [{ code: '0033:09', description: 'Infinite Lives P2' }],
+  cheats: [{ code: '0033:09', description: 'Infinite Lives P2', enabled: true }],
 })
 
 nostalgist.disableCheat('Infinite Lives P2')

@@ -2,7 +2,7 @@
 title: enableCheat
 ---
 
-Apply a cheat that has been added but is not enabled.
+Apply a cheat that has been added. Cheats are added disabled, so this is how most of them end up being applied.
 
 The cheat can be pointed at by its index, its description, or its code, in that order. If more than one cheat matches, all of them are enabled. If none matches, an error is thrown.
 
@@ -11,7 +11,7 @@ The cheat can be pointed at by its index, its description, or its code, in that 
 ```js
 const nostalgist = await Nostalgist.nes({
   rom: 'contra.nes',
-  cheats: [{ code: '0033:09', description: 'Infinite Lives P2', enabled: false }],
+  cheats: [{ code: '0033:09', description: 'Infinite Lives P2' }],
 })
 
 // by description
@@ -24,7 +24,7 @@ nostalgist.enableCheat('0033:09')
 nostalgist.enableCheat(0)
 ```
 
-This is most useful together with [`loadCheats`](/apis/load-cheats), since cheat files tend to mark every cheat as disabled:
+This is most useful together with [`loadCheats`](/apis/load-cheats), which can add a whole cheat file at once:
 
 ```js
 await nostalgist.loadCheats('https://example.com/cheats/Contra (USA).cht')
