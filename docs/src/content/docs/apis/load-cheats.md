@@ -35,4 +35,4 @@ Two kinds of entries are skipped: the ones RetroArch handles itself, by watching
 
 ## Returns
 
-A Promise that resolves when the cheats have been applied.
+A Promise of a boolean for whether the cheats could be applied. It's `false` when the core does not support cheats.

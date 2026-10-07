@@ -19,4 +19,5 @@ nostalgist.disableCheat('Infinite Lives P2')
 
 ## Returns
 
-`undefined`
+A boolean for whether the cheats could be applied. It's `false` when no cheat matches the target, or when
+the core does not support cheats.

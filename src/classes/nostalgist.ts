@@ -191,7 +191,10 @@ export class Nostalgist {
   }
 
   /**
-   * Add a cheat, and apply it if it's enabled.
+   * Add a cheat. Cheats are added disabled, so `enabled` needs to be set for the cheat to be applied right
+   * away, or `enableCheat` needs to be called later.
+   *
+   * Returns whether the cheats could be applied, which is `false` when the core does not support cheats.
    *
    * @see {@link https://nostalgist.js.org/apis/add-cheat/}
    *
@@ -199,15 +202,17 @@ export class Nostalgist {
    * ```js
    * const nostalgist = await Nostalgist.nes('contra.nes')
    *
-   * nostalgist.addCheat({ code: '00AE:41', description: 'Totally Invincible P1' })
+   * nostalgist.addCheat({ code: '00AE:41', description: 'Totally Invincible P1', enabled: true })
    * ```
    */
   addCheat(cheat: NostalgistCheatInput) {
-    this.getEmulator().addCheat(cheat)
+    return this.getEmulator().addCheat(cheat)
   }
 
   /**
    * Remove every cheat, and stop applying them.
+   *
+   * Returns whether the cheats could be applied, which is `false` when the core does not support cheats.
    *
    * @see {@link https://nostalgist.js.org/apis/clear-cheats/}
    *
@@ -219,7 +224,7 @@ export class Nostalgist {
    * ```
    */
   clearCheats() {
-    this.getEmulator().clearCheats()
+    return this.getEmulator().clearCheats()
   }
 
   /**
@@ -227,6 +232,9 @@ export class Nostalgist {
    *
    * The cheat can be pointed at by its index, its description, or its code.
    * If more than one cheat matches, all of them are disabled.
+   *
+   * Returns whether the cheats could be applied, which is `false` when no cheat matches the target, or when
+   * the core does not support cheats.
    *
    * @see {@link https://nostalgist.js.org/apis/disable-cheat/}
    *
@@ -238,7 +246,7 @@ export class Nostalgist {
    * ```
    */
   disableCheat(target: NostalgistCheatTarget) {
-    this.getEmulator().disableCheat(target)
+    return this.getEmulator().disableCheat(target)
   }
 
   /**
@@ -246,6 +254,9 @@ export class Nostalgist {
    *
    * The cheat can be pointed at by its index, its description, or its code.
    * If more than one cheat matches, all of them are enabled.
+   *
+   * Returns whether the cheats could be applied, which is `false` when no cheat matches the target, or when
+   * the core does not support cheats.
    *
    * @see {@link https://nostalgist.js.org/apis/enable-cheat/}
    *
@@ -258,7 +269,7 @@ export class Nostalgist {
    * ```
    */
   enableCheat(target: NostalgistCheatTarget) {
-    this.getEmulator().enableCheat(target)
+    return this.getEmulator().enableCheat(target)
   }
 
   /**
@@ -424,7 +435,7 @@ export class Nostalgist {
    */
   async loadCheats(file: ResolvableFileInput) {
     const resolvable = await ResolvableFile.create(file)
-    this.setCheats(parseCheatFile(await resolvable.getText()))
+    return this.setCheats(parseCheatFile(await resolvable.getText()))
   }
 
   /**
@@ -655,6 +666,8 @@ export class Nostalgist {
   /**
    * Replace every cheat with the given ones, and apply the enabled ones.
    *
+   * Returns whether the cheats could be applied, which is `false` when the core does not support cheats.
+   *
    * @see {@link https://nostalgist.js.org/apis/set-cheats/}
    *
    * @example
@@ -665,7 +678,7 @@ export class Nostalgist {
    * ```
    */
   setCheats(cheats: NostalgistCheatInput[]) {
-    this.getEmulator().setCheats(cheats)
+    return this.getEmulator().setCheats(cheats)
   }
 
   /**

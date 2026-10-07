@@ -15,4 +15,4 @@ nostalgist.getCheats() // []
 
 ## Returns
 
-`undefined`
+A boolean for whether the cheats could be applied. It's `false` when the core does not support cheats.

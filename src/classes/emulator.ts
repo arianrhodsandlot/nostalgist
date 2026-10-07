@@ -123,7 +123,7 @@ export class Emulator {
 
   addCheat(cheat: NostalgistCheatInput) {
     this.options.cheats.push(normalizeCheat(cheat))
-    this.syncCheats()
+    return this.syncCheats()
   }
 
   callCommand(command: string) {
@@ -132,15 +132,15 @@ export class Emulator {
   }
 
   clearCheats() {
-    this.setCheats([])
+    return this.setCheats([])
   }
 
   disableCheat(target: NostalgistCheatTarget) {
-    this.setCheatsEnabled(target, false)
+    return this.setCheatsEnabled(target, false)
   }
 
   enableCheat(target: NostalgistCheatTarget) {
-    this.setCheatsEnabled(target, true)
+    return this.setCheatsEnabled(target, true)
   }
 
   exit(statusCode = 0) {
@@ -359,7 +359,7 @@ export class Emulator {
 
   setCheats(cheats: NostalgistCheatInput[]) {
     this.options.cheats = cheats.map((cheat) => normalizeCheat(cheat))
-    this.syncCheats()
+    return this.syncCheats()
   }
 
   async setup() {
@@ -588,10 +588,14 @@ export class Emulator {
   }
 
   private setCheatsEnabled(target: NostalgistCheatTarget, enabled: boolean) {
-    for (const index of resolveCheatTargets(this.options.cheats, target)) {
+    const indexes = resolveCheatTargets(this.options.cheats, target)
+    if (indexes.length === 0) {
+      return false
+    }
+    for (const index of indexes) {
       this.options.cheats[index].enabled = enabled
     }
-    this.syncCheats()
+    return this.syncCheats()
   }
 
   private async setupEmscripten() {
@@ -751,8 +755,9 @@ export class Emulator {
    */
   private syncCheats() {
     const { Module } = this.getEmscripten()
+    // cores built before RetroArch v1.21.0 do not expose the cheat functions at all
     if (!('_cmd_cheat_realloc' in Module)) {
-      throw new Error('cheats are not supported by this core')
+      return false
     }
     const {
       _cmd_cheat_apply_cheats: applyCheats,
@@ -779,6 +784,8 @@ export class Emulator {
     if (enabledCheats.length === 0) {
       realloc(0)
     }
+
+    return true
   }
 
   private updateKeyboardEventHandlers() {

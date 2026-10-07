@@ -88,10 +88,12 @@ await describe('cheats', async () => {
       t.assert.deepStrictEqual(resolveCheatTargets(cheats, 'PEUZUGAA'), [3])
     })
 
-    await test('throws when nothing matches', (t: TestContext) => {
-      t.assert.throws(() => resolveCheatTargets(cheats, 'Unknown'), /can not find a cheat/u)
-      t.assert.throws(() => resolveCheatTargets(cheats, 4), RangeError)
-      t.assert.throws(() => resolveCheatTargets(cheats, -1), RangeError)
+    await test('resolves nothing when the target points at no cheat', (t: TestContext) => {
+      t.assert.deepStrictEqual(resolveCheatTargets(cheats, 'Unknown'), [])
+      t.assert.deepStrictEqual(resolveCheatTargets(cheats, 4), [])
+      t.assert.deepStrictEqual(resolveCheatTargets(cheats, -1), [])
+      t.assert.deepStrictEqual(resolveCheatTargets(cheats, 1.5), [])
+      t.assert.deepStrictEqual(resolveCheatTargets([], 0), [])
     })
   })
 })

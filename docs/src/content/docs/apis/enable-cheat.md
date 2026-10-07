@@ -24,6 +24,14 @@ nostalgist.enableCheat('0033:09')
 nostalgist.enableCheat(0)
 ```
 
+The return value says whether it worked, so a missing cheat does not need to be guarded against beforehand:
+
+```js
+if (!nostalgist.enableCheat('Infinite Lives P2')) {
+  // there is no such cheat, or this core does not support cheats
+}
+```
+
 This is most useful together with [`loadCheats`](/apis/load-cheats), which can add a whole cheat file at once:
 
 ```js
@@ -33,4 +41,5 @@ nostalgist.enableCheat('Infinite Lives P2')
 
 ## Returns
 
-`undefined`
+A boolean for whether the cheats could be applied. It's `false` when no cheat matches the target, or when
+the core does not support cheats.

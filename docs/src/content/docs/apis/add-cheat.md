@@ -23,4 +23,4 @@ nostalgist.addCheat({ code: '0033:09', description: 'Infinite Lives P2', enabled
 
 ## Returns
 
-`undefined`
+A boolean for whether the cheats could be applied. It's `false` when the core does not support cheats.

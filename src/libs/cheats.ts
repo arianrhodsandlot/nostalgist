@@ -47,23 +47,17 @@ export function parseCheatFile(content: string): NostalgistCheat[] {
 
 /**
  * Finds the cheats a target points at, which is an index, a description, or a code, in that order.
- * Every match is returned, because cheat files do contain repeated descriptions.
+ * Every match is returned, because cheat files do contain repeated descriptions, and nothing is returned
+ * when the target points at no cheat at all.
  */
 export function resolveCheatTargets(cheats: NostalgistCheat[], target: NostalgistCheatTarget): number[] {
   if (typeof target === 'number') {
-    if (!Number.isInteger(target) || target < 0 || target >= cheats.length) {
-      throw new RangeError(`there is no cheat at index ${target}`)
-    }
-    return [target]
+    return Number.isInteger(target) && target >= 0 && target < cheats.length ? [target] : []
   }
 
   const byDescription = cheats.flatMap((cheat, index) => (cheat.description === target ? [index] : []))
   if (byDescription.length > 0) {
     return byDescription
   }
-  const byCode = cheats.flatMap((cheat, index) => (cheat.code === target ? [index] : []))
-  if (byCode.length > 0) {
-    return byCode
-  }
-  throw new Error(`can not find a cheat with the description or code "${target}"`)
+  return cheats.flatMap((cheat, index) => (cheat.code === target ? [index] : []))
 }

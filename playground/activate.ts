@@ -171,12 +171,8 @@ const handlers = {
 
     toggleCheat() {
       const [cheat] = nostalgist.getCheats()
-      if (cheat?.enabled) {
-        nostalgist.disableCheat('A cheat')
-      } else {
-        nostalgist.enableCheat('A cheat')
-      }
-      console.info(nostalgist.getCheats())
+      const applied = cheat?.enabled ? nostalgist.disableCheat('A cheat') : nostalgist.enableCheat('A cheat')
+      console.info(applied, nostalgist.getCheats())
     },
 
     pause() {
