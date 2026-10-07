@@ -551,7 +551,7 @@ export class Emulator {
   }
 
   private async setupEmscripten() {
-    const { core, element, emscriptenModule } = this.options
+    const { core, element, emscriptenModule, onLog } = this.options
     const { js, name, wasm } = core
     const { locateFile } = emscriptenModule
     const blobJs = (() => {
@@ -590,7 +590,7 @@ export class Emulator {
         return scriptDirectory + url
       },
     }
-    const initialModule = getEmscriptenModuleOverrides(moduleOptions)
+    const initialModule = getEmscriptenModuleOverrides(moduleOptions, { onLog })
     initialModule.preRun?.push(() => {
       if (typeof initialModule.FS.init === 'function') {
         initialModule.FS.init(() => this.stdin())

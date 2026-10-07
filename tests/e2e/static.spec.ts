@@ -73,6 +73,14 @@ function tests() {
     expect(event2.text()).toBe('object onLaunch')
   })
 
+  test('launch with logging', async ({ page }) => {
+    await page.getByText('launchWithLogging', { exact: true }).click()
+    const event = await page.waitForEvent('console', (consoleMessage) => consoleMessage.text().startsWith('onLog '))
+
+    // both RetroArch and the core were heard from, which is only knowable by having parsed their level tags
+    expect(event.text()).toBe('onLog core,frontend')
+  })
+
   test('launch with an initial state', async ({ page }) => {
     const canvas = page.locator('#canvas')
     await expect(canvas).not.toBeAttached()
