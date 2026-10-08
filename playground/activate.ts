@@ -65,6 +65,18 @@ const handlers = {
       })
     },
 
+    async launchWithLogging() {
+      const sources = new Set<string>()
+      nostalgist = await Nostalgist.nes({
+        onLog({ source }) {
+          sources.add(source)
+        },
+        retroarchConfig: { log_verbosity: true },
+        rom: 'pong1k.nes',
+      })
+      console.warn(`onLog ${[...sources].toSorted().join(',')}`)
+    },
+
     async launchState() {
       nostalgist = await Nostalgist.nes({
         cache: true,

@@ -515,6 +515,41 @@ const nostalgist = await Nostalgist.launch({
 
     A custom function after the emulator is launched. The Nostalgist instance will be passed as its first parameter.
 
+  - #### `onLog`
+
+    **type:** `Function`
+
+    **since:** `0.23.0`
+
+    A custom function called for every message logged by RetroArch and by the libretro core. An object will be passed as its first parameter, with these properties:
+
+    | property  | type                                     | description                                                                         |
+    | --------- | ---------------------------------------- | ----------------------------------------------------------------------------------- |
+    | `level`   | `'debug' \| 'info' \| 'warn' \| 'error'` | the level of the message, parsed from the tag RetroArch puts at the start of a line |
+    | `message` | `string`                                 | the message, with its level tag removed                                             |
+    | `source`  | `'core' \| 'frontend'`                   | whether the message came from the libretro core, or from RetroArch itself           |
+
+    ```js
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'flappybird.nes',
+      retroarchConfig: {
+        log_verbosity: true,
+      },
+      onLog({ level, message, source }) {
+        console.log(`[${source}] [${level}] ${message}`)
+      },
+    })
+    ```
+
+    A few things are worth knowing about this option:
+
+    - RetroArch only emits most of its messages when verbose logging is on, so `retroarchConfig` likely needs `{ log_verbosity: true }`, as above, for this to report much of anything.
+    - By default, Nostalgist writes every message to the browser console at its own level. Specifying `onLog` replaces that behavior, so a function that does not log anything will silence the emulator's output.
+    - Messages that RetroArch does not tag with a level are reported as `'info'` if they were written to standard output, or as `'error'` if they were written to standard error.
+    - Messages logged by Emscripten itself, like the ones it writes when the WebAssembly module fails to load, do not pass through this function.
+    - `emscriptenModule.print` and `emscriptenModule.printErr` take precedence over this option, since those are the lower level version of the same hook. Specifying either of them hides the corresponding messages from here.
+
 ## Returns
 
 A `Promise` of the instance of the emulator.

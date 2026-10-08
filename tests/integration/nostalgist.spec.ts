@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, test, type TestContext } from 'node:test'
 import { GlobalRegistrator } from '@happy-dom/global-registrator'
 import { Nostalgist } from '../../src/index.ts'
+import type { NostalgistLogEvent } from '../../src/types/nostalgist-options.ts'
 
 const testNesRomUrl =
   'https://buildbot.libretro.com/assets/cores/Nintendo%20-%20Nintendo%20Entertainment%20System/Super%20Tilt%20Bro%20%28USA%29.nes'
@@ -11,6 +12,12 @@ function resolveRom(rom: any) {
 
 function resolveBios(bios: any) {
   return `https://buildbot.libretro.com/assets/system/${encodeURIComponent(bios)}`
+}
+
+const collectedLogs: NostalgistLogEvent[] = []
+
+function onLog(event: NostalgistLogEvent) {
+  collectedLogs.push(event)
 }
 
 GlobalRegistrator.register({ settings: { fetch: { disableSameOriginPolicy: true } } })
@@ -264,5 +271,12 @@ await describe('nostalgist', async () => {
       { code: 'SXIOPO', enabled: false },
       { code: '00AE:41', description: 'Totally Invincible P1', enabled: true },
     ])
+  })
+
+  await test('Nostalgist.launch with onLog', async (t: TestContext) => {
+    const nostalgist = await Nostalgist.launch({ core: 'fceumm', onLog, rom: 'flappybird.nes' })
+
+    const emulatorOptions = nostalgist.getEmulatorOptions()
+    t.assert.strictEqual(emulatorOptions.onLog, onLog)
   })
 })

@@ -43,6 +43,28 @@ export type NostalgistCheatInput = NostalgistCheat | string
  */
 export type NostalgistCheatTarget = number | string
 
+export type NostalgistLogLevel = 'debug' | 'error' | 'info' | 'warn'
+
+export interface NostalgistLogEvent {
+  /**
+   * The level of the message, parsed from the tag RetroArch puts at the start of every log line.
+   * A line that arrives without a tag is reported as `'info'` if it was written to standard output,
+   * or as `'error'` if it was written to standard error.
+   */
+  level: NostalgistLogLevel
+
+  /** The message, with its level tag removed. */
+  message: string
+
+  /**
+   * Whether the message was emitted by the libretro core, or by RetroArch itself.
+   * Core messages are the ones RetroArch tags with `"[libretro ...]"`.
+   */
+  source: 'core' | 'frontend'
+}
+
+export type NostalgistLogHandler = (event: NostalgistLogEvent) => void
+
 export interface NostalgistOptions {
   /**
    * The canvas element to use.
@@ -253,6 +275,33 @@ export interface NostalgistOptions {
 
   beforeLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
   onLaunch?: (nostalgist: Nostalgist) => Promise<void> | void
+
+  /**
+   * A function called for every message logged by RetroArch and the libretro core.
+   *
+   * Specifying this option replaces the default behavior, which is to write messages to the browser console,
+   * so a handler that does not log anything will silence the emulator's output.
+   *
+   * Bear in mind that RetroArch only emits most of its messages when verbose logging is enabled, so
+   * `retroarchConfig` likely needs `{ log_verbosity: true }` for this to report much of anything.
+   *
+   * `emscriptenModule.print` and `emscriptenModule.printErr` take precedence over this option, since those are
+   * the lower level version of the same hook. Specifying either of them hides the corresponding messages from here.
+   *
+   * @example
+   * ```js
+   * const nostalgist = await Nostalgist.launch({
+   *   core: 'fceumm',
+   *   rom: 'flappybird.nes',
+   *   retroarchConfig: { log_verbosity: true },
+   *   onLog({ level, message, source }) {
+   *     console.log(`[${source}] [${level}] ${message}`)
+   *   },
+   * })
+   * ```
+   */
+  onLog?: NostalgistLogHandler
+
   resolveBios: NostalgistResolveFileFunction
   resolveCoreJs: (core: NostalgistOptions['core'], options: NostalgistOptions) => ResolvableFileInput
   resolveCoreWasm: (core: NostalgistOptions['core'], options: NostalgistOptions) => ResolvableFileInput
