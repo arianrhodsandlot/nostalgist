@@ -10,6 +10,7 @@ function getDefaultRetroarchConfig() {
   const defaultRetroarchConfig: RetroArchConfig = {
     menu_driver: 'rgui',
     menu_navigation_browser_filter_supported_extensions_enable: false,
+    notification_show_cheats_applied: false,
     notification_show_when_menu_is_alive: true,
     savestate_auto_load: true,
     savestate_thumbnail_enable: true,

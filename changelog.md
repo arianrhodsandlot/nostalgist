@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add an `onLog` option for receiving the messages logged by RetroArch and libretro cores
+- Add support for cheats
 
 ## [0.22.0] - 2026-08-30
 

@@ -201,6 +201,35 @@ const nostalgist = await Nostalgist.launch({
 
     Sets the save file battery type used by Nostalgist internally. Use `'sav'` for cores like melonDS. Defaults to `'srm'`.
 
+  - #### `cheats`
+
+    **type:** `Array`
+
+    **since:** `0.23.0`
+
+    The cheats to be added after launching. Each one can be a cheat code, or an object with a `code` property, an optional `description`, and an optional `enabled`.
+
+    Cheats are added disabled, so `enabled` needs to be set for a cheat to be applied, or [`enableCheat`](/apis/enable-cheat) needs to be called later.
+
+    ```js
+    const nostalgist = await Nostalgist.launch({
+      core: 'fceumm',
+      rom: 'contra.nes',
+      cheats: [
+        // applied right away
+        { code: '00AE:41', description: 'Totally Invincible P1', enabled: true },
+
+        // added, but not applied until enableCheat is called
+        'SXIOPO',
+        { code: '0033:09', description: 'Infinite Lives P2' },
+      ],
+    })
+    ```
+
+    The cheats can be changed afterwards with [`setCheats`](/apis/set-cheats), [`addCheat`](/apis/add-cheat), [`enableCheat`](/apis/enable-cheat), [`disableCheat`](/apis/disable-cheat), [`clearCheats`](/apis/clear-cheats) and [`loadCheats`](/apis/load-cheats).
+
+    Cheats are only supported by cores built from RetroArch v1.21.0 or later, and only by cores that implement cheats themselves. Using them with a core that does not will throw an error.
+
   - #### `shader`
 
     **type:** `string`

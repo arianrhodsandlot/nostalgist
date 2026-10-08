@@ -1,6 +1,7 @@
+import { normalizeCheat } from '../libs/cheats.ts'
 import { getGlobalOptions } from '../libs/options.ts'
 import { generateValidFileName, getResult, merge } from '../libs/utils.ts'
-import type { NostalgistLogHandler, NostalgistOptions } from '../types/nostalgist-options.ts'
+import type { NostalgistCheat, NostalgistLogHandler, NostalgistOptions } from '../types/nostalgist-options.ts'
 import type { RetroArchEmscriptenModuleOptions } from '../types/retroarch-emscripten.ts'
 import { ResolvableFile, type ResolvableFileInput } from './resolvable-file.ts'
 
@@ -38,6 +39,7 @@ export class EmulatorOptions {
   beforeLaunch?: (() => Promise<void> | void) | undefined
   bios: ResolvableFile[] = []
   cache = { bios: false, core: false, rom: false, shader: false, sram: false, state: false }
+  cheats: NostalgistCheat[] = []
   core: {
     /** the name of core */
     name: string
@@ -133,6 +135,7 @@ export class EmulatorOptions {
     this.nostalgistOptions = options
 
     this.emscriptenModule = options.emscriptenModule ?? {}
+    this.cheats = (options.cheats ?? []).map((cheat) => normalizeCheat(cheat))
     this.onLog = options.onLog
     this.respondToGlobalEvents = options.respondToGlobalEvents ?? true
     this.signal = options.signal

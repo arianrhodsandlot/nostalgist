@@ -1,5 +1,6 @@
 import { coreInfoMap } from '../constants/core-info.ts'
 import { keyboardCodeMap } from '../constants/keyboard-code-map.ts'
+import { normalizeCheat, resolveCheatTargets } from '../libs/cheats.ts'
 import { getEmscriptenModuleOverrides } from '../libs/emscripten.ts'
 import { importCoreJsAsESM } from '../libs/emulator-utils.ts'
 import {
@@ -12,6 +13,7 @@ import {
   updateStyle,
 } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
+import type { NostalgistCheatInput, NostalgistCheatTarget } from '../types/nostalgist-options.ts'
 import type { RetroArchCommand } from '../types/retroarch-command.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
 import { EmulatorFileSystem } from './emulator-file-system.ts'
@@ -73,6 +75,10 @@ export class Emulator {
     return coreFullName
   }
 
+  private get enabledCheats() {
+    return this.options.cheats.filter(({ enabled }) => enabled)
+  }
+
   private get fs() {
     if (!this.fileSystem) {
       throw new Error('fileSystem is not ready')
@@ -115,9 +121,26 @@ export class Emulator {
     this.options = options
   }
 
+  addCheat(cheat: NostalgistCheatInput) {
+    this.options.cheats.push(normalizeCheat(cheat))
+    return this.syncCheats()
+  }
+
   callCommand(command: string) {
     const { Module } = this.getEmscripten()
     Module[command]?.()
+  }
+
+  clearCheats() {
+    return this.setCheats([])
+  }
+
+  disableCheat(target: NostalgistCheatTarget) {
+    return this.setCheatsEnabled(target, false)
+  }
+
+  enableCheat(target: NostalgistCheatTarget) {
+    return this.setCheatsEnabled(target, true)
   }
 
   exit(statusCode = 0) {
@@ -137,6 +160,10 @@ export class Emulator {
     }
     uninstallSetImmediatePolyfill()
     this.gameStatus = 'terminated'
+  }
+
+  getCheats() {
+    return this.options.cheats.map((cheat) => ({ ...cheat }))
   }
 
   getEmscripten() {
@@ -330,6 +357,11 @@ export class Emulator {
     }
   }
 
+  setCheats(cheats: NostalgistCheatInput[]) {
+    this.options.cheats = cheats.map((cheat) => normalizeCheat(cheat))
+    return this.syncCheats()
+  }
+
   async setup() {
     await this.setupEmscripten()
     await this.setupFileSystem()
@@ -487,6 +519,11 @@ export class Emulator {
     }
 
     this.updateKeyboardEventHandlers()
+
+    // cheats can only reach the core once it's running
+    if (this.enabledCheats.length > 0) {
+      this.syncCheats()
+    }
   }
 
   private recordGlobalDOMEventListeners() {
@@ -548,6 +585,17 @@ export class Emulator {
     })
     this.gameStatus = 'running'
     this.postRun()
+  }
+
+  private setCheatsEnabled(target: NostalgistCheatTarget, enabled: boolean) {
+    const indexes = resolveCheatTargets(this.options.cheats, target)
+    if (indexes.length === 0) {
+      return false
+    }
+    for (const index of indexes) {
+      this.options.cheats[index].enabled = enabled
+    }
+    return this.syncCheats()
   }
 
   private async setupEmscripten() {
@@ -698,6 +746,51 @@ export class Emulator {
       }
     }
     return null
+  }
+
+  /**
+   * Rebuilds RetroArch's cheat list so that it contains exactly the enabled cheats.
+   * Rebuilding, instead of toggling individual cheats, keeps `this.options.cheats` the only source of truth,
+   * and avoids `cmd_cheat_toggle_index`, which flips a cheat's state rather than setting it.
+   */
+  private syncCheats() {
+    const { Module } = this.getEmscripten()
+    // cores built before RetroArch v1.21.0 do not expose the cheat functions at all
+    if (!('_cmd_cheat_realloc' in Module)) {
+      return false
+    }
+    // RetroArch is not ready to receive cheats until its main loop runs, and applying them any earlier
+    // reaches a core that has not been initialized yet. `postRun` applies the stored list at that point.
+    if (this.gameStatus === 'initial') {
+      return true
+    }
+    const {
+      _cmd_cheat_apply_cheats: applyCheats,
+      _cmd_cheat_realloc: realloc,
+      _cmd_cheat_set_code: setCode,
+      _free: free,
+    } = Module
+    const { enabledCheats } = this
+
+    // shrinking keeps the remaining slots, so everything is released first to avoid leaving a stale cheat behind
+    realloc(0)
+    // `cmd_cheat_apply_cheats` returns early while the list is empty, so a slot is needed for it to reset the core
+    realloc(Math.max(enabledCheats.length, 1))
+
+    for (const [index, { code }] of enabledCheats.entries()) {
+      const pointer = Module.stringToNewUTF8(code)
+      // the code is copied by RetroArch, so the pointer can be released right away
+      setCode(index, pointer)
+      free(pointer)
+    }
+
+    applyCheats()
+
+    if (enabledCheats.length === 0) {
+      realloc(0)
+    }
+
+    return true
   }
 
   private updateKeyboardEventHandlers() {
