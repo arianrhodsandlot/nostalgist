@@ -27,8 +27,14 @@ export function parseCheatFile(content: string): NostalgistCheat[] {
     throw new Error('the content does not look like a RetroArch cheat file')
   }
 
+  // a count of `Infinity`, or anything else that is not a count, would otherwise loop forever
+  const count = Number(parsed.cheats)
+  if (!Number.isSafeInteger(count) || count < 0) {
+    throw new Error(`the cheat file declares an invalid number of cheats: ${parsed.cheats}`)
+  }
+
   const cheats: NostalgistCheat[] = []
-  for (let index = 0; index < Number(parsed.cheats); index += 1) {
+  for (let index = 0; index < count; index += 1) {
     const code = parsed[`cheat${index}_code`]
     // cheat files do contain entries without a code, which RetroArch would not apply either
     if (!code || Number(parsed[`cheat${index}_handler`]) === retroArchHandledCheat) {

@@ -759,6 +759,11 @@ export class Emulator {
     if (!('_cmd_cheat_realloc' in Module)) {
       return false
     }
+    // RetroArch is not ready to receive cheats until its main loop runs, and applying them any earlier
+    // reaches a core that has not been initialized yet. `postRun` applies the stored list at that point.
+    if (this.gameStatus === 'initial') {
+      return true
+    }
     const {
       _cmd_cheat_apply_cheats: applyCheats,
       _cmd_cheat_realloc: realloc,

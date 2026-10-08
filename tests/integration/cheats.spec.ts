@@ -72,6 +72,17 @@ await describe('cheats', async () => {
     await test('rejects content that is not a cheat file', (t: TestContext) => {
       t.assert.throws(() => parseCheatFile('./Contra (USA).cht'), /does not look like a RetroArch cheat file/u)
     })
+
+    await test('rejects a count that would never finish being iterated', (t: TestContext) => {
+      t.assert.throws(() => parseCheatFile('cheats = Infinity'), /invalid number of cheats/u)
+      t.assert.throws(() => parseCheatFile('cheats = 1e309'), /invalid number of cheats/u)
+      t.assert.throws(() => parseCheatFile('cheats = -1'), /invalid number of cheats/u)
+      t.assert.throws(() => parseCheatFile('cheats = many'), /invalid number of cheats/u)
+    })
+
+    await test('reads a file that declares no cheats', (t: TestContext) => {
+      t.assert.deepStrictEqual(parseCheatFile('cheats = 0'), [])
+    })
   })
 
   await describe('resolveCheatTargets', async () => {
