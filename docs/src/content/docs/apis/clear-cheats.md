@@ -4,6 +4,10 @@ title: clearCheats
 
 Remove every cheat, and stop applying them.
 
+## Since
+
+`0.23.0`
+
 ## Usage
 
 ```js

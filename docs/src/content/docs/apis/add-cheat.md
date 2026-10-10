@@ -8,6 +8,10 @@ The parameter can be a cheat code, or an object with a `code` property, an optio
 
 Cheats are added disabled, so `enabled` needs to be set for the cheat to be applied right away, or [`enableCheat`](/apis/enable-cheat) needs to be called later.
 
+## Since
+
+`0.23.0`
+
 ## Usage
 
 ```js

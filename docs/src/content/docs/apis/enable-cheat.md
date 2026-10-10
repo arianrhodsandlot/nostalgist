@@ -6,6 +6,10 @@ Apply a cheat that has been added. Cheats are added disabled, so this is how mos
 
 The cheat can be pointed at by its index, its description, or its code, in that order. If more than one cheat matches, all of them are enabled. If none matches, an error is thrown.
 
+## Since
+
+`0.23.0`
+
 ## Usage
 
 ```js

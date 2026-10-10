@@ -8,6 +8,10 @@ The file can be passed as its content, or as anything else that is a [resolvable
 
 The enabled state of each cheat comes from the file, and these files tend to mark every cheat as disabled, so [`enableCheat`](/apis/enable-cheat) will likely be needed afterwards.
 
+## Since
+
+`0.23.0`
+
 ## Usage
 
 ```js

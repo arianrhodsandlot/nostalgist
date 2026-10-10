@@ -6,6 +6,10 @@ Stop applying a cheat, without removing it. It stays in [`getCheats`](/apis/get-
 
 The cheat can be pointed at by its index, its description, or its code, in that order. If more than one cheat matches, all of them are disabled. If none matches, an error is thrown.
 
+## Since
+
+`0.23.0`
+
 ## Usage
 
 ```js
