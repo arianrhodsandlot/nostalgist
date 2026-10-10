@@ -16,10 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: voidzero-dev/setup-vp@v1.20.0
-      - run: vp run build
-      - run: npm version from-git --no-git-tag-version
-      - run: npm publish --no-git-checks
+      - run: vpr build
       - run: vpx @arianrhodsandlot/release-kit release-notes --version ${{ github.ref_name }}
+      - run: vp pm version from-git -- --no-git-tag-version
+      - run: vp pm publish --access=public
       - uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
