@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-10-10
+
 ### Added
 
 - Add an `onLog` option for receiving the messages logged by RetroArch and libretro cores
@@ -332,7 +334,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix core loading ([9790327](https://github.com/arianrhodsandlot/nostalgist/commit/97903270c39788b3d05b7f7d0700ccdf32503a9e))
 
-[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.23.0...HEAD
+[0.23.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.21.1...v0.22.0
 [0.21.1]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.21.0...v0.21.1
 [0.21.0]: https://github.com/arianrhodsandlot/eslint-config/compare/v0.20.0...v0.21.0
