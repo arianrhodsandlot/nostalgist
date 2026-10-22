@@ -128,6 +128,7 @@ Please refer to [nostalgist.js.org/apis](https://nostalgist.js.org/apis).
 | [AstroEmu](https://github.com/syed-sakeeb-ahmed/AstroEmu)                                | Famicom and Super Famicom on the web                                                                                   |
 | [Koin.js](https://koin.js.org)                                                           | The high-performance, preservation-focused netflix style emulation engine powered by Nostalgist.                       |
 | [Foxol](https://play.foxol.app)                                                          | Foxol is a modern emulator platform with multiplayer, cloud saves, cheats, and deep customization across every device. |
+| [OnlineClassicGame](https://onlineclassicgame.com/)                                      | Play classic games from 25+ retro consoles in the browser, with a touch gamepad for mobile and a UI in 5 languages.    |
 
 ### Credits
 
