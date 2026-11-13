@@ -157,6 +157,21 @@ function tests() {
 
     await page.getByText('exitWithoutRemovingCanvas', { exact: true }).click()
     await expect(canvas).toBeAttached()
+
+    // Nothing that refers to the exited emulator is left on the canvas or the page, as it would keep the emulator and
+    // the game alive for as long as the canvas is kept
+    const leftovers = await canvas.evaluate((element) =>
+      [
+        [element, 'addEventListener'],
+        [element, 'getContext'],
+        [element.style, 'removeProperty'],
+        [document, 'addEventListener'],
+        [globalThis, 'addEventListener'],
+      ]
+        .filter(([target, key]) => Object.hasOwn(target as object, key as string))
+        .map(([, key]) => key),
+    )
+    expect(leftovers).toEqual([])
   })
 
   test('save sram', async ({ page }) => {

@@ -1,7 +1,7 @@
 import { checkIsAborted, delay } from '../libs/utils.ts'
 import { vendors } from '../libs/vendors.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
-import { ResolvableFile } from './resolvable-file.ts'
+import { largeFileSize, ResolvableFile } from './resolvable-file.ts'
 
 const { ini, path } = vendors
 
@@ -113,6 +113,13 @@ export class EmulatorFileSystem {
     const fileName = path.basename(filePath)
     const resolvable = await ResolvableFile.create(fileContent)
     const buffer = await resolvable.getUint8Array()
+    // A large file (a game, a BIOS file or a state) is handed to the file system as it is, which lets it keep the
+    // buffer instead of copying it. Going through a temporary file as below would make about three copies of it
+    if (buffer.byteLength >= largeFileSize) {
+      this.mkdirTree(directory)
+      FS.writeFile(filePath, buffer, { canOwn: true })
+      return
+    }
     FS.createDataFile('/', fileName, buffer, true, false)
     const encoding = 'binary'
     const data = this.readFile(fileName, encoding)
