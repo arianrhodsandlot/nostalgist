@@ -18,7 +18,7 @@ import type { RetroArchCommand } from '../types/retroarch-command.ts'
 import type { RetroArchEmscriptenModule } from '../types/retroarch-emscripten'
 import { EmulatorFileSystem } from './emulator-file-system.ts'
 import type { EmulatorOptions } from './emulator-options'
-import type { ResolvableFile } from './resolvable-file.ts'
+import { largeFileSize, type ResolvableFile } from './resolvable-file.ts'
 
 const { ini, path } = vendors
 
@@ -42,6 +42,8 @@ interface EmulatorEmscripten {
   AL: any
   Browser: any
   exit: (code: number) => void
+  freeAudio: (() => void) | null
+  freeBrowser: (() => void) | null
   JSEvents: any
   Module: RetroArchEmscriptenModule
 }
@@ -60,7 +62,7 @@ export class Emulator {
   }
   private fileSystem: EmulatorFileSystem | undefined
   private gameStatus: GameStatus = 'initial'
-  private readonly globalDOMEventListeners = new Map<EventTarget, Record<string, EventListenerOrEventListenerObject>>()
+  private readonly globalDOMEventListeners = new Map<EventTarget, Parameters<EventTarget['addEventListener']>[]>()
 
   private readonly messageQueue: [Uint8Array, number][] = []
 
@@ -144,10 +146,16 @@ export class Emulator {
   }
 
   exit(statusCode = 0) {
-    const { exit, JSEvents } = this.getEmscripten()
+    const { exit, freeAudio, freeBrowser, JSEvents } = this.getEmscripten()
     try {
       exit(statusCode)
     } catch {}
+    // RetroArch's own clean-up of its sound and of what it set up in the page, which shutting it down this way skips
+    for (const free of [freeAudio, freeBrowser]) {
+      try {
+        free?.()
+      } catch {}
+    }
     JSEvents.removeAllEventListeners()
     this.removeGlobalDOMEventListeners()
     if (this.blobUrlWasm !== undefined) {
@@ -159,6 +167,7 @@ export class Emulator {
       this.blobUrlJs = undefined
     }
     uninstallSetImmediatePolyfill()
+    this.releaseMemory()
     this.gameStatus = 'terminated'
   }
 
@@ -526,25 +535,78 @@ export class Emulator {
     }
   }
 
+  // Every listener is recorded with its options: RetroArch adds several of the same type, some of them capturing, and
+  // any one left behind keeps the emulator and the game alive. The canvas's are recorded too, as the canvas can outlive
+  // the emulator
   private recordGlobalDOMEventListeners() {
-    for (const eventTarget of [globalThis, document]) {
-      eventTarget.addEventListener = (...args: [string, any]) => {
-        const [type, listener] = args
-        const value = this.globalDOMEventListeners.get(eventTarget) || {}
-        value[type] = listener
+    for (const eventTarget of [globalThis, document, this.options.element]) {
+      eventTarget.addEventListener = (...args: Parameters<EventTarget['addEventListener']>) => {
+        const value = this.globalDOMEventListeners.get(eventTarget) || []
+        value.push(args)
         this.globalDOMEventListeners.set(eventTarget, value)
         return EventTarget.prototype.addEventListener.apply(eventTarget, args)
       }
     }
   }
 
-  private removeGlobalDOMEventListeners() {
-    for (const [eventTarget, eventListeners] of this.globalDOMEventListeners) {
-      for (const eventType in eventListeners) {
-        const listener = eventListeners[eventType]
-        eventTarget.removeEventListener(eventType, listener)
+  // Lets go of the game and of the emulator's memory once it has exited, which anything still referring to this
+  // emulator, or to its canvas, would otherwise keep alive
+  private releaseMemory() {
+    const { element } = this.options
+    // Functions put on the page and the canvas that refer to this emulator: the listener recorder, the workaround in
+    // `launch`, and Emscripten's own getContext
+    for (const [target, key] of [
+      [globalThis, 'addEventListener'],
+      [document, 'addEventListener'],
+      [element, 'addEventListener'],
+      [element.style, 'removeProperty'],
+      [element, 'getContext'],
+    ] as const) {
+      if (Object.hasOwn(target, key)) {
+        Reflect.deleteProperty(target, key)
       }
     }
+
+    const { Module } = this.getEmscripten()
+    // Emscripten adds functions to the canvas's WebGL context that refer to all of the emulator's memory, and the
+    // context stays with the canvas
+    const context: unknown = Reflect.get(Module, 'ctx')
+    if (context && typeof context === 'object') {
+      for (const key of Object.keys(context)) {
+        Reflect.deleteProperty(context, key)
+      }
+    }
+
+    // The game's files in the emulator's file system share their memory with the files they were read from
+    const { FS } = Module
+    for (let node of FS?.nameTable ?? []) {
+      for (; node; node = node.name_next) {
+        if (node.contents?.byteLength >= largeFileSize) {
+          node.contents = null
+          node.usedBytes = 0
+        }
+      }
+    }
+
+    // Files in the shared cache are kept for the next emulator that uses them
+    const { cache } = this.options
+    const files = { bios: this.options.bios, rom: this.options.rom, sram: this.options.sram, state: this.options.state }
+    for (const [field, value] of Object.entries(files)) {
+      if (!cache[field as keyof typeof cache]) {
+        for (const file of [value].flat()) {
+          file?.release()
+        }
+      }
+    }
+  }
+
+  private removeGlobalDOMEventListeners() {
+    for (const [eventTarget, eventListeners] of this.globalDOMEventListeners) {
+      for (const args of eventListeners) {
+        eventTarget.removeEventListener(...args)
+      }
+    }
+    this.globalDOMEventListeners.clear()
   }
 
   private async runEventListeners(event: EmulatorEvent) {

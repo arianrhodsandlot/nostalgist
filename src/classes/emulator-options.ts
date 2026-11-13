@@ -266,19 +266,24 @@ export class EmulatorOptions {
     }
 
     const biosFiles = Array.isArray(bios) ? bios : [bios]
+    // The functions below don't refer to `this`, which a cached file would otherwise keep alive, and with it the game
+    // of the emulator that first loaded it
+    const { nostalgistOptions, signal } = this
     this.bios = await Promise.all(
       biosFiles.map((raw) =>
         ResolvableFile.create(
           typeof raw === 'string'
-            ? { raw, signal: this.signal, urlResolver: () => resolveBios(raw, this.nostalgistOptions) }
-            : { raw, signal: this.signal },
+            ? { raw, signal, urlResolver: () => resolveBios(raw, nostalgistOptions) }
+            : { raw, signal },
         ),
       ),
     )
   }
 
   private async updateCore() {
-    const { core, resolveCoreJs, resolveCoreWasm } = this.nostalgistOptions
+    // The functions below don't refer to `this`, which a cached file would otherwise keep alive (see `updateBios`)
+    const { nostalgistOptions, signal } = this
+    const { core, resolveCoreJs, resolveCoreWasm } = nostalgistOptions
 
     if (typeof core === 'object' && 'js' in core && 'name' in core && 'wasm' in core) {
       const [js, wasm] = await Promise.all([ResolvableFile.create(core.js), ResolvableFile.create(core.wasm)])
@@ -290,8 +295,8 @@ export class EmulatorOptions {
       [resolveCoreJs, resolveCoreWasm].map((resolver) =>
         ResolvableFile.create({
           raw: core,
-          signal: this.signal,
-          urlResolver: () => resolver(core, this.nostalgistOptions),
+          signal,
+          urlResolver: () => resolver(core, nostalgistOptions),
         }),
       ),
     )
@@ -333,10 +338,11 @@ export class EmulatorOptions {
   }
 
   async createResolvableFile(file: ResolvableFileInput): Promise<ResolvableFile> {
-    const { resolveRom } = this.nostalgistOptions
+    const { nostalgistOptions } = this
+    const { resolveRom } = nostalgistOptions
     const rom = await ResolvableFile.create(
       typeof file === 'string'
-        ? { raw: file, signal: this.signal, urlResolver: () => resolveRom(file, this.nostalgistOptions) }
+        ? { raw: file, signal: this.signal, urlResolver: () => resolveRom(file, nostalgistOptions) }
         : { raw: file, signal: this.signal },
     )
 

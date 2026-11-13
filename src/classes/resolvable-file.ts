@@ -11,6 +11,11 @@ import { vendors } from '../libs/vendors.ts'
 
 const { path } = vendors
 
+/**
+ * Files of this size or larger (games, BIOS files, states) are handled so that only one copy of them is kept in memory.
+ */
+export const largeFileSize = 1024 * 1024
+
 const fileNameHeaderRegex = /filename[^;=\n]*=(?<filename>(?<quote>['"]).*?\k<quote>|[^;\n]*)/u
 
 const urlSegmentSeparator = /[?/#]/u
@@ -154,6 +159,19 @@ export class ResolvableFile {
     }
   }
 
+  /**
+   * Lets go of the file's contents, so that their memory can be freed even while something still refers to this file.
+   * They can't be read from it afterwards.
+   */
+  release() {
+    this.dispose()
+    this.arrayBuffer = undefined
+    this.blob = undefined
+    this.objectUrl = undefined
+    this.text = undefined
+    this.uint8Array = undefined
+  }
+
   async getArrayBuffer() {
     if (this.arrayBuffer) {
       return this.arrayBuffer
@@ -164,6 +182,10 @@ export class ResolvableFile {
   }
 
   getBlob() {
+    // A large download is kept only as an array buffer (see `loadResponse`), so its Blob is made when it's asked for
+    if (!this.blob && this.arrayBuffer) {
+      this.blob = new Blob([this.arrayBuffer], { type: this.blobType })
+    }
     if (!this.blob) {
       throw new Error('blob is not available')
     }
@@ -277,7 +299,13 @@ export class ResolvableFile {
     if (!response.ok) {
       throw new Error('Failed to load response', { cause: response })
     }
-    this.blob = await response.blob()
+    // A large download is read straight into the array buffer the emulator needs. Reading it into a Blob first, as
+    // smaller files are, would keep a second full copy of it for as long as the file is kept
+    if (Number(response.headers.get('Content-Length')) >= largeFileSize) {
+      this.arrayBuffer = await response.arrayBuffer()
+    } else {
+      this.blob = await response.blob()
+    }
     this.name ||= extractValidFileName(response.url)
   }
 
